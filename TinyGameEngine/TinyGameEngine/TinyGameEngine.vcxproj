@@ -160,6 +160,8 @@
     <ClInclude Include="Engine\Application.h" />
     <ClInclude Include="Engine\Core.h" />
     <ClInclude Include="Engine\Entrypoint.h" />
+    <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Vector.h" />
     <ClInclude Include="TinyGameEngine.h" />
   </ItemGroup>
