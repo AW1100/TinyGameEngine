@@ -2,7 +2,7 @@
 
 #ifdef TGE_PLATFORM_WINDOWS
 
-extern TGE::Application* TGE::CreateApplication();
+TGE::Application* TGE::CreateApplication();
 
 int main(int argc, char** argv)
 {

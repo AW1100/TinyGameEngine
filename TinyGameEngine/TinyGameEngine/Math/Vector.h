@@ -6,7 +6,9 @@ namespace MathUtil
 	class Vector3
 	{
 	public:
-		Vector3() {}
+		Vector3(T _x = 0.0f, T _y = 0.0f, T _z = 0.0f):
+			x(_x),y(_y),z(_z)
+		{}
 		Vector3(const Vector3& other)
 		{
 			x = other.x;
@@ -33,7 +35,14 @@ namespace MathUtil
 	{
 	public:
 		Vector4() {}
-		Vector4(const class Vector3<T>& _v, T _w)
+		Vector4(T _x = 0.0f, T _y = 0.0f, T _z = 0.0f, T _w = 0.0f)
+		{
+			v.x = _x;
+			v.y = _y;
+			v.z = _z;
+			w = _w;
+		}
+		Vector4(const Vector3<T>& _v, T _w)
 		{
 			v = _v;
 			w = _w;
@@ -53,7 +62,7 @@ namespace MathUtil
 		}
 
 	public:
-		class Vector3<T> v;
+		Vector3<T> v;
 		T w;
 	};
 }
