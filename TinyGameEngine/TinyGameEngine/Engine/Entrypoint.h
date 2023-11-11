@@ -1,10 +1,11 @@
 #pragma once
 
 #ifdef TGE_PLATFORM_WINDOWS
+#include <Windows.h>
 
-extern TGE::Application* TGE::CreateApplication();
+TGE::Application* TGE::CreateApplication();
 
-int main(int argc, char** argv)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int mCmdShow)
 {
 	auto app = TGE::CreateApplication();
 	app->Run();
