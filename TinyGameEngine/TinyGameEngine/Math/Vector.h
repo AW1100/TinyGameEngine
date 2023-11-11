@@ -1,10 +1,16 @@
 #pragma once
+#include "Misc.h"
 
 namespace MathUtil
 {
 	template <typename T>
 	class Vector3
 	{
+		friend std::ostream& operator<<(std::ostream& os, const Vector3<T> obj)
+		{
+			os << "<" << x << " " << y << " " << z << ">" << std::endl;
+			return os;
+		}
 	public:
 		Vector3(T _x = 0.0f, T _y = 0.0f, T _z = 0.0f):
 			x(_x),y(_y),z(_z)

@@ -2,6 +2,7 @@
 #include "../Math/Math.h"
 #include <iostream>
 #include "Event\Event.h"
+#include "Window\WindowWindows.h"
 
 TGE::Application::Application()
 {
@@ -13,11 +14,17 @@ TGE::Application::~Application()
 
 void TGE::Application::Run()
 {
-	auto e1 = TGE::EventCategory::Input | TGE::EventCategory::Keyboard;
+	WindowWindows wnd(800, 450);
+	wnd.Init("Tiny Game Engine");
+	wnd.Show();
 
-	while (true)
+	MSG msg;
+	BOOL gResult;
+	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
 	{
-		
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
+	
 }
 
