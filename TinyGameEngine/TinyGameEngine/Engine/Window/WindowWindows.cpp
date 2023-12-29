@@ -104,3 +104,18 @@ LRESULT WindowWindows::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
+
+std::optional<int> WindowWindows::ProcessMessages()
+{
+	MSG msg;
+	while (PeekMessage(&msg,nullptr,0,0,PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT)
+		{
+			return msg.wParam;
+		}
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	return {};
+}

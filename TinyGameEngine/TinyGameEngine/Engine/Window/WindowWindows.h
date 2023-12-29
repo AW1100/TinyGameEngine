@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include <Windows.h>
+#include <optional>
 
 class WindowsClass
 {
@@ -30,7 +31,7 @@ public:
 	static LRESULT WINAPI HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT WINAPI HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
+	static std::optional<int> ProcessMessages();
 private:
 	HWND hWnd;
 };

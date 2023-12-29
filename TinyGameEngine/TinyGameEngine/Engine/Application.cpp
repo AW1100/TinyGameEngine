@@ -6,25 +6,30 @@
 
 TGE::Application::Application()
 {
+	WindowWindows wnd(800, 450);
+	wnd.Init("Tiny Game Engine");
+	wnd.Show();
 }
 
 TGE::Application::~Application()
 {
 }
 
-void TGE::Application::Run()
+int TGE::Application::Run()
 {
-	WindowWindows wnd(800, 450);
-	wnd.Init("Tiny Game Engine");
-	wnd.Show();
-
-	MSG msg;
-	BOOL gResult;
-	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+	while (true)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if (const auto code = WindowWindows::ProcessMessages())
+		{
+			return *code;
+		}
+		DoFrame();
 	}
 	
+}
+
+void TGE::Application::DoFrame()
+{
+
 }
 
