@@ -9,7 +9,9 @@ namespace TGE
 		Application();
 		virtual ~Application();
 
-		void Run();
+		int Run();
+	private:
+		void DoFrame();
 	};
 
 	Application* CreateApplication();
