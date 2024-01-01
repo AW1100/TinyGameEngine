@@ -1,5 +1,6 @@
 #pragma once
 #include "Core.h"
+#include "Window/WindowWindows.h"
 
 namespace TGE
 {
@@ -12,6 +13,9 @@ namespace TGE
 		int Run();
 	private:
 		void DoFrame();
+
+	private:
+		WindowWindows* wnd;
 	};
 
 	Application* CreateApplication();

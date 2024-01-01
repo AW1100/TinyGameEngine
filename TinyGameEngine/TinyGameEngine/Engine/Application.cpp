@@ -1,14 +1,14 @@
 #include "Application.h"
 #include "../Math/Math.h"
+#include "Event/Event.h"
+
 #include <iostream>
-#include "Event\Event.h"
-#include "Window\WindowWindows.h"
 
 TGE::Application::Application()
 {
-	WindowWindows wnd(800, 450);
-	wnd.Init("Tiny Game Engine");
-	wnd.Show();
+	wnd = new WindowWindows(800, 450);
+	wnd->Init("Tiny Game Engine");
+	wnd->Show();
 }
 
 TGE::Application::~Application()
@@ -30,6 +30,7 @@ int TGE::Application::Run()
 
 void TGE::Application::DoFrame()
 {
-
+	wnd->Gfx().ClearBuffer(0.0f, 0.0f, 1.0f);
+	wnd->Gfx().EndFrame();
 }
 

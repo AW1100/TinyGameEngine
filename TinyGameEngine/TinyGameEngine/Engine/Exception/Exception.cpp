@@ -1,4 +1,5 @@
 #include "Exception.h"
+
 #include <sstream>
 
 Exception::Exception(int line, const char* file):

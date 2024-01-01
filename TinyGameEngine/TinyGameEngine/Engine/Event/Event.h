@@ -2,6 +2,13 @@
 
 namespace TGE
 {
+	enum EventCategory
+	{
+		None = 0,
+		Keyboard = 1,
+		Mouse = 2
+	};
+
 	enum class EventType
 	{
 		None = 0,
@@ -11,22 +18,24 @@ namespace TGE
 		AppTick
 	};
 
-	enum EventCategory
-	{
-		None = 0,
-		Input = 1,
-		Application = 2,
-		Mouse = 4,
-		Keyboard = 8
-	};
-
 	class Event
 	{
 	public:
-		virtual EventType GetEventType() const = 0;
-		virtual const char* GetName() const = 0;
+		Event(EventCategory ec, EventType et)
+			:category(ec), type(et)
+		{}
+		virtual EventCategory GetEventCategory() const
+		{
+			return category;
+		}
+		virtual EventType GetEventType() const
+		{
+			return type;
+		}
 
 	protected:
 		bool hasHandled = false;
+		EventCategory category;
+		EventType type;
 	};
 }

@@ -159,11 +159,16 @@
   <ItemGroup>
     <ClInclude Include="Engine\Application.h" />
     <ClInclude Include="Engine\Core.h" />
+    <ClInclude Include="Engine\CustomizedWindows.h" />
     <ClInclude Include="Engine\Entrypoint.h" />
     <ClInclude Include="Engine\Event\Event.h" />
+    <ClInclude Include="Engine\Event\EventHandler.h" />
+    <ClInclude Include="Engine\Event\KeyboardEvent.h" />
     <ClInclude Include="Engine\Exception\Exception.h" />
     <ClInclude Include="Engine\Exception\WindowException.h" />
+    <ClInclude Include="Engine\Graphics\Graphics.h" />
     <ClInclude Include="Engine\Window\Window.h" />
+    <ClInclude Include="Engine\Window\WindowsMessage.h" />
     <ClInclude Include="Engine\Window\WindowWindows.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Matrix.h" />
@@ -173,7 +178,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp" />
+    <ClCompile Include="Engine\Event\EventHandler.cpp" />
+    <ClCompile Include="Engine\Event\KeyboardEvent.cpp" />
     <ClCompile Include="Engine\Exception\Exception.cpp" />
+    <ClCompile Include="Engine\Exception\WindowException.cpp" />
+    <ClCompile Include="Engine\Graphics\Graphics.cpp" />
+    <ClCompile Include="Engine\Window\WIndowsMessage.cpp" />
     <ClCompile Include="Engine\Window\WindowWindows.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

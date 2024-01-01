@@ -1,4 +1,9 @@
 #include "WindowWindows.h"
+#include "../Exception/WindowException.h"
+#include "../Event/EventHandler.h"
+#include "../Event/KeyboardEvent.h"
+
+#include <iostream>
 
 WindowsClass WindowsClass::wndClass;
 
@@ -12,12 +17,12 @@ WindowsClass::WindowsClass()
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetInstance();
-	wc.hIcon = nullptr;
+	wc.hIcon = static_cast<HICON>(LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 64, 64, 0));
 	wc.hCursor = nullptr;
 	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = GetName();
-	wc.hIconSm = nullptr;
+	wc.hIconSm = static_cast<HICON>(LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 32, 32, 0));
 	RegisterClassEx(&wc);
 }
 
@@ -72,6 +77,7 @@ void WindowWindows::Init(const char* name)
 void WindowWindows::Show()
 {
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
+	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 LRESULT WindowWindows::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -95,27 +101,70 @@ LRESULT __stdcall WindowWindows::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wPar
 
 LRESULT WindowWindows::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	std::ostringstream oss;
+#if TGE_WM_DEBUG
+	oss << "Message: " << WindowsMessage::GetInstance().Find(msg) << "\n";
+	OutputDebugStringA(oss.str().c_str());
+#endif
+
 	switch (msg)
 	{
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		return 0;
-	}
+
+#if TGE_WM_DEBUG
+	case WM_LBUTTONDOWN:
+		const POINTS pt = MAKEPOINTS(lParam);
+		oss << "(" << pt.x << "," << pt.y << ")\n";
+		OutputDebugStringA(oss.str().c_str());
+#endif
+
+	case WM_KEYDOWN:
+		new TGE::KeyboardEvent(TGE::EventType::KeyPressed, static_cast<unsigned char>(wParam));
+		break;
+
+	case WM_KEYUP:
+		new TGE::KeyboardEvent(TGE::EventType::KeyReleased, static_cast<unsigned char>(wParam));
+		break;
+ 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 std::optional<int> WindowWindows::ProcessMessages()
 {
-	MSG msg;
-	while (PeekMessage(&msg,nullptr,0,0,PM_REMOVE))
+	try 
 	{
-		if (msg.message == WM_QUIT)
+		MSG msg;
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
-			return msg.wParam;
+			if (msg.message == WM_QUIT)
+			{
+				return msg.wParam;
+			}
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		return {};
 	}
-	return {};
+	catch(const WindowException& e)
+	{
+		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (const std::exception& e)
+	{
+		MessageBox(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (...)
+	{
+		MessageBox(nullptr, "Unknown", "Unknown", MB_OK | MB_ICONEXCLAMATION);
+	}
+	return -1;
+	
+}
+
+Graphics& WindowWindows::Gfx()
+{
+	return *pGfx;
 }

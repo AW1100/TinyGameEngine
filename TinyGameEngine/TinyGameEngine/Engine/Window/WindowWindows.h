@@ -1,6 +1,10 @@
 #pragma once
+#include "../CustomizedWindows.h"
 #include "Window.h"
-#include <Windows.h>
+#include "../Graphics/Graphics.h"
+#include "WindowsMessage.h"
+
+#include <memory>
 #include <optional>
 
 class WindowsClass
@@ -32,6 +36,10 @@ public:
 	static LRESULT WINAPI HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static std::optional<int> ProcessMessages();
+	Graphics& Gfx();
+
 private:
 	HWND hWnd;
+	std::unique_ptr<Graphics> pGfx;
+	WindowsMessage* wm_ptr;
 };

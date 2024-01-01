@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef TGE_PLATFORM_WINDOWS
-#include <Windows.h>
+#include "CustomizedWindows.h"
 
 TGE::Application* TGE::CreateApplication();
 
