@@ -158,8 +158,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Application.h" />
+    <ClInclude Include="Engine\Bindable\Bases.h" />
+    <ClInclude Include="Engine\Bindable\Bindable.h" />
+    <ClInclude Include="Engine\Bindable\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Bindable\IndexBuffer.h" />
+    <ClInclude Include="Engine\Bindable\InputLayout.h" />
+    <ClInclude Include="Engine\Bindable\PixelShader.h" />
+    <ClInclude Include="Engine\Bindable\Topology.h" />
+    <ClInclude Include="Engine\Bindable\TransformConstantBuffer.h" />
+    <ClInclude Include="Engine\Bindable\VertexBuffer.h" />
+    <ClInclude Include="Engine\Bindable\VertexShader.h" />
     <ClInclude Include="Engine\Core.h" />
     <ClInclude Include="Engine\CustomizedWindows.h" />
+    <ClInclude Include="Engine\Drawable\Box.h" />
+    <ClInclude Include="Engine\Drawable\Drawable.h" />
     <ClInclude Include="Engine\Entrypoint.h" />
     <ClInclude Include="Engine\Event\Event.h" />
     <ClInclude Include="Engine\Event\EventHandler.h" />
@@ -167,6 +179,7 @@
     <ClInclude Include="Engine\Exception\Exception.h" />
     <ClInclude Include="Engine\Exception\WindowException.h" />
     <ClInclude Include="Engine\Graphics\Graphics.h" />
+    <ClInclude Include="Engine\Util\Timer.h" />
     <ClInclude Include="Engine\Window\Window.h" />
     <ClInclude Include="Engine\Window\WindowsMessage.h" />
     <ClInclude Include="Engine\Window\WindowWindows.h" />
@@ -178,11 +191,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp" />
+    <ClCompile Include="Engine\Bindable\Bindable.cpp" />
+    <ClCompile Include="Engine\Bindable\IndexBuffer.cpp" />
+    <ClCompile Include="Engine\Bindable\InputLayout.cpp" />
+    <ClCompile Include="Engine\Bindable\PixelShader.cpp" />
+    <ClCompile Include="Engine\Bindable\Topology.cpp" />
+    <ClCompile Include="Engine\Bindable\TransformConstantBuffer.cpp" />
+    <ClCompile Include="Engine\Bindable\VertexBuffer.cpp" />
+    <ClCompile Include="Engine\Bindable\VertexShader.cpp" />
+    <ClCompile Include="Engine\Drawable\Box.cpp" />
+    <ClCompile Include="Engine\Drawable\Drawable.cpp" />
     <ClCompile Include="Engine\Event\EventHandler.cpp" />
     <ClCompile Include="Engine\Event\KeyboardEvent.cpp" />
     <ClCompile Include="Engine\Exception\Exception.cpp" />
     <ClCompile Include="Engine\Exception\WindowException.cpp" />
     <ClCompile Include="Engine\Graphics\Graphics.cpp" />
+    <ClCompile Include="Engine\Util\Timer.cpp" />
     <ClCompile Include="Engine\Window\WIndowsMessage.cpp" />
     <ClCompile Include="Engine\Window\WindowWindows.cpp" />
   </ItemGroup>
@@ -194,6 +218,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shaders\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

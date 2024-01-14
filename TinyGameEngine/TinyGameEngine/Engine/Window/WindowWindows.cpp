@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-WindowsClass WindowsClass::wndClass;
+WindowWindows::WindowsClass WindowWindows::WindowsClass::wndClass;
 
-WindowsClass::WindowsClass()
+WindowWindows::WindowsClass::WindowsClass()
 {
 	hInst = GetModuleHandle(nullptr);
 	WNDCLASSEX wc = { 0 };
@@ -26,17 +26,17 @@ WindowsClass::WindowsClass()
 	RegisterClassEx(&wc);
 }
 
-WindowsClass::~WindowsClass()
+WindowWindows::WindowsClass::~WindowsClass()
 {
 	UnregisterClass(wndClassName, hInst);
 }
 
-HINSTANCE WindowsClass::GetInstance()
+HINSTANCE WindowWindows::WindowsClass::GetInstance()
 {
 	return wndClass.hInst;
 }
 
-const char* WindowsClass::GetName()
+const char* WindowWindows::WindowsClass::GetName()
 {
 	return wndClassName;
 }
