@@ -2,7 +2,7 @@
 #include "Core.h"
 #include "Window/WindowWindows.h"
 #include "Util/Timer.h"
-#include "Drawable/Box.h"
+#include "Drawable/Scene.h"
 
 namespace TGE
 {
@@ -18,7 +18,7 @@ namespace TGE
 
 	private:
 		WindowWindows* wnd;
-		std::vector<Box*> boxes;
+		Scene* scene;
 		Timer timer;
 	};
 

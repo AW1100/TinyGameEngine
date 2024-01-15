@@ -172,6 +172,7 @@
     <ClInclude Include="Engine\CustomizedWindows.h" />
     <ClInclude Include="Engine\Drawable\Box.h" />
     <ClInclude Include="Engine\Drawable\Drawable.h" />
+    <ClInclude Include="Engine\Drawable\Scene.h" />
     <ClInclude Include="Engine\Entrypoint.h" />
     <ClInclude Include="Engine\Event\Event.h" />
     <ClInclude Include="Engine\Event\EventHandler.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="Engine\Bindable\VertexShader.cpp" />
     <ClCompile Include="Engine\Drawable\Box.cpp" />
     <ClCompile Include="Engine\Drawable\Drawable.cpp" />
+    <ClCompile Include="Engine\Drawable\Scene.cpp" />
     <ClCompile Include="Engine\Event\EventHandler.cpp" />
     <ClCompile Include="Engine\Event\KeyboardEvent.cpp" />
     <ClCompile Include="Engine\Exception\Exception.cpp" />

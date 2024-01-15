@@ -108,6 +108,9 @@
     <ClInclude Include="Engine\Bindable\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Drawable\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -165,6 +168,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Bindable\VertexShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Drawable\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
