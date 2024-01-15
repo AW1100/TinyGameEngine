@@ -158,7 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Application.h" />
-    <ClInclude Include="Engine\Bindable\Bases.h" />
+    <ClInclude Include="Engine\Bindable\BindableHeader.h" />
     <ClInclude Include="Engine\Bindable\Bindable.h" />
     <ClInclude Include="Engine\Bindable\ConstantBuffer.h" />
     <ClInclude Include="Engine\Bindable\IndexBuffer.h" />
