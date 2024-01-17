@@ -17,8 +17,14 @@ TGE::Application::Application()
 
 TGE::Application::~Application()
 {
-	delete wnd;
-	delete scene;
+	if (wnd != nullptr)
+	{
+		delete wnd;
+	}
+	if (scene != nullptr)
+	{
+		delete scene;
+	}
 }
 
 int TGE::Application::Run()
