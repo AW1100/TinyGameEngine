@@ -1,9 +1,9 @@
 #pragma once
-#include "Drawable.h"
+#include "DrawableBase.h"
 
 #include <random>
 
-class Box : public Drawable
+class Box : public DrawableBase<Box>
 {
 public:
 	Box(Graphics& gfx,std::mt19937& rng,
@@ -11,7 +11,7 @@ public:
 		std::uniform_real_distribution<float>& ddist,
 		std::uniform_real_distribution<float>& odist,
 		std::uniform_real_distribution<float>& rdist);
-	~Box() = default;
+	virtual ~Box() override;
 	void Update(float dt) override;
 	DirectX::XMMATRIX GetTransformXM() const override;
 

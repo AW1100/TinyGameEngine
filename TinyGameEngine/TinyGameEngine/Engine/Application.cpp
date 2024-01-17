@@ -1,12 +1,14 @@
 #include "Application.h"
 #include "../Math/Math.h"
 #include "Event/Event.h"
+#include "Constants.h"
 
 #include <iostream>
+#include <d3d11sdklayers.h>
 
 TGE::Application::Application()
 {
-	wnd = new WindowWindows(800, 450);
+	wnd = new WindowWindows(WIDTH, HEIGHT);
 	wnd->Init("Tiny Game Engine");
 	wnd->Show();
 	scene = new Scene(wnd->Gfx());

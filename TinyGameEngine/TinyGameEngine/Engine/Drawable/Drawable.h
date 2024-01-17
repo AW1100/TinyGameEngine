@@ -11,7 +11,7 @@ class Drawable
 public:
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
-	~Drawable() = default;
+	virtual ~Drawable();
 	virtual DirectX::XMMATRIX GetTransformXM() const = 0;
 	void Draw(Graphics& gfx) const;
 	virtual void Update(float dt) = 0;
@@ -19,6 +19,9 @@ public:
 	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ib);
 
 private:
-	const IndexBuffer* pIndexBuffer = nullptr;
+	virtual std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const = 0;
+
+protected:
+	IndexBuffer* pIndexBuffer = nullptr;
 	std::vector<std::unique_ptr<Bindable>> binds;
 };

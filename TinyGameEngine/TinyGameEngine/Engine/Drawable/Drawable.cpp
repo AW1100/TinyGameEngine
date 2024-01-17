@@ -1,9 +1,18 @@
 #include "Drawable.h"
 #include "../Bindable/IndexBuffer.h"
 
+Drawable::~Drawable()
+{
+
+}
+
 void Drawable::Draw(Graphics& gfx) const
 {
 	for (auto& b : binds)
+	{
+		b->Bind(gfx);
+	}
+	for (auto& b : GetStaticBinds())
 	{
 		b->Bind(gfx);
 	}

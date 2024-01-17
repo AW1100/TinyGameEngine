@@ -168,10 +168,12 @@
     <ClInclude Include="Engine\Bindable\TransformConstantBuffer.h" />
     <ClInclude Include="Engine\Bindable\VertexBuffer.h" />
     <ClInclude Include="Engine\Bindable\VertexShader.h" />
+    <ClInclude Include="Engine\Constants.h" />
     <ClInclude Include="Engine\Core.h" />
     <ClInclude Include="Engine\CustomizedWindows.h" />
     <ClInclude Include="Engine\Drawable\Box.h" />
     <ClInclude Include="Engine\Drawable\Drawable.h" />
+    <ClInclude Include="Engine\Drawable\DrawableBase.h" />
     <ClInclude Include="Engine\Drawable\Scene.h" />
     <ClInclude Include="Engine\Entrypoint.h" />
     <ClInclude Include="Engine\Event\Event.h" />

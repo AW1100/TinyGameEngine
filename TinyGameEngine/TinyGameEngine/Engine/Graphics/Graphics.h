@@ -29,5 +29,9 @@ private:
 	ComPtr<ID3D11RenderTargetView> pTarget = nullptr;
 	ComPtr<ID3D11DepthStencilView> pDSV = nullptr;
 
+#ifdef _DEBUG 
+	ComPtr<ID3D11Debug> pDebug;
+#endif
+
 	DirectX::XMMATRIX projection;
 };
