@@ -11,5 +11,5 @@ public:
 	void UpdateFrame(float dt, Graphics& gfx);
 
 private:
-	std::vector<Drawable*> objects;
+	std::vector<std::unique_ptr<Drawable>> objects;
 };
