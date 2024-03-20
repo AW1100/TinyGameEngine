@@ -4,6 +4,9 @@
 
 #include <d3d11sdklayers.h>
 
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
+
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
@@ -98,6 +101,7 @@ Graphics::Graphics(HWND hWnd)
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports(1u, &vp);
 
+	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
 Graphics::~Graphics()
@@ -222,4 +226,35 @@ void Graphics::SetProjection(DirectX::XMMATRIX proj)
 DirectX::XMMATRIX Graphics::GetProjection() const
 {
 	return projection;
+}
+
+void Graphics::BeginImgui(float &sf)
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	//ImGui::ShowDemoWindow(); // Show demo window! :)
+	if (ImGui::Begin("Simulation Speed"))
+	{
+		ImGui::SliderFloat("Speed Factor", &sf, 0.0f, 4.0f);
+		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	}
+	ImGui::End();
+	
+}
+
+void Graphics::RenderImgui()
+{
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Graphics::SetCamera(DirectX::FXMMATRIX cam)
+{
+	camera = cam;
+}
+
+DirectX::XMMATRIX Graphics::GetCamera() const
+{
+	return camera;
 }

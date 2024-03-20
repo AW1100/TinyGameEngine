@@ -1,12 +1,16 @@
 #include "TransformConstantBuffer.h"
 
 TransformConstantBuffer::TransformConstantBuffer(Graphics& gfx, const Drawable& parent)
-	:vcbuf(gfx),parent(parent)
+	:parent(parent)
 {
+	if (!vcbuf)
+	{
+		vcbuf = std::make_unique<VertexConstantBuffer<DirectX::XMMATRIX>>(gfx);
+	}
 }
 
 void TransformConstantBuffer::Bind(Graphics& gfx)
 {
-	vcbuf.Update(gfx, DirectX::XMMatrixTranspose(parent.GetTransformXM() * gfx.GetProjection()));
-	vcbuf.Bind(gfx);
+	vcbuf->Update(gfx, DirectX::XMMatrixTranspose(parent.GetTransformXM() * gfx.GetCamera() * gfx.GetProjection()));
+	vcbuf->Bind(gfx);
 }

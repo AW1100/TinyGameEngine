@@ -6,6 +6,10 @@
 #include <iostream>
 #include <d3d11sdklayers.h>
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 TGE::Application::Application()
 {
 	wnd = new WindowWindows(WIDTH, HEIGHT);
@@ -13,6 +17,7 @@ TGE::Application::Application()
 	wnd->Show();
 	scene = new Scene(wnd->Gfx());
 	wnd->Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
+
 }
 
 TGE::Application::~Application()
@@ -42,12 +47,17 @@ int TGE::Application::Run()
 
 void TGE::Application::DoFrame()
 {
-	auto dt = timer.Mark();
+	auto dt = timer.Mark() * speed_factor;
+	wnd->Gfx().SetCamera(cam.GetMatrix());
 	std::ostringstream oss;
 	oss << std::fixed << std::setprecision(1) << timer.Duration();
 	SetWindowText(wnd->GetHWnd(), ("Tiny Game Engine " + oss.str() + " s").c_str());
 	wnd->Gfx().ClearBuffer(0.0f, 0.0f, 0.0f);
 	scene->UpdateFrame(dt, wnd->Gfx());
+	
+	wnd->Gfx().BeginImgui(speed_factor);
+	cam.SpawnControlWindow();
+	wnd->Gfx().RenderImgui();
 	wnd->Gfx().EndFrame();
 }
 

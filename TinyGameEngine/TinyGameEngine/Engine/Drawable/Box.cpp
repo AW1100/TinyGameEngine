@@ -58,6 +58,9 @@ Box::Box(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>
 
         AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
+        AddStaticBind(std::make_unique<Texture>(gfx, L"F:/TinyGameEngine/Assets/01.jpg"));
+        AddStaticBind(std::make_unique<Sampler>(gfx));
+
         struct CB
         {
             struct
@@ -84,6 +87,7 @@ Box::Box(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>
         const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
         {
             { "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+            { "TexCoord",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 }
         };
         AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
@@ -118,6 +122,5 @@ DirectX::XMMATRIX Box::GetTransformXM() const
 {
     return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
         DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-        DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
-        DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
+        DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 }

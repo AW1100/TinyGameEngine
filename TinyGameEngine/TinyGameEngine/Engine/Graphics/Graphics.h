@@ -21,6 +21,10 @@ public:
 	void DrawTestTriangle();
 	void SetProjection(DirectX::XMMATRIX proj);
 	DirectX::XMMATRIX GetProjection() const;
+	void BeginImgui(float &sf);
+	void RenderImgui();
+	void SetCamera(DirectX::FXMMATRIX cam);
+	DirectX::XMMATRIX GetCamera() const;
 
 private:
 	ComPtr<ID3D11Device> pDevice = nullptr;
@@ -33,5 +37,6 @@ private:
 	ComPtr<ID3D11Debug> pDebug;
 #endif
 
+	DirectX::XMMATRIX camera;
 	DirectX::XMMATRIX projection;
 };

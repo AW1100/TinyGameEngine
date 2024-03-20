@@ -1,6 +1,7 @@
 #pragma once
 #include "ConstantBuffer.h"
 #include "../Drawable/Drawable.h"
+#include <memory>
 
 class TransformConstantBuffer : public Bindable
 {
@@ -9,6 +10,6 @@ public:
 	void Bind(Graphics& gfx) override;
 
 private:
-	VertexConstantBuffer<DirectX::XMMATRIX> vcbuf;
+	inline static std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> vcbuf;
 	const Drawable& parent;
 };

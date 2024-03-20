@@ -3,9 +3,14 @@
 #include "../Event/EventHandler.h"
 #include "../Event/KeyboardEvent.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 #include <iostream>
 
 WindowWindows::WindowsClass WindowWindows::WindowsClass::wndClass;
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 WindowWindows::WindowsClass::WindowsClass()
 {
@@ -50,6 +55,9 @@ WindowWindows::WindowWindows(unsigned int width, unsigned int height) :
 
 WindowWindows::~WindowWindows()
 {
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	
 	DestroyWindow(hWnd);
 }
 
@@ -72,12 +80,16 @@ void WindowWindows::Init(const char* name)
 		nullptr,
 		WindowsClass::GetInstance(),
 		this);
+
+	ShowWindow(hWnd, SW_SHOWDEFAULT);
+	pGfx = std::make_unique<Graphics>(hWnd);
+
+	ImGui_ImplWin32_Init(hWnd);
 }
 
 void WindowWindows::Show()
 {
-	ShowWindow(hWnd, SW_SHOWDEFAULT);
-	pGfx = std::make_unique<Graphics>(hWnd);
+	
 }
 
 LRESULT WindowWindows::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -106,6 +118,9 @@ LRESULT WindowWindows::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	oss << "Message: " << WindowsMessage::GetInstance().Find(msg) << "\n";
 	OutputDebugStringA(oss.str().c_str());
 #endif
+
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		return true;
 
 	switch (msg)
 	{
