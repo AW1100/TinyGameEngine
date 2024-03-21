@@ -129,13 +129,13 @@
       <PreprocessorDefinitions>TGE_PLATFORM_WINDOWS;TGE_BUILD_DLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\;F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\imgui;F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\assimp;%(AdditionalIncludeDirectories);F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\assimp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\Autodesk\;F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\imgui;F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\assimp;%(AdditionalIncludeDirectories);F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\assimp</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\;F:\DirectXTK\Bin\Windows10_2022\x64\Debug;F:\TinyGameEngine\TinyGameEngine\bin\Debug-x64\Ext\assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DirectXTK.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\;F:\DirectXTK\Bin\Windows10_2022\x64\Debug;F:\TinyGameEngine\TinyGameEngine\bin\Debug-x64\Ext\assimp;D:\Autodesk\FBX\FBX SDK\2020.3.4\lib\vs2022\x64\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;assimp-vc143-mtd.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)..\bin\$(Configuration)-$(Platform)\$(ProjectName)\TinyGameEngine.dll" ""$(ProjectDir)..\bin\$(Configuration)-$(Platform)\Demo\"</Command>
@@ -150,7 +150,7 @@
       <PreprocessorDefinitions>TGE_PLATFORM_WINDOWS;TGE_BUILD_DLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\;%(AdditionalIncludeDirectories);F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\assimp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\Autodesk\;%(AdditionalIncludeDirectories);F:\TinyGameEngine\TinyGameEngine\TinyGameEngine\ThirdParty\assimp</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -194,8 +194,10 @@
     <ClInclude Include="Engine\Exception\WindowException.h" />
     <ClInclude Include="Engine\Graphics\Graphics.h" />
     <ClInclude Include="Engine\Util\Camera.h" />
+    <ClInclude Include="Engine\Util\FBXManager.h" />
     <ClInclude Include="Engine\Util\ImguiManager.h" />
     <ClInclude Include="Engine\Util\Timer.h" />
+    <ClInclude Include="Engine\Util\Vertex.h" />
     <ClInclude Include="Engine\Window\Window.h" />
     <ClInclude Include="Engine\Window\WindowsMessage.h" />
     <ClInclude Include="Engine\Window\WindowWindows.h" />
@@ -318,6 +320,7 @@
     <ClCompile Include="Engine\Exception\WindowException.cpp" />
     <ClCompile Include="Engine\Graphics\Graphics.cpp" />
     <ClCompile Include="Engine\Util\Camera.cpp" />
+    <ClCompile Include="Engine\Util\FBXManager.cpp" />
     <ClCompile Include="Engine\Util\ImguiManager.cpp" />
     <ClCompile Include="Engine\Util\Timer.cpp" />
     <ClCompile Include="Engine\Window\WIndowsMessage.cpp" />
@@ -356,6 +359,20 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shaders\TexturePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shaders\TextureVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shaders\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

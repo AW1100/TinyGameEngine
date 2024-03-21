@@ -58,9 +58,6 @@ Box::Box(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>
 
         AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
-        AddStaticBind(std::make_unique<Texture>(gfx, L"F:/TinyGameEngine/Assets/01.jpg"));
-        AddStaticBind(std::make_unique<Sampler>(gfx));
-
         struct CB
         {
             struct

@@ -7,6 +7,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "../Util/FBXManager.h"
+
 Model::Model(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist, std::uniform_real_distribution<float>& ddist, std::uniform_real_distribution<float>& odist, std::uniform_real_distribution<float>& rdist)
     :r(),
     droll(),
@@ -21,124 +23,27 @@ Model::Model(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 {
     if (!IsStaticInitialized())
     {
-        struct Vertex
-        {
-            struct
-            {
-                float x;
-                float y;
-                float z;
-            }pos;
-            struct
-            {
-                float u;
-                float v;
-            }tex;
-            struct
-            {
-                float x;
-                float y;
-                float z;
-            }normal;
-
-        };
-
-
-        Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile("F:/3DModels/fbx/kafka.fbx", aiProcess_OptimizeMeshes | aiProcess_ValidateDataStructure);
-
-        // Loop through each mesh
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
+        std::vector<UV> texcoords;
 
-        // Process each mesh
-        for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-            aiMesh* mesh = scene->mMeshes[i];
-
-            // Process each vertex
-            for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
-                Vertex vertex;
-
-                // Position
-                vertex.pos.x = mesh->mVertices[j].x;
-                vertex.pos.y = mesh->mVertices[j].y;
-                vertex.pos.z = mesh->mVertices[j].z;
-
-                // Texture Coordinates
-                if (mesh->mTextureCoords[0]) {
-                    vertex.tex.u = mesh->mTextureCoords[0][j].x;
-                    vertex.tex.v = mesh->mTextureCoords[0][j].y;
-                }
-                else {
-                    vertex.tex.u = 0.0f;
-                    vertex.tex.v = 0.0f;
-                }
-
-                // Normals
-                if (mesh->HasNormals()) {
-                    vertex.normal.x = mesh->mNormals[j].x;
-                    vertex.normal.y = mesh->mNormals[j].y;
-                    vertex.normal.z = mesh->mNormals[j].z;
-                }
-
-                vertices.push_back(vertex);
-            }
-
-            // Process indices
-            for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
-                aiFace face = mesh->mFaces[j];
-                for (unsigned int k = 0; k < face.mNumIndices; k++) {
-                    indices.push_back(face.mIndices[k]);
-                }
-            }
-
-            
-        }
-
-        if (scene->HasMaterials())
-        {
-            for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
-                aiMaterial* material = scene->mMaterials[i];
-                int a = 0;
-            }
-        }
+        FBXManager fbxm;
+        auto lScene = fbxm.ReadFromFilepath("F:/3DModels/fbx/kafka.fbx");
+        fbxm.LoadMeshData(lScene->GetRootNode(),vertices,indices, texcoords);
 
         AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-        auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
+        auto pvs = std::make_unique<VertexShader>(gfx, L"TextureVS.cso");
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind(std::move(pvs));
 
-        AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+        AddStaticBind(std::make_unique<PixelShader>(gfx, L"TexturePS.cso"));
 
         AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
         AddStaticBind(std::make_unique<Texture>(gfx, L"F:/TinyGameEngine/Assets/01.jpg"));
         AddStaticBind(std::make_unique<Sampler>(gfx));
 
-        struct CB
-        {
-            struct
-            {
-                float r;
-                float g;
-                float b;
-                float a;
-            } face_colors[6];
-        };
-
-        const CB cbuf =
-        {
-            {
-                { 1.0f,0.0f,1.0f },
-                { 1.0f,0.0f,0.0f },
-                { 0.0f,1.0f,0.0f },
-                { 0.0f,0.0f,1.0f },
-                { 1.0f,1.0f,0.0f },
-                { 0.0f,1.0f,1.0f },
-            }
-        };
-        AddStaticBind(std::make_unique<PixelConstantBuffer<CB>>(gfx, cbuf));
         const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
         {
             { "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
