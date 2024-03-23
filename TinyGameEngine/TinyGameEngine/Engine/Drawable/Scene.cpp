@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Box.h"
+#include "Mesh.h"
 #include "Model.h"
 
 #include <sstream>
@@ -18,10 +19,12 @@ Scene::Scene(Graphics& gfx)
 			ddist, odist, rdist
 		));
 	}*/
-	objects.push_back(std::make_unique<Model>(
+	/*objects.push_back(std::make_unique<Mesh>(
 		gfx, rng, adist,
 		ddist, odist, rdist
-	));
+	));*/
+	Model m("F:/3DModels/fbx/leidian.fbx");
+	m.FindRenderables(objects, gfx);
 }
 
 Scene::~Scene()

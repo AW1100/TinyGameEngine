@@ -402,13 +402,16 @@
     <ClInclude Include="ThirdParty\assimp\ZipArchiveIOSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Drawable\Model.h">
+    <ClInclude Include="Engine\Drawable\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Util\FBXManager.h">
+    <ClInclude Include="Engine\Util\FbxManagerWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Util\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Drawable\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -506,10 +509,13 @@
     <ClCompile Include="Engine\Util\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Drawable\Model.cpp">
+    <ClCompile Include="Engine\Drawable\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Util\FBXManager.cpp">
+    <ClCompile Include="Engine\Util\FbxManagerWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Drawable\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -520,6 +526,8 @@
     <FxCompile Include="Shaders\PhongPS.hlsl" />
     <FxCompile Include="Shaders\TextureVS.hlsl" />
     <FxCompile Include="Shaders\TexturePS.hlsl" />
+    <FxCompile Include="Shaders\KafkaVS.hlsl" />
+    <FxCompile Include="Shaders\KafkaPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

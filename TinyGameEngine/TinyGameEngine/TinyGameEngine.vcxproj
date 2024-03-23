@@ -184,6 +184,7 @@
     <ClInclude Include="Engine\Drawable\Box.h" />
     <ClInclude Include="Engine\Drawable\Drawable.h" />
     <ClInclude Include="Engine\Drawable\DrawableBase.h" />
+    <ClInclude Include="Engine\Drawable\Mesh.h" />
     <ClInclude Include="Engine\Drawable\Model.h" />
     <ClInclude Include="Engine\Drawable\Scene.h" />
     <ClInclude Include="Engine\Entrypoint.h" />
@@ -194,7 +195,7 @@
     <ClInclude Include="Engine\Exception\WindowException.h" />
     <ClInclude Include="Engine\Graphics\Graphics.h" />
     <ClInclude Include="Engine\Util\Camera.h" />
-    <ClInclude Include="Engine\Util\FBXManager.h" />
+    <ClInclude Include="Engine\Util\FbxManagerWrapper.h" />
     <ClInclude Include="Engine\Util\ImguiManager.h" />
     <ClInclude Include="Engine\Util\Timer.h" />
     <ClInclude Include="Engine\Util\Vertex.h" />
@@ -312,6 +313,7 @@
     <ClCompile Include="Engine\Bindable\VertexShader.cpp" />
     <ClCompile Include="Engine\Drawable\Box.cpp" />
     <ClCompile Include="Engine\Drawable\Drawable.cpp" />
+    <ClCompile Include="Engine\Drawable\Mesh.cpp" />
     <ClCompile Include="Engine\Drawable\Model.cpp" />
     <ClCompile Include="Engine\Drawable\Scene.cpp" />
     <ClCompile Include="Engine\Event\EventHandler.cpp" />
@@ -320,7 +322,7 @@
     <ClCompile Include="Engine\Exception\WindowException.cpp" />
     <ClCompile Include="Engine\Graphics\Graphics.cpp" />
     <ClCompile Include="Engine\Util\Camera.cpp" />
-    <ClCompile Include="Engine\Util\FBXManager.cpp" />
+    <ClCompile Include="Engine\Util\FbxManagerWrapper.cpp" />
     <ClCompile Include="Engine\Util\ImguiManager.cpp" />
     <ClCompile Include="Engine\Util\Timer.cpp" />
     <ClCompile Include="Engine\Window\WIndowsMessage.cpp" />
@@ -334,6 +336,22 @@
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shaders\KafkaPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shaders\KafkaVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shaders\PhongPS.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>

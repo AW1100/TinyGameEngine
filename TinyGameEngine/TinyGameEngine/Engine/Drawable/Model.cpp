@@ -1,91 +1,63 @@
 #include "Model.h"
-#include "../Bindable/BindableHeader.h"
+#include "../Util/FbxManagerWrapper.h"
 
-#include <sstream>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include "../Util/FBXManager.h"
-
-Model::Model(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist, std::uniform_real_distribution<float>& ddist, std::uniform_real_distribution<float>& odist, std::uniform_real_distribution<float>& rdist)
-    :r(),
-    droll(),
-    dpitch(),
-    dyaw(),
-    dphi(),
-    dtheta(),
-    dchi(),
-    chi(),
-    theta(),
-    phi()
+TreeNode::TreeNode()
 {
-    if (!IsStaticInitialized())
-    {
-        std::vector<Vertex> vertices;
-        std::vector<unsigned int> indices;
-        std::vector<UV> texcoords;
+	numVertices = 0;
+	numIndices = 0;
+}
 
-        FBXManager fbxm;
-        auto lScene = fbxm.ReadFromFilepath("F:/3DModels/fbx/kafka.fbx");
-        fbxm.LoadMeshData(lScene->GetRootNode(),vertices,indices, texcoords);
+TreeNode::TreeNode(int numOfVertices, int numOfIndices)
+{
+	numVertices = numOfVertices;
+	numIndices = numOfIndices;
+}
 
-        AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
+TreeNode::~TreeNode()
+{
+}
 
-        auto pvs = std::make_unique<VertexShader>(gfx, L"TextureVS.cso");
-        auto pvsbc = pvs->GetBytecode();
-        AddStaticBind(std::move(pvs));
+std::vector<std::shared_ptr<TreeNode>>& TreeNode::GetChildNodes()
+{
+	return childNodes;
+}
 
-        AddStaticBind(std::make_unique<PixelShader>(gfx, L"TexturePS.cso"));
+Model::Model(const char* filepath)
+{
+	rootNode = std::make_shared<TreeNode>();
+	FbxManagerWrapper fbxm;
+	fbxm.LoadModelWithFilepath(filepath, rootNode);
 
-        AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
-
-        AddStaticBind(std::make_unique<Texture>(gfx, L"F:/TinyGameEngine/Assets/01.jpg"));
-        AddStaticBind(std::make_unique<Sampler>(gfx));
-
-        const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
-        {
-            { "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-            { "TexCoord",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 }
-        };
-        AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-
-        AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-    }
-    else
-    {
-        SetIndexBufferFromStatic();
-    }
-
-    AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this));
 }
 
 Model::~Model()
 {
-    /*std::ostringstream oss;
-    oss << "Box Destructor Called." << "\n";
-    OutputDebugStringA(oss.str().c_str());*/
+
 }
 
-void Model::Update(float dt)
+void Model::FindRenderables(std::vector<std::shared_ptr<class Drawable>>& meshes, Graphics& gfx)
 {
-    roll += droll * dt;
-    pitch += dpitch * dt;
-    yaw += dyaw * dt;
-    theta += dtheta * dt;
-    phi += dphi * dt;
-    chi += dchi * dt;
+	Traverse(rootNode, meshes, gfx);
 }
 
-DirectX::XMMATRIX Model::GetTransformXM() const
+void Model::Traverse(std::shared_ptr<TreeNode> node, std::vector<std::shared_ptr<Drawable>>& meshes, Graphics& gfx)
 {
-    return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-        DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-        DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
+	if (node->Renderable())
+	{
+		meshes.push_back(std::make_shared<Mesh>(gfx, node));
+	}
+	if (node->GetChildNodes().size() == 0)
+	{
+		return;
+	}
+	else
+	{
+		for (int i = 0; i < node->GetChildNodes().size(); i++)
+		{
+			Traverse(node->GetChildNodes()[i], meshes, gfx);
+		}
+	}
+	return;
 }
 
-void Model::loadModel()
-{
 
-}
