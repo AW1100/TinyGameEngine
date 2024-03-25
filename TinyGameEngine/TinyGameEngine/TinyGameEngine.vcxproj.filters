@@ -414,6 +414,9 @@
     <ClInclude Include="Engine\Drawable\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Bindable\Rasterizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -518,6 +521,9 @@
     <ClCompile Include="Engine\Drawable\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Bindable\Rasterizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\VertexShader.hlsl" />
@@ -526,8 +532,8 @@
     <FxCompile Include="Shaders\PhongPS.hlsl" />
     <FxCompile Include="Shaders\TextureVS.hlsl" />
     <FxCompile Include="Shaders\TexturePS.hlsl" />
-    <FxCompile Include="Shaders\KafkaVS.hlsl" />
-    <FxCompile Include="Shaders\KafkaPS.hlsl" />
+    <FxCompile Include="Shaders\TexArrayVS.hlsl" />
+    <FxCompile Include="Shaders\TexArrayPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

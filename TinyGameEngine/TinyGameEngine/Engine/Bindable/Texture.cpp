@@ -1,5 +1,8 @@
 #include "Texture.h"
 #include "DirectXTK\WICTextureLoader.h"
+#include "DirectXTex\DirectXTex.h"
+
+#include <iostream>
 
 Texture::Texture(Graphics& gfx, const wchar_t* filepath)
 {
@@ -37,7 +40,7 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
     textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     textureDesc.CPUAccessFlags = 0;
     textureDesc.MiscFlags = 0;
-    //textureDesc.MipLevels = -1;
+    textureDesc.MipLevels = 1;
 
     // Create the Texture2DArray
     Microsoft::WRL::ComPtr<ID3D11Texture2D> textureArray;
@@ -46,16 +49,45 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
 
     // Copy the first texture into the first slice of the texture array
     //GetContext(gfx)->CopyResource(textureArray.Get(), firstTexture.Get());
+    GetContext(gfx)->CopySubresourceRegion(textureArray.Get(), D3D11CalcSubresource(0, 0, textureDesc.MipLevels), 0, 0, 0, firstTexture.Get(), 0, nullptr);
 
     // Load the rest of the textures
-    for (int i = 0; i < filepaths.size(); i++) {
+    for (int i = 1; i < filepaths.size(); i++) {
         Microsoft::WRL::ComPtr<ID3D11Resource> resource;
-        hr = DirectX::CreateWICTextureFromFile(GetDevice(gfx), nullptr, filepaths[i], resource.GetAddressOf(), nullptr);
-        if (FAILED(hr)) continue; // Handle error
+        //hr = DirectX::CreateWICTextureFromFile(GetDevice(gfx), nullptr, filepaths[i], resource.GetAddressOf(), nullptr);
+        //if (FAILED(hr)) continue; // Handle error
+        
+        DirectX::ScratchImage* image_ptr;
+        DirectX::ScratchImage image;
+        DirectX::ScratchImage convertedImage;
+        DirectX::ScratchImage resizedImage;
+        image_ptr = &image;
+        hr = DirectX::LoadFromWICFile(filepaths[i], DirectX::WIC_FLAGS_NONE, nullptr, image);
+        auto im = image_ptr->GetMetadata();
+        if (im.format != textureDesc.Format)
+        {            
+            hr = DirectX::Convert(image_ptr->GetImages(), image_ptr->GetImageCount(), image_ptr->GetMetadata(), textureDesc.Format, DirectX::TEX_FILTER_DEFAULT, 0.5, convertedImage);
+            image_ptr = &convertedImage;
+        }
+        if (im.width != textureDesc.Width || im.height != textureDesc.Height)
+        {            
+            hr = DirectX::Resize(image_ptr->GetImages(), image_ptr->GetImageCount(), image_ptr->GetMetadata(), textureDesc.Width, textureDesc.Height, DirectX::TEX_FILTER_DEFAULT, resizedImage);
+            image_ptr = &resizedImage;
+        }        
+        
+        HRESULT hr = DirectX::CreateTexture(
+            GetDevice(gfx), // ID3D11Device
+            image_ptr->GetImages(), // Pointer to the image data
+            image_ptr->GetImageCount(), // Number of images
+            image_ptr->GetMetadata(), // Image metadata
+            &resource // Where to store the created resource
+        );
 
         // Copy each texture into its corresponding slice
         Microsoft::WRL::ComPtr<ID3D11Texture2D> srcTexture;
-        resource.As(&srcTexture);
+        if (FAILED(resource.As(&srcTexture))) {
+
+        }
         GetContext(gfx)->CopySubresourceRegion(textureArray.Get(), D3D11CalcSubresource(0, i, textureDesc.MipLevels), 0, 0, 0, srcTexture.Get(), 0, nullptr);
     }
 

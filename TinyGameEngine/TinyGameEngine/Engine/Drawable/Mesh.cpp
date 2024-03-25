@@ -16,16 +16,18 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<TreeNode> node)
     {
         AddStaticBind(std::make_unique<VertexBuffer>(gfx, node->vertices));
 
-        auto pvs = std::make_unique<VertexShader>(gfx, L"KafkaVS.cso");
+        auto pvs = std::make_unique<VertexShader>(gfx, L"TexArrayVS.cso");
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind(std::move(pvs));
 
-        AddStaticBind(std::make_unique<PixelShader>(gfx, L"KafkaPS.cso"));
+        AddStaticBind(std::make_unique<PixelShader>(gfx, L"TexArrayPS.cso"));
 
         AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, node->indices));
 
         AddStaticBind(std::make_unique<Texture>(gfx, node->textureFilenames));
         AddStaticBind(std::make_unique<Sampler>(gfx));
+
+        AddStaticBind(std::make_unique<Rasterizer>(gfx));
 
         const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
         {

@@ -134,8 +134,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\;F:\DirectXTK\Bin\Windows10_2022\x64\Debug;F:\TinyGameEngine\TinyGameEngine\bin\Debug-x64\Ext\assimp;D:\Autodesk\FBX\FBX SDK\2020.3.4\lib\vs2022\x64\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DirectXTK.lib;assimp-vc143-mtd.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\;F:\DirectXTK\Bin\Windows10_2022\x64\Debug;F:\TinyGameEngine\TinyGameEngine\bin\Debug-x64\Ext\assimp;D:\Autodesk\FBX\FBX SDK\2020.3.4\lib\vs2022\x64\debug;F:\DirectXTex\DirectXTex\Bin\Windows10_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;assimp-vc143-mtd.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)..\bin\$(Configuration)-$(Platform)\$(ProjectName)\TinyGameEngine.dll" ""$(ProjectDir)..\bin\$(Configuration)-$(Platform)\Demo\"</Command>
@@ -172,6 +172,7 @@
     <ClInclude Include="Engine\Bindable\IndexBuffer.h" />
     <ClInclude Include="Engine\Bindable\InputLayout.h" />
     <ClInclude Include="Engine\Bindable\PixelShader.h" />
+    <ClInclude Include="Engine\Bindable\Rasterizer.h" />
     <ClInclude Include="Engine\Bindable\Sampler.h" />
     <ClInclude Include="Engine\Bindable\Texture.h" />
     <ClInclude Include="Engine\Bindable\Topology.h" />
@@ -305,6 +306,7 @@
     <ClCompile Include="Engine\Bindable\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Bindable\InputLayout.cpp" />
     <ClCompile Include="Engine\Bindable\PixelShader.cpp" />
+    <ClCompile Include="Engine\Bindable\Rasterizer.cpp" />
     <ClCompile Include="Engine\Bindable\Sampler.cpp" />
     <ClCompile Include="Engine\Bindable\Texture.cpp" />
     <ClCompile Include="Engine\Bindable\Topology.cpp" />
@@ -336,7 +338,7 @@
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\KafkaPS.hlsl">
+    <FxCompile Include="Shaders\TexArrayPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -344,7 +346,7 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Shaders\KafkaVS.hlsl">
+    <FxCompile Include="Shaders\TexArrayVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

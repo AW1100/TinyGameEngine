@@ -12,18 +12,18 @@ Scene::Scene(Graphics& gfx)
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
 	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
-	/*for (auto i = 0; i < 10; i++)
+	for (auto i = 0; i < 10; i++)
 	{
 		objects.push_back(std::make_unique<Box>(
 			gfx, rng, adist,
 			ddist, odist, rdist
 		));
-	}*/
+	}
 	/*objects.push_back(std::make_unique<Mesh>(
 		gfx, rng, adist,
 		ddist, odist, rdist
 	));*/
-	Model m("F:/3DModels/fbx/leidian.fbx");
+	Model m("F:/3DModels/fbx/kafka.fbx");
 	m.FindRenderables(objects, gfx);
 }
 
