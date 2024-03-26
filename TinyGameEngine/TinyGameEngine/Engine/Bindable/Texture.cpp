@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include "DirectXTK\WICTextureLoader.h"
 #include "DirectXTex\DirectXTex.h"
+#include "..\Exception\Exception.h"
 
 #include <iostream>
 
@@ -44,7 +45,7 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
 
     // Create the Texture2DArray
     Microsoft::WRL::ComPtr<ID3D11Texture2D> textureArray;
-    hr = GetDevice(gfx)->CreateTexture2D(&textureDesc, nullptr, &textureArray);
+    DX::ThrowIfFailed(GetDevice(gfx)->CreateTexture2D(&textureDesc, nullptr, &textureArray));
     if (FAILED(hr)) return; // Handle error
 
     // Copy the first texture into the first slice of the texture array
@@ -66,12 +67,12 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
         auto im = image_ptr->GetMetadata();
         if (im.format != textureDesc.Format)
         {            
-            hr = DirectX::Convert(image_ptr->GetImages(), image_ptr->GetImageCount(), image_ptr->GetMetadata(), textureDesc.Format, DirectX::TEX_FILTER_DEFAULT, 0.5, convertedImage);
+            DX::ThrowIfFailed(DirectX::Convert(image_ptr->GetImages(), image_ptr->GetImageCount(), image_ptr->GetMetadata(), textureDesc.Format, DirectX::TEX_FILTER_DEFAULT, 0.5, convertedImage));
             image_ptr = &convertedImage;
         }
         if (im.width != textureDesc.Width || im.height != textureDesc.Height)
         {            
-            hr = DirectX::Resize(image_ptr->GetImages(), image_ptr->GetImageCount(), image_ptr->GetMetadata(), textureDesc.Width, textureDesc.Height, DirectX::TEX_FILTER_DEFAULT, resizedImage);
+            DX::ThrowIfFailed(DirectX::Resize(image_ptr->GetImages(), image_ptr->GetImageCount(), image_ptr->GetMetadata(), textureDesc.Width, textureDesc.Height, DirectX::TEX_FILTER_DEFAULT, resizedImage));
             image_ptr = &resizedImage;
         }        
         

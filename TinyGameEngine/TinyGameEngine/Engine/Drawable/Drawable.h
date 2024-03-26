@@ -12,7 +12,7 @@ public:
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
 	virtual ~Drawable();
-	virtual DirectX::XMMATRIX GetTransformXM() const = 0;
+	virtual DirectX::XMMATRIX GetModelMatrix() const = 0;
 	void Draw(Graphics& gfx) const;
 	virtual void Update(float dt) = 0;
 	void AddBind(std::unique_ptr<class Bindable> bind);

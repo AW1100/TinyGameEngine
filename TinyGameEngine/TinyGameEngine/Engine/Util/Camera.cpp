@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "imgui.h"
 
-DirectX::XMMATRIX Camera::GetMatrix() const
+DirectX::XMMATRIX Camera::GetView() const
 {
 	const auto pos = DirectX::XMVector3Transform(
 		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f), 
@@ -22,7 +22,7 @@ void Camera::SpawnControlWindow()
 	if (ImGui::Begin("Camera"))
 	{
 		ImGui::Text("Position");
-		ImGui::SliderFloat("R", &r, 0.1f, 80.0f, "%.1f");
+		ImGui::SliderFloat("R", &r, 0.1f, 20.0f, "%.1f");
 		ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);
 		ImGui::SliderAngle("Phi", &phi, -89.0f, 89.0f);
 		ImGui::Text("Orientation");
@@ -39,7 +39,7 @@ void Camera::SpawnControlWindow()
 
 void Camera::Reset()
 {
-	r = 3.0f;
+	r = 2.0f;
 	theta = 0.0f;
 	phi = 0.0f;
 	pitch = 0.0f;

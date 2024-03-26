@@ -17,6 +17,7 @@ public:
 	~Graphics();
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
+	void Draw(UINT count);
 	void DrawIndexed(UINT count);
 	void DrawTestTriangle();
 	void SetProjection(DirectX::XMMATRIX proj);

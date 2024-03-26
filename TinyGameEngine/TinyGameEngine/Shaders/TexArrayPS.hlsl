@@ -17,5 +17,4 @@ float4 main(PixelInputType input) : SV_TARGET
     // You could also do additional calculations here if needed.
 
     return textureColor;
-
 }

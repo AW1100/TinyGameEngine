@@ -125,6 +125,11 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
+void Graphics::Draw(UINT count)
+{
+	pContext->Draw(count, 0u);
+}
+
 void Graphics::DrawIndexed(UINT count)
 {
 	pContext->DrawIndexed(count, 0u, 0u);

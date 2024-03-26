@@ -18,9 +18,10 @@ namespace TGE
 	private:
 		void DoFrame();
 
+	protected:
+		Scene* scene;
 	private:
 		WindowWindows* wnd;
-		Scene* scene;
 		Timer timer;
 		ImguiManager im;
 		Camera cam;

@@ -6,7 +6,7 @@ Rasterizer::Rasterizer(Graphics& gfx)
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
 
 	rasterDesc.FillMode = D3D11_FILL_SOLID;  // Or D3D11_FILL_WIREFRAME to render in wireframe mode
-	rasterDesc.CullMode = D3D11_CULL_NONE;    // Turn off back-face culling
+	rasterDesc.CullMode = D3D11_CULL_BACK;    // Turn off back-face culling
 	rasterDesc.FrontCounterClockwise = false; // This is the default value, but you can set it as needed
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;

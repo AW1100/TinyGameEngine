@@ -13,7 +13,7 @@ public:
 		std::uniform_real_distribution<float>& rdist);
 	virtual ~Box() override;
 	void Update(float dt) override;
-	DirectX::XMMATRIX GetTransformXM() const override;
+	DirectX::XMMATRIX GetModelMatrix() const override;
 
 private:
 	float r;

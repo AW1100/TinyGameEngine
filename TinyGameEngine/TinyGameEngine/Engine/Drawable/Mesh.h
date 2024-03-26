@@ -9,7 +9,7 @@ public:
 	Mesh(Graphics& gfx, std::shared_ptr<class TreeNode> node);
 	virtual ~Mesh() override;
 	void Update(float dt) override;
-	DirectX::XMMATRIX GetTransformXM() const override;
+	DirectX::XMMATRIX GetModelMatrix() const override;
 
 private:
 	float r = 0.0f;

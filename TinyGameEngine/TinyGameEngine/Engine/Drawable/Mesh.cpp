@@ -16,11 +16,11 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<TreeNode> node)
     {
         AddStaticBind(std::make_unique<VertexBuffer>(gfx, node->vertices));
 
-        auto pvs = std::make_unique<VertexShader>(gfx, L"TexArrayVS.cso");
+        auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind(std::move(pvs));
 
-        AddStaticBind(std::make_unique<PixelShader>(gfx, L"TexArrayPS.cso"));
+        AddStaticBind(std::make_unique<PixelShader>(gfx, L"ToonPS.cso"));
 
         AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, node->indices));
 
@@ -64,10 +64,13 @@ void Mesh::Update(float dt)
     chi += dchi * dt;
 }
 
-DirectX::XMMATRIX Mesh::GetTransformXM() const
+DirectX::XMMATRIX Mesh::GetModelMatrix() const
 {
-    return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+    /*return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
         DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-        DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
+        DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);*/
+    return DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, DirectX::XMConvertToRadians(180.0f))*
+        DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(-90.0f), 0.0f, 0.0f)*
+        DirectX::XMMatrixTranslation(0.0f, -1.0f, 0.0f);
 }
 

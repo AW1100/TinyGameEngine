@@ -115,7 +115,7 @@ void Box::Update(float dt)
     chi += dchi * dt;
 }
 
-DirectX::XMMATRIX Box::GetTransformXM() const
+DirectX::XMMATRIX Box::GetModelMatrix() const
 {
     return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
         DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
