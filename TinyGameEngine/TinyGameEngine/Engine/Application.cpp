@@ -13,10 +13,10 @@
 TGE::Application::Application()
 {
 	wnd = new WindowWindows(WIDTH, HEIGHT);
-	wnd->Init("Tiny Game Engine");
+	wnd->Init(TITLE);
 	wnd->Show();
 	scene = new Scene(wnd->Gfx());
-	wnd->Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
+	wnd->Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, HEIGHT/WIDTH, NEAR, FAR));
 
 }
 
@@ -51,11 +51,11 @@ void TGE::Application::DoFrame()
 	wnd->Gfx().SetCamera(cam.GetView());
 	std::ostringstream oss;
 	oss << std::fixed << std::setprecision(1) << timer.Duration();
-	SetWindowText(wnd->GetHWnd(), ("Tiny Game Engine " + oss.str() + " s").c_str());
+	SetWindowText(wnd->GetHWnd(), TITLE);
 	wnd->Gfx().ClearBuffer(0.1f, 0.1f, 0.1f);
 	scene->UpdateFrame(dt, wnd->Gfx());
-	
 	wnd->Gfx().BeginImgui(speed_factor);
+	Log::GetInstance().RenderLogWindow();
 	cam.SpawnControlWindow();
 	scene->lights.at(0)->SpawnControlWindow();
 	wnd->Gfx().RenderImgui();

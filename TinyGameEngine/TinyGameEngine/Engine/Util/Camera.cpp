@@ -1,6 +1,10 @@
 #include "Camera.h"
 #include "imgui.h"
 
+Camera::Camera(float r, float theta, float phi, float pitch, float yaw, float roll)
+	:r(r), theta(theta), phi(phi), pitch(pitch), yaw(yaw), roll(roll)
+{}
+
 DirectX::XMMATRIX Camera::GetView() const
 {
 	const auto pos = DirectX::XMVector3Transform(

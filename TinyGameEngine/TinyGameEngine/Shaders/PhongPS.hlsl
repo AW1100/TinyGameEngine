@@ -18,7 +18,7 @@ struct PixelInputType
 {
     float4 position : SV_POSITION;
     float3 worldPos : WORLDPOS;
-    float3 tex : TexCoord0; // The third component (tex.z) will specify the texture slice index.
+    float3 tex : TexCoord0;
     float3 normal : NORMAL;
 };
 

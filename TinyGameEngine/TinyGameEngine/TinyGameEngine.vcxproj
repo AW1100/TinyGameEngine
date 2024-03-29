@@ -200,6 +200,8 @@
     <ClInclude Include="Engine\Util\Camera.h" />
     <ClInclude Include="Engine\Util\FbxManagerWrapper.h" />
     <ClInclude Include="Engine\Util\ImguiManager.h" />
+    <ClInclude Include="Engine\Util\Log.h" />
+    <ClInclude Include="Engine\Util\Material.h" />
     <ClInclude Include="Engine\Util\Timer.h" />
     <ClInclude Include="Engine\Util\Vertex.h" />
     <ClInclude Include="Engine\Window\Window.h" />
@@ -330,6 +332,7 @@
     <ClCompile Include="Engine\Util\Camera.cpp" />
     <ClCompile Include="Engine\Util\FbxManagerWrapper.cpp" />
     <ClCompile Include="Engine\Util\ImguiManager.cpp" />
+    <ClCompile Include="Engine\Util\Log.cpp" />
     <ClCompile Include="Engine\Util\Timer.cpp" />
     <ClCompile Include="Engine\Window\WIndowsMessage.cpp" />
     <ClCompile Include="Engine\Window\WindowWindows.cpp" />

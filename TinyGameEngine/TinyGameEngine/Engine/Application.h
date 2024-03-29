@@ -5,6 +5,7 @@
 #include "Drawable/Scene.h"
 #include "Util\ImguiManager.h"
 #include "Util\Camera.h"
+#include "Util\Log.h"
 
 namespace TGE
 {

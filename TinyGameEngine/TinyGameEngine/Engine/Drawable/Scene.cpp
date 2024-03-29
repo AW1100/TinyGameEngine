@@ -27,7 +27,7 @@ Scene::Scene(Graphics& gfx)
 	Model m("F:/3DModels/fbx/kafka.fbx");
 	m.FindRenderables(objects, gfx);
 	
-	lights.push_back(std::make_unique<PointLight>(gfx, 0.05f));
+	lights.push_back(std::make_unique<PointLight>(gfx, 0.03f));
 	//objects.push_back(lights[0]->GetMesh());
 }
 

@@ -14,13 +14,14 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<TreeNode> node)
 {
     if (!IsStaticInitialized())
     {
+        node->textureFilenames.push_back(L"F:/3DModels/face.png");
         AddStaticBind(std::make_unique<VertexBuffer>(gfx, node->vertices));
 
         auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind(std::move(pvs));
 
-        AddStaticBind(std::make_unique<PixelShader>(gfx, L"ToonPS.cso"));
+        AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
 
         AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, node->indices));
 
@@ -44,7 +45,10 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<TreeNode> node)
         SetIndexBufferFromStatic();
     }
 
-    AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this));
+    AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this, 0));
+    PixelConstantBuffer<DirectX::XMMATRIX> pcb(gfx, 1);
+    pcb.Update(gfx, GetModelMatrix());
+
 }
 
 Mesh::~Mesh()

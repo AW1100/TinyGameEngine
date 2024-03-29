@@ -1,10 +1,11 @@
 #include "PointLight.h"
 #include "imgui.h"
+#include "..\Util\Log.h"
 
 PointLight::PointLight(Graphics& gfx, float radius)
-	:cbuf(gfx)
+	:cbuf(gfx,0)
 {
-	pos = { 0.0f,1.0f,0.0f };
+	pos = initialPos;
 	mesh = std::make_shared<Sphere>(gfx, radius);
 }
 
@@ -30,7 +31,8 @@ void PointLight::SpawnControlWindow()
 
 void PointLight::Reset()
 {
-	pos = { 0.0f,1.0f,0.0f };
+	pos = initialPos;
+	LOG("Point Light position reset.")
 }
 
 void PointLight::Draw(Graphics& gfx)

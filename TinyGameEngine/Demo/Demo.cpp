@@ -3,7 +3,10 @@
 class Demo : public TGE::Application
 {
 public:
-	Demo() {}
+	Demo() 
+	{
+
+	}
 
 	~Demo() {}
 };

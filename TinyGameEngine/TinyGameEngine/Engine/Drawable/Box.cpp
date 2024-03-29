@@ -95,7 +95,7 @@ Box::Box(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>
         SetIndexBufferFromStatic();
     }
     
-    AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this));
+    AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this, 0));
 }
 
 Box::~Box()

@@ -12,6 +12,35 @@
 
 Graphics::Graphics(HWND hWnd)
 {
+	CreateDevice();
+	CreateSwapChain(hWnd);
+
+	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
+}
+
+Graphics::~Graphics()
+{
+	if (pDebug != nullptr)
+	{
+		pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		pDebug = nullptr;
+	}
+}
+
+void Graphics::CreateDevice()
+{
+	DX::ThrowIfFailed(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, &pDevice, nullptr, &pContext));
+}
+
+void Graphics::CreateSwapChain(HWND hWnd)
+{
+	UINT msaaQualityLevels = 0;
+	DX::ThrowIfFailed(pDevice->CheckMultisampleQualityLevels(
+		DXGI_FORMAT_B8G8R8A8_UNORM, 
+		4,                     
+		&msaaQualityLevels)); 
+	UINT msaaQuality = msaaQualityLevels - 1;
+
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = 0;
 	sd.BufferDesc.Height = 0;
@@ -20,29 +49,26 @@ Graphics::Graphics(HWND hWnd)
 	sd.BufferDesc.RefreshRate.Denominator = 0;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	sd.SampleDesc.Count = 1;
-	sd.SampleDesc.Quality = 0;
+	sd.SampleDesc.Count = SAMPLES;
+	sd.SampleDesc.Quality = msaaQuality;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = 1;
 	sd.OutputWindow = hWnd;
 	sd.Windowed = TRUE;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	sd.Flags = 0;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	DX::ThrowIfFailed(D3D11CreateDeviceAndSwapChain(
-		nullptr,
-		D3D_DRIVER_TYPE_HARDWARE,
-		nullptr,
-		D3D11_CREATE_DEVICE_DEBUG,
-		nullptr,
-		0,
-		D3D11_SDK_VERSION,
-		&sd,
-		&pSwap,
-		&pDevice,
-		nullptr,
-		&pContext
-	));
+	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
+	DX::ThrowIfFailed(pDevice.As(&dxgiDevice));
+
+	Microsoft::WRL::ComPtr<IDXGIAdapter> adapter;
+	DX::ThrowIfFailed(dxgiDevice->GetAdapter(&adapter));
+
+	Microsoft::WRL::ComPtr<IDXGIFactory> factory;
+	DX::ThrowIfFailed(adapter->GetParent(__uuidof(IDXGIFactory), &factory));
+
+	DX::ThrowIfFailed(factory->CreateSwapChain(pDevice.Get(), &sd, &pSwap));
+
 #ifdef _DEBUG
 	pDevice->QueryInterface(IID_PPV_ARGS(&pDebug));
 #endif
@@ -73,8 +99,8 @@ Graphics::Graphics(HWND hWnd)
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count = 1u;
-	descDepth.SampleDesc.Quality = 0u;
+	descDepth.SampleDesc.Count = SAMPLES;
+	descDepth.SampleDesc.Quality = msaaQuality;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	DX::ThrowIfFailed(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
@@ -82,7 +108,7 @@ Graphics::Graphics(HWND hWnd)
 	// create view of depth stensil texture
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
 	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
-	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 	descDSV.Texture2D.MipSlice = 0u;
 	DX::ThrowIfFailed(pDevice->CreateDepthStencilView(
 		pDepthStencil.Get(), &descDSV, &pDSV
@@ -100,17 +126,6 @@ Graphics::Graphics(HWND hWnd)
 	vp.TopLeftX = 0.0f;
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports(1u, &vp);
-
-	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
-}
-
-Graphics::~Graphics()
-{
-	if (pDebug != nullptr)
-	{
-		pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-		pDebug = nullptr;
-	}
 }
 
 void Graphics::EndFrame()
@@ -212,8 +227,8 @@ void Graphics::DrawTestTriangle()
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	D3D11_VIEWPORT vp;
-	vp.Width = 800;
-	vp.Height = 450;
+	vp.Width = WIDTH;
+	vp.Height = HEIGHT;
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;

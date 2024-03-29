@@ -10,7 +10,7 @@ Sphere::Sphere(Graphics& gfx, float radius)
     {
         std::vector<DirectX::XMFLOAT3> vertices;
         std::vector<unsigned int> indices;
-        createSphere(radius, 10, 10, vertices, indices);
+        createSphere(radius, 30, 30, vertices, indices);
 
         AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
@@ -37,7 +37,7 @@ Sphere::Sphere(Graphics& gfx, float radius)
         SetIndexBufferFromStatic();
     }
 
-    AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this));
+    AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this, 0));
 }
 
 Sphere::~Sphere()

@@ -12,10 +12,11 @@ class TransformConstantBuffer : public Bindable
 	};
 
 public:
-	TransformConstantBuffer(Graphics& gfx, const Drawable& parent);
+	TransformConstantBuffer(Graphics& gfx, const Drawable& parent, UINT s);
 	void Bind(Graphics& gfx) override;
 
 private:
 	inline static std::unique_ptr<VertexConstantBuffer<Transform>> vcbuf;
 	const Drawable& parent;
+	UINT slot;
 };

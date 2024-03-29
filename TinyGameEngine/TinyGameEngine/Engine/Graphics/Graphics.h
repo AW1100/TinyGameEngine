@@ -15,6 +15,8 @@ public:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics();
+	void CreateDevice();
+	void CreateSwapChain(HWND hWnd);
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
 	void Draw(UINT count);
