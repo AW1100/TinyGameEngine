@@ -69,23 +69,16 @@ void FbxManagerWrapper::ProcessFbxTree(FbxNode* fbxnode, std::shared_ptr<TreeNod
     int numOfChildren = fbxnode->GetChildCount();
     if (mesh)
     {
-        if (fbxnode->GetNodeAttribute() && fbxnode->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eMesh)
-        {
-            if (mesh)
-            {
-                std::shared_ptr<TreeNode> child = std::make_shared<TreeNode>();
-                child->SetRenderable();
-                ConstructMesh(fbxnode, child);
-                node->GetChildNodes().push_back(child);
-
-            }
-        }
+        std::shared_ptr<TreeNode> child = std::make_shared<TreeNode>();
+        child->SetRenderable();
+        ConstructMesh(fbxnode, child);
+        node->GetChildNodes().push_back(child);
+        node = child;
     }
-    for (int i = 0; i < fbxnode->GetChildCount(); i++) {
-        auto childNode = std::make_shared<TreeNode>();
-        node->GetChildNodes().push_back(childNode);
+
+    for (int i = 0; i < numOfChildren; i++) {
         auto child = fbxnode->GetChild(i);
-        ProcessFbxTree(child, childNode);
+        ProcessFbxTree(child, node);
     }
     return;
 }
