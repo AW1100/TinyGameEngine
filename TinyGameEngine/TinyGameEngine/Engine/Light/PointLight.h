@@ -16,12 +16,13 @@ public:
 private:
 	struct alignas(16) PointLightCBuf
 	{
-		DirectX::XMFLOAT3 pos;
-		float padding;
+		DirectX::XMFLOAT4 pos;
+		DirectX::XMFLOAT4 color;
 	};
 private:
-	DirectX::XMFLOAT3 initialPos = { 0.6f,1.0f,0.6f };
-	DirectX::XMFLOAT3 pos;
+	DirectX::XMFLOAT4 initialPos = { 1.0f,1.0f, 2.0f,1.0f };
+	DirectX::XMFLOAT4 pos;
+	DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
 	mutable std::shared_ptr<Sphere> mesh;
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
 };

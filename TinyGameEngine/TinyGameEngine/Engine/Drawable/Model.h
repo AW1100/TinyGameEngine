@@ -10,7 +10,6 @@ class TreeNode
 {
 public:
 	TreeNode();
-	TreeNode(int numOfVertices, int numOfIndices);
 	~TreeNode();
 	std::vector<std::shared_ptr<TreeNode>>& GetChildNodes();
 	inline bool Renderable() const { return renderable; }
@@ -19,8 +18,6 @@ public:
 private:
 	std::vector<std::shared_ptr<TreeNode>> childNodes;
 	bool renderable = false;
-	int numVertices;
-	int numIndices;
 
 public:
 	std::vector<Vertex> vertices;
@@ -31,13 +28,13 @@ public:
 class Model
 {
 public:
-	Model(const char* filepath);
+	Model(const char* filepath, DirectX::XMFLOAT3 trans);
 	~Model();
 	void FindRenderables(std::vector<std::shared_ptr<class Drawable>>& meshes, Graphics& gfx);
 	void Traverse(std::shared_ptr<TreeNode> rootNode, std::vector<std::shared_ptr<Drawable>>& meshes, Graphics& gfx);
-
+	void SetTranslation(const DirectX::XMFLOAT3& pos);
 
 private:
 	std::shared_ptr<TreeNode> rootNode = nullptr;
-
+	DirectX::XMFLOAT3 translation;
 };

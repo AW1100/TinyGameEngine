@@ -48,8 +48,8 @@ float4 main(PixelInputType input) : SV_Target
     }
     else
     {
-        const float3 refletVector = reflect(-vToL, input.normal);
-        const float specular = pow(max(0.0f, dot(vToC, refletVector)), alpha);
+        const float3 halfVector = normalize(vToL + vToC);
+        const float specular = pow(max(0.0f, dot(halfVector, input.normal)), alpha);
         output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular);
     }
 

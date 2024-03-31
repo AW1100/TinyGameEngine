@@ -15,11 +15,7 @@ void TransformConstantBuffer::Bind(Graphics& gfx)
 	const Transform tf =
 	{
 		DirectX::XMMatrixTranspose(model),
-		DirectX::XMMatrixTranspose(
-			model *
-			gfx.GetCamera() *
-			gfx.GetProjection()
-		)
+		DirectX::XMMatrixTranspose(model * gfx.GetCamera() * gfx.GetProjection())
 	};
 	vcbuf->Update(gfx, tf);
 	vcbuf->Bind(gfx);

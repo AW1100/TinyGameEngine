@@ -43,7 +43,7 @@ void PointLight::Draw(Graphics& gfx)
 
 void PointLight::Update(Graphics& gfx)
 {
-	cbuf.Update(gfx, PointLightCBuf{ pos });
+	cbuf.Update(gfx, PointLightCBuf{ pos,color });
 	cbuf.Bind(gfx);
 }
 

@@ -1,0 +1,2 @@
+Point Light position reset.
+Failed to load F:/3DModels/fbx/kafkaW.obj

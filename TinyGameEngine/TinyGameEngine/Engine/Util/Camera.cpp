@@ -3,15 +3,19 @@
 
 Camera::Camera(float r, float theta, float phi, float pitch, float yaw, float roll)
 	:r(r), theta(theta), phi(phi), pitch(pitch), yaw(yaw), roll(roll)
-{}
+{
+	eyePos = DirectX::XMVector3Transform(
+		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f),
+		DirectX::XMMatrixRotationRollPitchYaw(phi, -theta, 0.0f));
+}
 
 DirectX::XMMATRIX Camera::GetView() const
 {
-	const auto pos = DirectX::XMVector3Transform(
-		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f), 
+	eyePos = DirectX::XMVector3Transform(
+		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f),
 		DirectX::XMMatrixRotationRollPitchYaw(phi, -theta, 0.0f));
 	return DirectX::XMMatrixLookAtLH(
-		pos,
+		eyePos,
 		DirectX::XMVectorZero(),
 		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
 	) * DirectX::XMMatrixRotationRollPitchYaw(
@@ -19,6 +23,17 @@ DirectX::XMMATRIX Camera::GetView() const
 		-yaw,
 		roll
 	);
+}
+
+void Camera::SetConstantBuffer(Graphics& gfx)
+{
+	pcb = std::make_unique<PixelConstantBuffer<DirectX::XMVECTOR>>(gfx, 1);
+}
+
+void Camera::Update(Graphics& gfx)
+{
+	pcb->Update(gfx, eyePos);
+	pcb->Bind(gfx);
 }
 
 void Camera::SpawnControlWindow()

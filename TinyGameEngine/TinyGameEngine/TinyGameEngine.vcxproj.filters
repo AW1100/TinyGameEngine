@@ -429,6 +429,12 @@
     <ClInclude Include="Engine\Util\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Util\ModelImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Util\AssimpWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -545,10 +551,16 @@
     <ClCompile Include="Engine\Util\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Util\ModelImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Util\AssimpWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\VertexShader.hlsl" />
-    <FxCompile Include="Shaders\PixelShader.hlsl" />
+    <FxCompile Include="Shaders\ColorCubeVS.hlsl" />
+    <FxCompile Include="Shaders\ColorCubePS.hlsl" />
     <FxCompile Include="Shaders\PhongVS.hlsl" />
     <FxCompile Include="Shaders\PhongPS.hlsl" />
     <FxCompile Include="Shaders\TextureVS.hlsl" />
@@ -558,6 +570,7 @@
     <FxCompile Include="Shaders\SolidVS.hlsl" />
     <FxCompile Include="Shaders\SolidPS.hlsl" />
     <FxCompile Include="Shaders\ToonPS.hlsl" />
+    <FxCompile Include="Shaders\BlinnPhongPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

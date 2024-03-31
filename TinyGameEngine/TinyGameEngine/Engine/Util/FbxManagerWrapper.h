@@ -12,14 +12,10 @@ public:
 	FbxManagerWrapper& operator=(const FbxManagerWrapper&) = delete;
 	~FbxManagerWrapper();
 	std::shared_ptr<FbxScene> ReadFromFilepath(const char* filepath);
-	void LoadModelWithFilepath(const char* filepath, std::shared_ptr<class TreeNode> rootNode);
+	void LoadMeshesByFilename(const char* filepath, std::shared_ptr<class TreeNode> rootNode);
 	void ProcessFbxTree(FbxNode* fbxnode, std::shared_ptr<TreeNode> node);
-	void LoadMeshData(FbxNode* rootNode,
-		std::vector<Vertex>& vertices, 
-		std::vector<unsigned int>& indices,
-		std::vector<DirectX::XMFLOAT2>& uvs);
 	void ConstructMesh(FbxNode* fbxMesh, std::shared_ptr<TreeNode> node);
-
+	void GetMaterialTexture(const FbxProperty& prop, std::shared_ptr<TreeNode> node, int& uniqueTextureIndex);
 private:
 	FbxManager* lSdkManager;
 	FbxImporter* lImporter;

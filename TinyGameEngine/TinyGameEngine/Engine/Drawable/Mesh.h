@@ -6,7 +6,7 @@
 class Mesh : public DrawableBase<Mesh>
 {
 public:
-	Mesh(Graphics& gfx, std::shared_ptr<class TreeNode> node);
+	Mesh(Graphics& gfx, std::shared_ptr<class TreeNode> node, DirectX::XMFLOAT3 trans);
 	virtual ~Mesh() override;
 	void Update(float dt) override;
 	DirectX::XMMATRIX GetModelMatrix() const override;
@@ -26,6 +26,8 @@ private:
 	float dtheta = 0.0f;
 	float dphi = 0.0f;
 	float dchi = 0.0f;
+
+	DirectX::XMFLOAT3 translation;
 
 public:
 	

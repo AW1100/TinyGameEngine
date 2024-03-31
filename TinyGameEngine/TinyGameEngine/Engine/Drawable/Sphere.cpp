@@ -5,7 +5,7 @@
 
 Sphere::Sphere(Graphics& gfx, float radius)
 {
-    pos = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+    pos = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
     if (!IsStaticInitialized())
     {
         std::vector<DirectX::XMFLOAT3> vertices;
@@ -44,7 +44,7 @@ Sphere::~Sphere()
 {
 }
 
-void Sphere::SetPos(DirectX::XMFLOAT3 p)
+void Sphere::SetPos(DirectX::XMFLOAT4 p)
 {
     pos = p;
 }

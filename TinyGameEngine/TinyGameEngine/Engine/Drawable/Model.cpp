@@ -1,16 +1,8 @@
 #include "Model.h"
-#include "../Util/FbxManagerWrapper.h"
+#include "../Util/ModelImporter.h"
 
 TreeNode::TreeNode()
 {
-	numVertices = 0;
-	numIndices = 0;
-}
-
-TreeNode::TreeNode(int numOfVertices, int numOfIndices)
-{
-	numVertices = numOfVertices;
-	numIndices = numOfIndices;
 }
 
 TreeNode::~TreeNode()
@@ -22,12 +14,11 @@ std::vector<std::shared_ptr<TreeNode>>& TreeNode::GetChildNodes()
 	return childNodes;
 }
 
-Model::Model(const char* filepath)
+Model::Model(const char* filepath, DirectX::XMFLOAT3 trans)
 {
 	rootNode = std::make_shared<TreeNode>();
-	FbxManagerWrapper fbxm;
-	fbxm.LoadModelWithFilepath(filepath, rootNode);
-
+	ModelImporter::ImportFromFilepath(filepath, rootNode);
+	translation = trans;
 }
 
 Model::~Model()
@@ -44,7 +35,7 @@ void Model::Traverse(std::shared_ptr<TreeNode> node, std::vector<std::shared_ptr
 {
 	if (node->Renderable())
 	{
-		meshes.push_back(std::make_shared<Mesh>(gfx, node));
+		meshes.push_back(std::make_shared<Mesh>(gfx, node, translation));
 	}
 	if (node->GetChildNodes().size() == 0)
 	{
@@ -58,6 +49,11 @@ void Model::Traverse(std::shared_ptr<TreeNode> node, std::vector<std::shared_ptr
 		}
 	}
 	return;
+}
+
+void Model::SetTranslation(const DirectX::XMFLOAT3& pos)
+{
+	translation = pos;
 }
 
 

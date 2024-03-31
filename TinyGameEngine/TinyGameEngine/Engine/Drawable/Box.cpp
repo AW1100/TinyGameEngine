@@ -40,11 +40,11 @@ Box::Box(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>
         };
         AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-        auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
+        auto pvs = std::make_unique<VertexShader>(gfx, L"ColorCubeVS.cso");
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind(std::move(pvs));
 
-        AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+        AddStaticBind(std::make_unique<PixelShader>(gfx, L"ColorCubePS.cso"));
 
         const std::vector<unsigned int> indices =
         {
