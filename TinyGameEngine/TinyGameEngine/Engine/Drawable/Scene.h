@@ -10,8 +10,10 @@ public:
 	Scene(Graphics& gfx);
 	~Scene();
 	void UpdateFrame(float dt, Graphics& gfx);
+	inline std::vector<PointLight*>& GetLights() { return lights; }
 
-	std::vector<std::unique_ptr<PointLight>> lights;
 protected:
-	std::vector<std::shared_ptr<Drawable>> objects;
+	std::vector<class Model*> models;
+	std::vector<class Drawable*> objects;
+	std::vector<class PointLight*> lights;
 };

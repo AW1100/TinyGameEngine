@@ -38,7 +38,7 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	auto type = aiTextureType::aiTextureType_DIFFUSE;
 	auto matCount = material->GetTextureCount(type);
-	assert(matCount == 1);
+	//assert(matCount == 1);
 	unsigned int uniqueTextureIndex = 0;
 	for (unsigned int i = 0; i < matCount; i++)
 	{

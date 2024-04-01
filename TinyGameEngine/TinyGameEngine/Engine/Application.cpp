@@ -2,6 +2,7 @@
 #include "../Math/Math.h"
 #include "Event/Event.h"
 #include "Constants.h"
+#include "Light\PointLight.h"
 
 #include <iostream>
 #include <d3d11sdklayers.h>
@@ -58,7 +59,7 @@ void TGE::Application::DoFrame()
 	wnd->Gfx().BeginImgui(speed_factor);
 	Log::GetInstance().RenderLogWindow();
 	cam.SpawnControlWindow();
-	scene->lights.at(0)->SpawnControlWindow();
+	scene->GetLights().at(0)->SpawnControlWindow();
 	wnd->Gfx().RenderImgui();
 	wnd->Gfx().EndFrame();
 }

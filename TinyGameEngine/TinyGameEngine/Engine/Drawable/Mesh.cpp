@@ -20,7 +20,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<TreeNode> node, DirectX::XMFLOAT3 tran
     auto pvsbc = pvs->GetBytecode();
     AddBind(std::move(pvs));
 
-    AddBind(std::make_unique<PixelShader>(gfx, L"ToonPS.cso"));
+    AddBind(std::make_unique<PixelShader>(gfx, L"BlinnPhongPS.cso"));
 
     AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, node->indices));
 
@@ -68,8 +68,9 @@ void Mesh::Update(float dt)
 
 DirectX::XMMATRIX Mesh::GetModelMatrix() const
 {
-    return DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, DirectX::XMConvertToRadians(180.0f))*
-        DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(-90.0f), 0.0f, 0.0f)*
+    return //DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, DirectX::XMConvertToRadians(180.0f))*
+        //DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(-90.0f), 0.0f, 0.0f)*
         DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
+        //DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
 }
 

@@ -1,9 +1,16 @@
-cbuffer CBuf
+const float3 cbuf[] =
 {
-    float4 face_colors[6];
+    {
+        { 1.0f, 0.0f, 1.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 1.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 1.0f },
+    }
 };
 
 float4 main(uint tid : SV_PRIMITIVEID) : SV_TARGET
 {
-    return face_colors[tid / 2];
+    return float4(cbuf[tid / 2], 1.0f);
 }

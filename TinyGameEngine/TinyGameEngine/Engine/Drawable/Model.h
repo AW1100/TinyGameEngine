@@ -30,8 +30,8 @@ class Model
 public:
 	Model(const char* filepath, DirectX::XMFLOAT3 trans);
 	~Model();
-	void FindRenderables(std::vector<std::shared_ptr<class Drawable>>& meshes, Graphics& gfx);
-	void Traverse(std::shared_ptr<TreeNode> rootNode, std::vector<std::shared_ptr<Drawable>>& meshes, Graphics& gfx);
+	void FindRenderables(std::vector<Drawable*>& meshes, Graphics& gfx);
+	void Traverse(std::shared_ptr<TreeNode> rootNode, std::vector<Drawable*>& meshes, Graphics& gfx);
 	void SetTranslation(const DirectX::XMFLOAT3& pos);
 
 private:

@@ -26,16 +26,16 @@ Model::~Model()
 
 }
 
-void Model::FindRenderables(std::vector<std::shared_ptr<class Drawable>>& meshes, Graphics& gfx)
+void Model::FindRenderables(std::vector<Drawable*>& meshes, Graphics& gfx)
 {
 	Traverse(rootNode, meshes, gfx);
 }
 
-void Model::Traverse(std::shared_ptr<TreeNode> node, std::vector<std::shared_ptr<Drawable>>& meshes, Graphics& gfx)
+void Model::Traverse(std::shared_ptr<TreeNode> node, std::vector<Drawable*>& meshes, Graphics& gfx)
 {
 	if (node->Renderable())
 	{
-		meshes.push_back(std::make_shared<Mesh>(gfx, node, translation));
+		meshes.push_back(new Mesh(gfx, node, translation));
 	}
 	if (node->GetChildNodes().size() == 0)
 	{
