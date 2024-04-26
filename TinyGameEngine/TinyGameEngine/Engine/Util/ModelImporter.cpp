@@ -1,10 +1,8 @@
 #include "ModelImporter.h"
-#include "FbxManagerWrapper.h"
-#include "AssimpWrapper.h"
 
 #include <cstring>
 
-void ModelImporter::ImportFromFilepath(const char* filepath, std::shared_ptr<TreeNode> rootNode)
+void ModelImporter::ImportFromFilepath(const char* filepath, std::shared_ptr<MeshNode> rootNode)
 {
 	const char* ext = strrchr(filepath, '.');
 	if (strcmp(ext, ".fbx") == 0)

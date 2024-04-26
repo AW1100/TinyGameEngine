@@ -1,24 +1,25 @@
 #include "Model.h"
 #include "../Util/ModelImporter.h"
 
-TreeNode::TreeNode()
+MeshNode::MeshNode()
 {
 }
 
-TreeNode::~TreeNode()
+MeshNode::~MeshNode()
 {
 }
 
-std::vector<std::shared_ptr<TreeNode>>& TreeNode::GetChildNodes()
+std::vector<std::shared_ptr<MeshNode>>& MeshNode::GetChildNodes()
 {
 	return childNodes;
 }
 
-Model::Model(const char* filepath, DirectX::XMFLOAT3 trans)
+Model::Model(const char* filepath, DirectX::XMFLOAT3 trans, MeshType type)
 {
-	rootNode = std::make_shared<TreeNode>();
+	rootNode = std::make_shared<MeshNode>();
 	ModelImporter::ImportFromFilepath(filepath, rootNode);
 	translation = trans;
+	meshType = type;
 }
 
 Model::~Model()
@@ -31,11 +32,11 @@ void Model::FindRenderables(std::vector<Drawable*>& meshes, Graphics& gfx)
 	Traverse(rootNode, meshes, gfx);
 }
 
-void Model::Traverse(std::shared_ptr<TreeNode> node, std::vector<Drawable*>& meshes, Graphics& gfx)
+void Model::Traverse(std::shared_ptr<MeshNode> node, std::vector<Drawable*>& meshes, Graphics& gfx)
 {
 	if (node->Renderable())
 	{
-		meshes.push_back(new Mesh(gfx, node, translation));
+		meshes.push_back(new Mesh(gfx, node, translation, meshType));
 	}
 	if (node->GetChildNodes().size() == 0)
 	{

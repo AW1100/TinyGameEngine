@@ -3,10 +3,17 @@
 
 #include <random>
 
+enum class MeshType
+{
+	Unknown = 0,
+	Anima_Character = 1,
+	Scene = 2
+};
+
 class Mesh : public DrawableBase<Mesh>
 {
 public:
-	Mesh(Graphics& gfx, std::shared_ptr<class TreeNode> node, DirectX::XMFLOAT3 trans);
+	Mesh(Graphics& gfx, std::shared_ptr<class MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type);
 	virtual ~Mesh() override;
 	void Update(float dt) override;
 	DirectX::XMMATRIX GetModelMatrix() const override;

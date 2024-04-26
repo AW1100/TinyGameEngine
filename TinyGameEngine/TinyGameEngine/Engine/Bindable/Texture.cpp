@@ -24,9 +24,10 @@ Texture::Texture(Graphics& gfx, const wchar_t* filepath)
 
 Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
 {
+    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     Microsoft::WRL::ComPtr<ID3D11Resource> firstResource;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> firstTextureView;
-    HRESULT hr = DirectX::CreateWICTextureFromFile(GetDevice(gfx), GetContext(gfx), filepaths[0], firstResource.GetAddressOf(), firstTextureView.GetAddressOf());
+    hr = DirectX::CreateWICTextureFromFile(GetDevice(gfx), GetContext(gfx), filepaths[0], firstResource.GetAddressOf(), firstTextureView.GetAddressOf());
     if (FAILED(hr)) return; // Handle error
 
     // Get the description from the first loaded texture
@@ -107,6 +108,8 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
 
     // Store the SRV for use in rendering
     pTextureViews.push_back(textureArraySRV);
+
+    CoUninitialize();
 }
 
 

@@ -2,19 +2,34 @@
 #include "Box.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "..\Util\Log.h"
 
-
+#include <thread>
+#include <mutex>
 #include <sstream>
+
+std::mutex mtx;
 
 Scene::Scene(Graphics& gfx)
 {
-	models.push_back(new Model("F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }));
-	models.push_back(new Model("F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }));
+	/*auto LoadModels = [&]() -> void {
+		Log::GetInstance().AddLog("Loading meshes ...");
+		models.push_back(new Model("F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::Anima_Character));
+		models.push_back(new Model("F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::Scene));
+		Log::GetInstance().AddLog("Load Complete");
+		mtx.lock();
+		for (auto& m : models)
+		{
+			m->FindRenderables(objects, gfx);
+		}
+		mtx.unlock();
+		};
 
-	for (auto& m : models)
-	{
-		m->FindRenderables(objects, gfx);
-	}
+	std::thread LoadWorker(LoadModels);
+	LoadWorker.detach();*/
+
+	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::Anima_Character);
+	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::Scene);
 
 	lights.push_back(new PointLight(gfx, 0.03f));
 }
@@ -44,9 +59,35 @@ void Scene::UpdateFrame(float dt, Graphics& gfx)
 		light->Update(gfx);
 		light->Draw(gfx);
 	}
+	mtx.lock();
+	if (loadedObjects.size() > 0)
+	{
+		objects.insert(objects.end(), loadedObjects.begin(), loadedObjects.end());
+		loadedObjects.clear();
+	}	
 	for (auto& obj : objects)
 	{
 		obj->Update(dt);
 		obj->Draw(gfx);
 	}
+	mtx.unlock();
+}
+
+void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type)
+{
+	std::thread worker(&Scene::LoadMeshAsync, this, std::ref(gfx), filename, trans, type);
+	worker.detach();
+}
+
+void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type)
+{
+	Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
+	models.push_back(new Model(filename, trans, type));
+	Log::GetInstance().AddLog("Load Complete");
+	mtx.lock();
+	for (auto& m : models)
+	{
+		m->FindRenderables(loadedObjects, gfx);
+	}
+	mtx.unlock();
 }

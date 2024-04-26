@@ -10,7 +10,7 @@
 #include "../Util/FbxManagerWrapper.h"
 #include "Model.h"
 
-Mesh::Mesh(Graphics& gfx, std::shared_ptr<TreeNode> node, DirectX::XMFLOAT3 trans)
+Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type)
 {
     translation = trans;
     //node->textureFilenames.push_back(L"F:/3DModels/face.png");
@@ -20,13 +20,20 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<TreeNode> node, DirectX::XMFLOAT3 tran
     auto pvsbc = pvs->GetBytecode();
     AddBind(std::move(pvs));
 
-    AddBind(std::make_unique<PixelShader>(gfx, L"BlinnPhongPS.cso"));
-
+    if (type == MeshType::Anima_Character)
+    {
+        AddBind(std::make_unique<PixelShader>(gfx, L"ToonPS.cso"));
+    }
+    else
+    {
+        AddBind(std::make_unique<PixelShader>(gfx, L"BlinnPhongPS.cso"));
+    }
+   
     AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, node->indices));
 
-    if (node->textureFilenames.size() > 0)
+    if (node->diffuse.size() > 0)
     {
-        AddBind(std::make_unique<Texture>(gfx, node->textureFilenames));
+        AddBind(std::make_unique<Texture>(gfx, node->diffuse));
     }
     
     AddBind(std::make_unique<Sampler>(gfx));

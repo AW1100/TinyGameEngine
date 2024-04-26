@@ -1,9 +1,8 @@
 #include "AssimpWrapper.h"
 #include "Log.h"
-#include "../Drawable/Model.h"
 #include <string>
 
-void AssimpWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<class TreeNode> rootNode)
+void AssimpWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<MeshNode> rootNode)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate |
@@ -16,54 +15,61 @@ void AssimpWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<c
 	ProcessNode(scene->mRootNode, scene, rootNode);
 }
 
-void AssimpWrapper::ProcessNode(aiNode* objNode, const aiScene* scene, std::shared_ptr<TreeNode> node)
+void AssimpWrapper::ProcessNode(aiNode* objNode, const aiScene* scene, std::shared_ptr<MeshNode> node)
 {
 	for (unsigned int i = 0; i < objNode->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[objNode->mMeshes[i]];
-		auto childNode = std::make_shared<TreeNode>();
+		auto childNode = std::make_shared<MeshNode>();
 		node->GetChildNodes().push_back(childNode);
 		ProcessMesh(mesh, scene, childNode);
 	}
 
 	for (unsigned int j = 0; j < objNode->mNumChildren; j++) {
-		auto childNode = std::make_shared<TreeNode>();
+		auto childNode = std::make_shared<MeshNode>();
 		node->GetChildNodes().push_back(childNode);
 		ProcessNode(objNode->mChildren[j], scene, childNode);
 	}
 }
 
-void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_ptr<class TreeNode> node)
+void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_ptr<MeshNode> node)
 {
 	node->SetRenderable();
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	auto type = aiTextureType::aiTextureType_DIFFUSE;
-	auto matCount = material->GetTextureCount(type);
+	
 	//assert(matCount == 1);
 	unsigned int uniqueTextureIndex = 0;
-	for (unsigned int i = 0; i < matCount; i++)
-	{
-		aiString str;
-		material->GetTexture(type, i, &str);
-		int bufferLen = MultiByteToWideChar(CP_UTF8, 0, str.C_Str(), -1, nullptr, 0);
-		wchar_t* wideString = new wchar_t[bufferLen];
-		MultiByteToWideChar(CP_UTF8, 0, str.C_Str(), -1, wideString, bufferLen);
-
-		auto it = std::find_if(node->textureFilenames.begin(), node->textureFilenames.end(), [wideString](const wchar_t* str) {
-			return wcscmp(str, wideString) == 0;
-			});
-		if (it == node->textureFilenames.end())
+	auto ProcessMaterials = [&](aiTextureType type, std::vector<const wchar_t*> filenames) -> void {
+		auto matCount = material->GetTextureCount(type);
+		
+		for (unsigned int i = 0; i < matCount; i++)
 		{
-			node->textureFilenames.push_back(wideString);
-			uniqueTextureIndex = node->textureFilenames.size();
-		}
-		else
-		{
-			uniqueTextureIndex = std::distance(node->textureFilenames.begin(), it);
+			aiString str;
+			material->GetTexture(type, i, &str);
+			int bufferLen = MultiByteToWideChar(CP_UTF8, 0, str.C_Str(), -1, nullptr, 0);
+			wchar_t* wideString = new wchar_t[bufferLen];
+			MultiByteToWideChar(CP_UTF8, 0, str.C_Str(), -1, wideString, bufferLen);
 
-		}
+			auto it = std::find_if(node->diffuse.begin(), node->diffuse.end(), [wideString](const wchar_t* str) {
+				return wcscmp(str, wideString) == 0;
+				});
+			if (it == node->diffuse.end())
+			{
+				node->diffuse.push_back(wideString);
+				uniqueTextureIndex = node->diffuse.size();
+			}
+			else
+			{
+				uniqueTextureIndex = std::distance(node->diffuse.begin(), it);
 
-		node->textureFilenames.push_back(wideString);
-	}
+			}
+
+			filenames.push_back(wideString);
+		}
+		};
+
+	ProcessMaterials(aiTextureType::aiTextureType_DIFFUSE, node->diffuse);
+	//ProcessMaterials(aiTextureType::aiTextureType_SPECULAR, node->specular);
+	
 
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) 
 	{

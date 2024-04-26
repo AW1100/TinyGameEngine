@@ -1,8 +1,10 @@
 #pragma once
+#include "FbxManagerWrapper.h"
+#include "AssimpWrapper.h"
+
 #include <memory>
 
-class ModelImporter
+namespace ModelImporter
 {
-public:
-	static void ImportFromFilepath(const char* filepath, std::shared_ptr<class TreeNode> rootNode);
+	void ImportFromFilepath(const char* filepath, std::shared_ptr<MeshNode> rootNode);
 };

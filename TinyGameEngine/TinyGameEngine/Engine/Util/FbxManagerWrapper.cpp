@@ -44,7 +44,7 @@ std::shared_ptr<FbxScene> FbxManagerWrapper::ReadFromFilepath(const char* filepa
     return lScene;
 }
 
-void FbxManagerWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<TreeNode> rootNode)
+void FbxManagerWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<MeshNode> rootNode)
 {
     if (!lImporter->Initialize(filepath, -1, lSdkManager->GetIOSettings())) {
         printf("Call to FbxImporter::Initialize() failed.\n");
@@ -63,13 +63,13 @@ void FbxManagerWrapper::LoadMeshesByFilename(const char* filepath, std::shared_p
     ProcessFbxTree(lScene->GetRootNode(), rootNode);
 }
 
-void FbxManagerWrapper::ProcessFbxTree(FbxNode* fbxnode, std::shared_ptr<TreeNode> node)
+void FbxManagerWrapper::ProcessFbxTree(FbxNode* fbxnode, std::shared_ptr<MeshNode> node)
 {
     FbxMesh* mesh = fbxnode->GetMesh();
     int numOfChildren = fbxnode->GetChildCount();
     if (mesh)
     {
-        std::shared_ptr<TreeNode> child = std::make_shared<TreeNode>();
+        std::shared_ptr<MeshNode> child = std::make_shared<MeshNode>();
         child->SetRenderable();
         ConstructMesh(fbxnode, child);
         node->GetChildNodes().push_back(child);
@@ -83,7 +83,7 @@ void FbxManagerWrapper::ProcessFbxTree(FbxNode* fbxnode, std::shared_ptr<TreeNod
     return;
 }
 
-void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<TreeNode> node)
+void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode> node)
 {
     FbxMesh* fbxMesh = (FbxMesh*)fbxNode->GetNodeAttribute();
 
@@ -102,7 +102,6 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<TreeNode
         const FbxGeometryElementUV* uvElement = fbxMesh->GetElementUV(uvSetName);
         if (!uvElement)
             continue;
-
         for (int j = 0; j < fbxMesh->GetPolygonCount(); j++) {
             for (int k = 0; k < fbxMesh->GetPolygonSize(j); k++) {
                 FbxVector2 uv;
@@ -196,7 +195,7 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<TreeNode
 
 }
 
-void FbxManagerWrapper::GetMaterialTexture(const FbxProperty& prop, std::shared_ptr<TreeNode> node, int& uniqueTextureIndex)
+void FbxManagerWrapper::GetMaterialTexture(const FbxProperty& prop, std::shared_ptr<MeshNode> node, int& uniqueTextureIndex)
 {
 
 
@@ -212,17 +211,17 @@ void FbxManagerWrapper::GetMaterialTexture(const FbxProperty& prop, std::shared_
                 wchar_t* wideString = new wchar_t[bufferLen];
                 MultiByteToWideChar(CP_UTF8, 0, relativeFilename, -1, wideString, bufferLen);
 
-                auto it = std::find_if(node->textureFilenames.begin(), node->textureFilenames.end(), [wideString](const wchar_t* str) {
+                auto it = std::find_if(node->diffuse.begin(), node->diffuse.end(), [wideString](const wchar_t* str) {
                     return wcscmp(str, wideString) == 0;
                     });
-                if (it == node->textureFilenames.end())
+                if (it == node->diffuse.end())
                 {
-                    node->textureFilenames.push_back(wideString);
-                    uniqueTextureIndex = node->textureFilenames.size();
+                    node->diffuse.push_back(wideString);
+                    uniqueTextureIndex = node->diffuse.size();
                 }
                 else
                 {
-                    uniqueTextureIndex = std::distance(node->textureFilenames.begin(), it);
+                    uniqueTextureIndex = std::distance(node->diffuse.begin(), it);
 
                 }
             }
