@@ -6,7 +6,8 @@ void AssimpWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<M
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate |
-		aiProcess_FlipUVs);
+		aiProcess_FlipUVs |
+		aiProcess_CalcTangentSpace);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		Log::GetInstance().AddLog(std::string("Failed to load " + std::string(filepath)).c_str());
@@ -38,7 +39,7 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 	
 	//assert(matCount == 1);
 	unsigned int uniqueTextureIndex = 0;
-	auto ProcessMaterials = [&](aiTextureType type, std::vector<const wchar_t*> filenames) -> void {
+	auto ProcessMaterials = [&](aiTextureType type, std::vector<const wchar_t*>& filenames, bool setIndex) -> void {
 		auto matCount = material->GetTextureCount(type);
 		
 		for (unsigned int i = 0; i < matCount; i++)
@@ -49,26 +50,28 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 			wchar_t* wideString = new wchar_t[bufferLen];
 			MultiByteToWideChar(CP_UTF8, 0, str.C_Str(), -1, wideString, bufferLen);
 
-			auto it = std::find_if(node->diffuse.begin(), node->diffuse.end(), [wideString](const wchar_t* str) {
+			auto it = std::find_if(filenames.begin(), filenames.end(), [wideString](const wchar_t* str) {
 				return wcscmp(str, wideString) == 0;
 				});
-			if (it == node->diffuse.end())
+			if (it == filenames.end())
 			{
-				node->diffuse.push_back(wideString);
-				uniqueTextureIndex = node->diffuse.size();
+				filenames.push_back(wideString);
+				if (setIndex)
+					uniqueTextureIndex = filenames.size();
 			}
 			else
 			{
-				uniqueTextureIndex = std::distance(node->diffuse.begin(), it);
-
+				if (setIndex)
+					uniqueTextureIndex = std::distance(filenames.begin(), it);
 			}
 
 			filenames.push_back(wideString);
 		}
 		};
 
-	ProcessMaterials(aiTextureType::aiTextureType_DIFFUSE, node->diffuse);
-	//ProcessMaterials(aiTextureType::aiTextureType_SPECULAR, node->specular);
+	ProcessMaterials(aiTextureType::aiTextureType_DIFFUSE, node->diffuse, true);
+	ProcessMaterials(aiTextureType::aiTextureType_SPECULAR, node->specular, false);
+	ProcessMaterials(aiTextureType::aiTextureType_NORMALS, node->normalMap, false);
 	
 
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) 

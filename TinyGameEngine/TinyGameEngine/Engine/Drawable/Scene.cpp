@@ -64,7 +64,7 @@ void Scene::UpdateFrame(float dt, Graphics& gfx)
 	{
 		objects.insert(objects.end(), loadedObjects.begin(), loadedObjects.end());
 		loadedObjects.clear();
-	}	
+	}
 	for (auto& obj : objects)
 	{
 		obj->Update(dt);

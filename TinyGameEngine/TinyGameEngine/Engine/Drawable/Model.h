@@ -24,6 +24,7 @@ public:
 	std::vector<unsigned int> indices;
 	std::vector<const wchar_t*> diffuse;
 	std::vector<const wchar_t*> specular;
+	std::vector<const wchar_t*> normalMap;
 };
 
 class Model
