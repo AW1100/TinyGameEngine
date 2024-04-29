@@ -12,19 +12,15 @@ void Drawable::Draw(Graphics& gfx) const
 	{
 		b->Bind(gfx);
 	}
-	for (auto& b : GetStaticBinds())
-	{
-		b->Bind(gfx);
-	}
 	gfx.DrawIndexed(pIndexBuffer->GetCount());
 }
 
-void Drawable::AddBind(std::unique_ptr<class Bindable> bind)
+void Drawable::AddBind(std::shared_ptr<Bindable> bind)
 {
 	binds.push_back(std::move(bind));
 }
 
-void Drawable::AddIndexBuffer(std::unique_ptr<class IndexBuffer> ib)
+void Drawable::AddIndexBuffer(std::shared_ptr<IndexBuffer> ib)
 {
 	pIndexBuffer = ib.get();
 	binds.push_back(std::move(ib));

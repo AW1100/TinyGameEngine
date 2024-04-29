@@ -15,13 +15,10 @@ public:
 	virtual DirectX::XMMATRIX GetModelMatrix() const = 0;
 	void Draw(Graphics& gfx) const;
 	virtual void Update(float dt) = 0;
-	void AddBind(std::unique_ptr<class Bindable> bind);
-	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ib);
-
-private:
-	virtual std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const = 0;
+	void AddBind(std::shared_ptr<class Bindable> bind);
+	void AddIndexBuffer(std::shared_ptr<class IndexBuffer> ib);
 
 protected:
 	IndexBuffer* pIndexBuffer = nullptr;
-	std::vector<std::unique_ptr<Bindable>> binds;
+	std::vector<std::shared_ptr<Bindable>> binds;
 };

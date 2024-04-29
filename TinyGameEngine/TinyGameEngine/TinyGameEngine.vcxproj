@@ -188,6 +188,7 @@
     <ClInclude Include="Engine\Drawable\Mesh.h" />
     <ClInclude Include="Engine\Drawable\Model.h" />
     <ClInclude Include="Engine\Drawable\Scene.h" />
+    <ClInclude Include="Engine\Drawable\SceneBindables.h" />
     <ClInclude Include="Engine\Drawable\Sphere.h" />
     <ClInclude Include="Engine\Entrypoint.h" />
     <ClInclude Include="Engine\Event\Event.h" />
@@ -324,6 +325,7 @@
     <ClCompile Include="Engine\Drawable\Mesh.cpp" />
     <ClCompile Include="Engine\Drawable\Model.cpp" />
     <ClCompile Include="Engine\Drawable\Scene.cpp" />
+    <ClCompile Include="Engine\Drawable\SceneBindables.cpp" />
     <ClCompile Include="Engine\Drawable\Sphere.cpp" />
     <ClCompile Include="Engine\Event\EventHandler.cpp" />
     <ClCompile Include="Engine\Event\KeyboardEvent.cpp" />

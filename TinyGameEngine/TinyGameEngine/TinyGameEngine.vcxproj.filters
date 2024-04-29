@@ -435,6 +435,9 @@
     <ClInclude Include="Engine\Util\AssimpWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Drawable\SceneBindables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -555,6 +558,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Util\AssimpWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Drawable\SceneBindables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

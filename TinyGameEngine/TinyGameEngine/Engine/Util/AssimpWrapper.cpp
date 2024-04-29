@@ -20,7 +20,8 @@ void AssimpWrapper::ProcessNode(aiNode* objNode, const aiScene* scene, std::shar
 {
 	for (unsigned int i = 0; i < objNode->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[objNode->mMeshes[i]];
-		auto childNode = std::make_shared<MeshNode>();
+		auto meshName = mesh->mName.C_Str();
+		auto childNode = std::make_shared<MeshNode>(meshName);
 		node->GetChildNodes().push_back(childNode);
 		ProcessMesh(mesh, scene, childNode);
 	}
@@ -36,12 +37,12 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 {
 	node->SetRenderable();
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	
 	//assert(matCount == 1);
 	unsigned int uniqueTextureIndex = 0;
 	auto ProcessMaterials = [&](aiTextureType type, std::vector<const wchar_t*>& filenames, bool setIndex) -> void {
 		auto matCount = material->GetTextureCount(type);
-		
+		aiString str1;
+		material->GetTexture(type, 0, &str1);
 		for (unsigned int i = 0; i < matCount; i++)
 		{
 			aiString str;

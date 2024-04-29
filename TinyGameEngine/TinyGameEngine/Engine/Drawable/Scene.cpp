@@ -81,13 +81,11 @@ void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMF
 
 void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type)
 {
-	Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
-	models.push_back(new Model(filename, trans, type));
-	Log::GetInstance().AddLog("Load Complete");
+	//Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
+	Model* temp = new Model(filename, trans, type);
+	models.push_back(temp);
+	//Log::GetInstance().AddLog("Load Complete");
 	mtx.lock();
-	for (auto& m : models)
-	{
-		m->FindRenderables(loadedObjects, gfx);
-	}
+	temp->FindRenderables(loadedObjects, gfx);
 	mtx.unlock();
 }

@@ -5,6 +5,12 @@ MeshNode::MeshNode()
 {
 }
 
+MeshNode::MeshNode(const char* meshName)
+	:name(meshName)
+{
+
+}
+
 MeshNode::~MeshNode()
 {
 }
@@ -36,7 +42,7 @@ void Model::Traverse(std::shared_ptr<MeshNode> node, std::vector<Drawable*>& mes
 {
 	if (node->Renderable())
 	{
-		meshes.push_back(new Mesh(gfx, node, translation, meshType));
+		meshes.push_back(new Mesh(gfx, node, translation, meshType, node->name));
 	}
 	if (node->GetChildNodes().size() == 0)
 	{

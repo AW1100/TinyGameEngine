@@ -6,36 +6,29 @@
 Sphere::Sphere(Graphics& gfx, float radius)
 {
     pos = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (!IsStaticInitialized())
+    std::vector<DirectX::XMFLOAT3> vertices;
+    std::vector<unsigned int> indices;
+    createSphere(radius, 30, 30, vertices, indices);
+
+    AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
+
+    auto pvs = std::make_unique<VertexShader>(gfx, L"SolidVS.cso");
+    auto pvsbc = pvs->GetBytecode();
+    AddBind(std::move(pvs));
+
+    AddBind(std::make_unique<PixelShader>(gfx, L"SolidPS.cso"));
+
+
+
+    AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
+
+    const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
     {
-        std::vector<DirectX::XMFLOAT3> vertices;
-        std::vector<unsigned int> indices;
-        createSphere(radius, 30, 30, vertices, indices);
+        { "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 }
+    };
+    AddBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
-        AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
-
-        auto pvs = std::make_unique<VertexShader>(gfx, L"SolidVS.cso");
-        auto pvsbc = pvs->GetBytecode();
-        AddStaticBind(std::move(pvs));
-
-        AddStaticBind(std::make_unique<PixelShader>(gfx, L"SolidPS.cso"));
-
-
-
-        AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
-
-        const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
-        {
-            { "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 }
-        };
-        AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-
-        AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-    }
-    else
-    {
-        SetIndexBufferFromStatic();
-    }
+    AddBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
     AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this, 0));
 }

@@ -10,8 +10,7 @@ cbuffer cameraCBuf
 };
 
 static const float3 ambient = { 0.05f, 0.05f, 0.05f };
-static const float Intensity = 0.7f;
-static const float alpha = 5.0f;
+static const float alpha = 10.0f;
 
 static const float attConst = 0.9f;
 static const float attLin = 0.045f;
@@ -50,7 +49,8 @@ float4 main(PixelInputType input) : SV_Target
     {
         const float3 halfVector = normalize(vToL + vToC);
         const float specular = pow(max(0.0f, dot(halfVector, input.normal)), alpha);
-        output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular);
+        const float4 specularColor = texArray.Sample(texSampler, float3(input.tex.x, input.tex.y, input.tex.z + 1.0f));
+        output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor * specular);
     }
 
     return float4(output, 1.0f);

@@ -10,6 +10,7 @@ class MeshNode
 {
 public:
 	MeshNode();
+	MeshNode(const char* meshName);
 	~MeshNode();
 	std::vector<std::shared_ptr<MeshNode>>& GetChildNodes();
 	inline bool Renderable() const { return renderable; }
@@ -25,6 +26,7 @@ public:
 	std::vector<const wchar_t*> diffuse;
 	std::vector<const wchar_t*> specular;
 	std::vector<const wchar_t*> normalMap;
+	std::string name;
 };
 
 class Model

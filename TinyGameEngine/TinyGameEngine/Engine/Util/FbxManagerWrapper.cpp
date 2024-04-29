@@ -4,6 +4,7 @@
 
 #include <cwchar>
 #include <iterator>
+#include <codecvt>
 
 FbxManagerWrapper::FbxManagerWrapper()
 {
@@ -69,7 +70,11 @@ void FbxManagerWrapper::ProcessFbxTree(FbxNode* fbxnode, std::shared_ptr<MeshNod
     int numOfChildren = fbxnode->GetChildCount();
     if (mesh)
     {
-        std::shared_ptr<MeshNode> child = std::make_shared<MeshNode>();
+        const char* meshName = mesh->GetName();
+        /*int bufferLen = MultiByteToWideChar(CP_UTF8, 0, meshName, -1, nullptr, 0);
+        wchar_t* wideString = new wchar_t[bufferLen];
+        MultiByteToWideChar(CP_UTF8, 0, meshName, -1, wideString, bufferLen);*/
+        std::shared_ptr<MeshNode> child = std::make_shared<MeshNode>(meshName);
         child->SetRenderable();
         ConstructMesh(fbxnode, child);
         node->GetChildNodes().push_back(child);

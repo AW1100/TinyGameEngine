@@ -1,9 +1,9 @@
 #pragma once
-#include "DrawableBase.h"
+#include "Drawable.h"
 
 #include <random>
 
-class Sphere : public DrawableBase<Sphere>
+class Sphere : public Drawable
 {
 public:
 	Sphere(Graphics& gfx, float radius);

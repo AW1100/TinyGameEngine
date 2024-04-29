@@ -1,5 +1,5 @@
 #pragma once
-#include "DrawableBase.h"
+#include "Drawable.h"
 
 #include <random>
 
@@ -10,10 +10,10 @@ enum class MeshType
 	Scene = 2
 };
 
-class Mesh : public DrawableBase<Mesh>
+class Mesh : public Drawable
 {
 public:
-	Mesh(Graphics& gfx, std::shared_ptr<class MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type);
+	Mesh(Graphics& gfx, std::shared_ptr<class MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n);
 	virtual ~Mesh() override;
 	void Update(float dt) override;
 	DirectX::XMMATRIX GetModelMatrix() const override;
@@ -35,7 +35,4 @@ private:
 	float dchi = 0.0f;
 
 	DirectX::XMFLOAT3 translation;
-
-public:
-	
 };
