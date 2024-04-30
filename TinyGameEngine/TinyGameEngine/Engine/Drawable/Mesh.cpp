@@ -10,8 +10,9 @@
 
 #include "../Util/FbxManagerWrapper.h"
 #include "Model.h"
+#include "../Util/Misc.h"
 
-Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n)
+Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n, unsigned int vertexType)
 {
     translation = trans;
     //auto key = GenerateUID<VertexBuffer>(n);
@@ -27,18 +28,14 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     auto pvsbc = sp->GetBytecode();
     AddBind(std::move(sp));
 
-    if (type == MeshType::Anima_Character)
-    {
-        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<PixelShader>("ToonPS.cso")), [&]()-> std::shared_ptr<Bindable> {
-            return std::make_shared<PixelShader>(gfx, L"ToonPS.cso");
-            }));
-    }
-    else
-    {
-        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<PixelShader>("BlinnPhongPS.cso")), [&]()-> std::shared_ptr<Bindable> {
-            return std::make_shared<PixelShader>(gfx, L"BlinnPhongPS.cso");
-            }));
-    }
+    ShaderLookupTable table;
+    auto& targetPS = table.GetShaderfilename(type, vertexType);
+
+    auto ws = StringToWideString(targetPS.c_str());
+
+    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<PixelShader>(targetPS)), [&]()-> std::shared_ptr<Bindable> {
+        return std::make_shared<PixelShader>(gfx, ws);
+        }));
 
     AddIndexBuffer(std::dynamic_pointer_cast<IndexBuffer>(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<IndexBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<IndexBuffer>(gfx, node->indices);

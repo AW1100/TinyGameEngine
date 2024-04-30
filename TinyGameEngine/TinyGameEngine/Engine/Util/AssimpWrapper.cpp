@@ -70,9 +70,24 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 		}
 		};
 
-	ProcessMaterials(aiTextureType::aiTextureType_DIFFUSE, node->diffuse, true);
-	ProcessMaterials(aiTextureType::aiTextureType_SPECULAR, node->specular, false);
-	ProcessMaterials(aiTextureType::aiTextureType_NORMALS, node->normalMap, false);
+	if (material->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) > 0)
+	{
+		node->vertexType = node->vertexType | Diffuse;
+		ProcessMaterials(aiTextureType::aiTextureType_DIFFUSE, node->diffuse, true);
+	}
+	
+	if (material->GetTextureCount(aiTextureType::aiTextureType_SPECULAR) > 0)
+	{
+		node->vertexType = node->vertexType | Specular;
+		ProcessMaterials(aiTextureType::aiTextureType_SPECULAR, node->specular, false);
+	}
+	
+	if (material->GetTextureCount(aiTextureType::aiTextureType_NORMALS) > 0)
+	{
+		node->vertexType = node->vertexType | NormalMap;
+		ProcessMaterials(aiTextureType::aiTextureType_NORMALS, node->normalMap, false);
+	}
+	
 
 	if (mesh->mNumVertices > 0u)
 	{

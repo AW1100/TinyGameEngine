@@ -54,8 +54,8 @@ Scene::Scene(Graphics& gfx)
 
 	}*/
 
-	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::Anima_Character);
-	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::Scene);
+	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::StylishCharacterA);
+	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::RealisticObjectA);
 
 	lights.push_back(new PointLight(gfx, 0.03f));
 }

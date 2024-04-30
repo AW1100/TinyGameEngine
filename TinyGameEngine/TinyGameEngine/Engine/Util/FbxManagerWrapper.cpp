@@ -160,7 +160,12 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
             if (material)
             {
                 FbxProperty diffuseProp = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
-                GetMaterialTexture(diffuseProp, node, uniqueTextureIndex);
+                if (diffuseProp.GetSrcObjectCount<FbxTexture>() > 0)
+                {
+                    node->vertexType = node->vertexType | Diffuse;
+                    GetMaterialTexture(diffuseProp, node, uniqueTextureIndex);
+                }
+                
 
                 FbxProperty specularProp = material->FindProperty(FbxSurfaceMaterial::sSpecular);
                 GetMaterialTexture(specularProp, node, uniqueTextureIndex);

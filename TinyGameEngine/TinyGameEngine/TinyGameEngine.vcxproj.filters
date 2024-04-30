@@ -441,6 +441,12 @@
     <ClInclude Include="Engine\Util\DynamicVertex.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Util\ShaderLookupTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Util\Misc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -579,7 +585,8 @@
     <FxCompile Include="Shaders\SolidVS.hlsl" />
     <FxCompile Include="Shaders\SolidPS.hlsl" />
     <FxCompile Include="Shaders\ToonPS.hlsl" />
-    <FxCompile Include="Shaders\BlinnPhongPS.hlsl" />
+    <FxCompile Include="Shaders\BlinnPhongDSPS.hlsl" />
+    <FxCompile Include="Shaders\BlinnPhongDPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

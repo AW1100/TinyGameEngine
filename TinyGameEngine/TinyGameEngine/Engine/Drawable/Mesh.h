@@ -1,19 +1,13 @@
 #pragma once
 #include "Drawable.h"
+#include "../Util/ShaderLookupTable.h"
 
 #include <random>
-
-enum class MeshType
-{
-	Unknown = 0,
-	Anima_Character = 1,
-	Scene = 2
-};
 
 class Mesh : public Drawable
 {
 public:
-	Mesh(Graphics& gfx, std::shared_ptr<class MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n);
+	Mesh(Graphics& gfx, std::shared_ptr<class MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n, unsigned int vertexType);
 	virtual ~Mesh() override;
 	void Update(float dt) override;
 	DirectX::XMMATRIX GetModelMatrix() const override;

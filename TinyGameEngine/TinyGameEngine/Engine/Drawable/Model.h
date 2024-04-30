@@ -29,6 +29,7 @@ public:
 	std::vector<const wchar_t*> specular;
 	std::vector<const wchar_t*> normalMap;
 	std::string name;
+	unsigned int vertexType = None;
 };
 
 class Model
