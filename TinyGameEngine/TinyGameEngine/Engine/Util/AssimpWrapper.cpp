@@ -73,6 +73,19 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 	ProcessMaterials(aiTextureType::aiTextureType_DIFFUSE, node->diffuse, true);
 	ProcessMaterials(aiTextureType::aiTextureType_SPECULAR, node->specular, false);
 	ProcessMaterials(aiTextureType::aiTextureType_NORMALS, node->normalMap, false);
+
+	if (mesh->mNumVertices > 0u)
+	{
+		node->vertices->GetLayout().Append({ElementType::Position3D});
+	}
+	if (mesh->mNumUVComponents[0] > 0u)
+	{
+		node->vertices->GetLayout().Append({ ElementType::Texture2D });
+	}
+	if (mesh->HasNormals())
+	{
+		node->vertices->GetLayout().Append({ ElementType::Normal });
+	}
 	
 
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) 
@@ -84,7 +97,7 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 		auto i1 = face.mIndices[1];
 		auto i2 = face.mIndices[2];
 		Vertex v0, v1, v2;
-		if (mesh->mNumVertices > 0)
+		if (mesh->mNumVertices > 0u)
 		{
 			v0.pos.x = mesh->mVertices[i0].x;
 			v0.pos.y = mesh->mVertices[i0].y;
@@ -123,9 +136,11 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 			v2.normal.y = mesh->mNormals[i2].y;
 			v2.normal.z = mesh->mNormals[i2].z;
 		}
-		node->vertices.push_back(v0);
-		node->vertices.push_back(v1);
-		node->vertices.push_back(v2);
+		
+
+		node->vertices->Store(v0);
+		node->vertices->Store(v1);
+		node->vertices->Store(v2);
 		node->indices.push_back(i0);
 		node->indices.push_back(i1);
 		node->indices.push_back(i2);

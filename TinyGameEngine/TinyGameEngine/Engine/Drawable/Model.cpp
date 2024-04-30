@@ -8,7 +8,11 @@ MeshNode::MeshNode()
 MeshNode::MeshNode(const char* meshName)
 	:name(meshName)
 {
-
+	/*VertexLayout v;
+	v.Append({ ElementType::Position3D });
+	v.Append({ ElementType::Texture2D });
+	v.Append({ ElementType::Normal });*/
+	vertices = new DynamicVertex();
 }
 
 MeshNode::~MeshNode()

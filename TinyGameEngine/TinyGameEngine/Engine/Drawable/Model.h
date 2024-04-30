@@ -1,6 +1,7 @@
 #pragma once
 #include "Mesh.h"
 #include "../Util/Vertex.h"
+#include "../Util/DynamicVertex.hpp"
 
 #include <vector>
 #include <memory>
@@ -21,7 +22,8 @@ private:
 	bool renderable = false;
 
 public:
-	std::vector<Vertex> vertices;
+	//std::vector<Vertex> vertices;
+	DynamicVertex* vertices;
 	std::vector<unsigned int> indices;
 	std::vector<const wchar_t*> diffuse;
 	std::vector<const wchar_t*> specular;

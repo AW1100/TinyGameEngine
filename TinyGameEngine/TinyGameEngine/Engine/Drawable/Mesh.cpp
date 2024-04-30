@@ -16,7 +16,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     translation = trans;
     //auto key = GenerateUID<VertexBuffer>(n);
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexBuffer>(n)), [&]()-> std::shared_ptr<Bindable>{
-        return std::make_shared<VertexBuffer>(gfx, node->vertices);
+        return std::make_shared<VertexBuffer>(gfx, node->vertices->GetContents(), node->vertices->GetStride());
         }));
     //AddBind(std::make_unique<VertexBuffer>(gfx, node->vertices));
 
@@ -68,12 +68,21 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<Rasterizer>(gfx);
         }));
 
-    const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
+    std::vector<D3D11_INPUT_ELEMENT_DESC> ied;
+    unsigned int offset = 0;
+    auto& elems = node->vertices->GetLayout().elements;
+    for (int i = 0; i < elems.size(); i++)
+    {
+        ied.push_back({ elems[i].semantic,0,DXGI_FORMAT_R32G32B32_FLOAT,0,offset,D3D11_INPUT_PER_VERTEX_DATA ,0 });
+        offset += elems[i].sizeInByte;
+    }
+
+    /*const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
     {
         { "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
         { "TexCoord",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
         { "Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
-    };
+    };*/
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<InputLayout>()), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<InputLayout>(gfx, ied, pvsbc);
         }));

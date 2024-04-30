@@ -94,6 +94,10 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
 
     std::vector<DirectX::XMFLOAT3> positions;
     int numVertices = fbxMesh->GetControlPointsCount();
+    if (numVertices > 0)
+    {
+        node->vertices->GetLayout().Append({ ElementType::Position3D });
+    }
     for (int i = 0; i < numVertices; i++) {
         FbxVector4 vertex = fbxMesh->GetControlPointAt(i);
         positions.push_back(DirectX::XMFLOAT3(vertex[0], vertex[1], vertex[2]));
@@ -107,6 +111,7 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
         const FbxGeometryElementUV* uvElement = fbxMesh->GetElementUV(uvSetName);
         if (!uvElement)
             continue;
+        node->vertices->GetLayout().Append({ ElementType::Texture2D });
         for (int j = 0; j < fbxMesh->GetPolygonCount(); j++) {
             for (int k = 0; k < fbxMesh->GetPolygonSize(j); k++) {
                 FbxVector2 uv;
@@ -123,6 +128,7 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
     std::vector<DirectX::XMFLOAT3> normals;
     FbxGeometryElementNormal* normalElement = fbxMesh->GetElementNormal();
     if (normalElement) {
+        node->vertices->GetLayout().Append({ ElementType::Normal });
         for (int i = 0; i < fbxMesh->GetPolygonCount(); i++) {
             for (int j = 0; j < fbxMesh->GetPolygonSize(i); j++) {
                 FbxVector4 normal;
@@ -189,9 +195,19 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
         v2.pos = positions[thirdIndex];
         v2.texCoord = DirectX::XMFLOAT3(texCoords[i * 3 + 2].x, (1.0f - texCoords[i * 3+2].y), uniqueTextureIndex);
         v2.normal = normals[i*3+2];
-        node->vertices.push_back(v0);
-        node->vertices.push_back(v1);
-        node->vertices.push_back(v2);
+
+        node->vertices->Store(v0.pos);
+        node->vertices->Store(v0.texCoord);
+        node->vertices->Store(v0.normal);
+        node->vertices->Store(v1.pos);
+        node->vertices->Store(v1.texCoord);
+        node->vertices->Store(v1.normal);
+        node->vertices->Store(v2.pos);
+        node->vertices->Store(v2.texCoord);
+        node->vertices->Store(v2.normal);
+        //node->vertex->Store(v0);
+        //node->vertex->Store(v1);
+        //node->vertex->Store(v2);
 
         node->indices.push_back(i * 3);
         node->indices.push_back(i * 3 + 1);

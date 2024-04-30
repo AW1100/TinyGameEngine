@@ -8,6 +8,9 @@
 #include <mutex>
 #include <sstream>
 
+#include "..\Util\DynamicVertex.hpp"
+
+
 std::mutex mtx;
 
 Scene::Scene(Graphics& gfx)
@@ -27,6 +30,29 @@ Scene::Scene(Graphics& gfx)
 
 	std::thread LoadWorker(LoadModels);
 	LoadWorker.detach();*/
+	/*struct Test
+	{
+		float x;
+		float y;
+		float z;
+	};
+	Test t0;
+	t0.x = 0.5;
+	t0.y = 1.5;
+	t0.z = 2.5;
+	VertexLayout v;
+	v.Append({ ElementType::Position3D });
+	v.Append({ ElementType::Texture2D });
+	v.Append({ ElementType::Normal });
+	DynamicVertex dv(std::move(v));
+	dv.Store(t0);
+	for (size_t i = 0; i < dv.contents.size(); i += 4)
+	{
+		float value;
+		std::memcpy(&value, &dv.contents[i], sizeof(float));
+		int pause = 0;
+
+	}*/
 
 	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::Anima_Character);
 	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::Scene);

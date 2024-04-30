@@ -200,6 +200,7 @@
     <ClInclude Include="Engine\Light\PointLight.h" />
     <ClInclude Include="Engine\Util\AssimpWrapper.h" />
     <ClInclude Include="Engine\Util\Camera.h" />
+    <ClInclude Include="Engine\Util\DynamicVertex.hpp" />
     <ClInclude Include="Engine\Util\FbxManagerWrapper.h" />
     <ClInclude Include="Engine\Util\ImguiManager.h" />
     <ClInclude Include="Engine\Util\Log.h" />
