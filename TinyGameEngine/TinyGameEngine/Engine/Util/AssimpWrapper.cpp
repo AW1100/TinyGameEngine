@@ -5,7 +5,8 @@
 void AssimpWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<MeshNode> rootNode)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate |
+	const aiScene* scene = importer.ReadFile(filepath, 
+		aiProcess_Triangulate |
 		aiProcess_FlipUVs |
 		aiProcess_CalcTangentSpace);
 
@@ -66,7 +67,7 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 					uniqueTextureIndex = std::distance(filenames.begin(), it);
 			}
 
-			filenames.push_back(wideString);
+			//filenames.push_back(wideString);
 		}
 		};
 
@@ -81,9 +82,10 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 		node->vertexType = node->vertexType | Specular;
 		ProcessMaterials(aiTextureType::aiTextureType_SPECULAR, node->specular, false);
 	}
-	
+	bool bUseNormalMap = false;
 	if (material->GetTextureCount(aiTextureType::aiTextureType_NORMALS) > 0)
 	{
+		bUseNormalMap = true;
 		node->vertexType = node->vertexType | NormalMap;
 		ProcessMaterials(aiTextureType::aiTextureType_NORMALS, node->normalMap, false);
 	}
@@ -101,6 +103,15 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 	{
 		node->vertices->GetLayout().Append({ ElementType::Normal });
 	}
+	if (mesh->HasTangentsAndBitangents() && bUseNormalMap)
+	{
+		node->vertices->GetLayout().Append({ ElementType::Tangent });
+		node->vertices->GetLayout().Append({ ElementType::Bitangent });
+	}
+	else
+	{
+		bUseNormalMap = false;
+	}
 	
 
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) 
@@ -112,54 +123,30 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 		auto i1 = face.mIndices[1];
 		auto i2 = face.mIndices[2];
 		Vertex v0, v1, v2;
-		if (mesh->mNumVertices > 0u)
+
+		for (int i = 0; i < face.mNumIndices; i++)
 		{
-			v0.pos.x = mesh->mVertices[i0].x;
-			v0.pos.y = mesh->mVertices[i0].y;
-			v0.pos.z = mesh->mVertices[i0].z;
-			v1.pos.x = mesh->mVertices[i1].x;
-			v1.pos.y = mesh->mVertices[i1].y;
-			v1.pos.z = mesh->mVertices[i1].z;
-			v2.pos.x = mesh->mVertices[i2].x;
-			v2.pos.y = mesh->mVertices[i2].y;
-			v2.pos.z = mesh->mVertices[i2].z;
-
+			auto index = face.mIndices[i];
+			if (mesh->mNumVertices > 0u)
+			{
+				node->vertices->Store(mesh->mVertices[index]);
+			}
+			if (mesh->mNumUVComponents[0] > 0u)
+			{
+				node->vertices->Store(mesh->mTextureCoords[0][index].x);
+				node->vertices->Store(mesh->mTextureCoords[0][index].y);
+				node->vertices->Store(uniqueTextureIndex);
+			}
+			if (mesh->HasNormals())
+			{
+				node->vertices->Store(mesh->mNormals[index]);
+			}	
+			if (bUseNormalMap)
+			{
+				node->vertices->Store(mesh->mTangents[index]);
+				node->vertices->Store(mesh->mBitangents[index]);
+			}
+			node->indices.push_back(index);
 		}
-
-		if (mesh->mNumUVComponents[0] > 0u)
-		{
-			v0.texCoord.x = mesh->mTextureCoords[0][i0].x;
-			v0.texCoord.y = mesh->mTextureCoords[0][i0].y;
-			v0.texCoord.z = uniqueTextureIndex;
-			v1.texCoord.x = mesh->mTextureCoords[0][i1].x;
-			v1.texCoord.y = mesh->mTextureCoords[0][i1].y;
-			v1.texCoord.z = uniqueTextureIndex;
-			v2.texCoord.x = mesh->mTextureCoords[0][i2].x;
-			v2.texCoord.y = mesh->mTextureCoords[0][i2].y;
-			v2.texCoord.z = uniqueTextureIndex;
-		}
-
-		if (mesh->HasNormals())
-		{
-			v0.normal.x = mesh->mNormals[i0].x;
-			v0.normal.y = mesh->mNormals[i0].y;
-			v0.normal.z = mesh->mNormals[i0].z;
-			v1.normal.x = mesh->mNormals[i1].x;
-			v1.normal.y = mesh->mNormals[i1].y;
-			v1.normal.z = mesh->mNormals[i1].z;
-			v2.normal.x = mesh->mNormals[i2].x;
-			v2.normal.y = mesh->mNormals[i2].y;
-			v2.normal.z = mesh->mNormals[i2].z;
-		}
-		
-
-		node->vertices->Store(v0);
-		node->vertices->Store(v1);
-		node->vertices->Store(v2);
-		node->indices.push_back(i0);
-		node->indices.push_back(i1);
-		node->indices.push_back(i2);
-	}
-
-	
+	}	
 }

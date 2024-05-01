@@ -190,29 +190,16 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
         auto firstIndex = fbxMesh->GetPolygonVertex(i, 0);
         auto secondIndex = fbxMesh->GetPolygonVertex(i, 1);
         auto thirdIndex = fbxMesh->GetPolygonVertex(i, 2);
-        Vertex v0, v1, v2;
-        v0.pos = positions[firstIndex];
-        v0.texCoord = DirectX::XMFLOAT3(texCoords[i * 3].x, (1.0f-texCoords[i * 3].y), uniqueTextureIndex);
-        v0.normal = normals[i*3];
-        v1.pos = positions[secondIndex];
-        v1.texCoord = DirectX::XMFLOAT3(texCoords[i * 3 + 1].x, (1.0f - texCoords[i * 3+1].y), uniqueTextureIndex);
-        v1.normal = normals[i*3+1];
-        v2.pos = positions[thirdIndex];
-        v2.texCoord = DirectX::XMFLOAT3(texCoords[i * 3 + 2].x, (1.0f - texCoords[i * 3+2].y), uniqueTextureIndex);
-        v2.normal = normals[i*3+2];
 
-        node->vertices->Store(v0.pos);
-        node->vertices->Store(v0.texCoord);
-        node->vertices->Store(v0.normal);
-        node->vertices->Store(v1.pos);
-        node->vertices->Store(v1.texCoord);
-        node->vertices->Store(v1.normal);
-        node->vertices->Store(v2.pos);
-        node->vertices->Store(v2.texCoord);
-        node->vertices->Store(v2.normal);
-        //node->vertex->Store(v0);
-        //node->vertex->Store(v1);
-        //node->vertex->Store(v2);
+        node->vertices->Store(positions[firstIndex]);
+        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3].x, (1.0f-texCoords[i * 3].y), uniqueTextureIndex));
+        node->vertices->Store(normals[i*3]);
+        node->vertices->Store(positions[secondIndex]);
+        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3 + 1].x, (1.0f - texCoords[i * 3+1].y), uniqueTextureIndex));
+        node->vertices->Store(normals[i*3+1]);
+        node->vertices->Store(positions[thirdIndex]);
+        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3 + 2].x, (1.0f - texCoords[i * 3+2].y), uniqueTextureIndex));
+        node->vertices->Store(normals[i*3+2]);
 
         node->indices.push_back(i * 3);
         node->indices.push_back(i * 3 + 1);

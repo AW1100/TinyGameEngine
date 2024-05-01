@@ -6,7 +6,9 @@ enum ElementType
 {
 	Position3D,
 	Texture2D,
-	Normal
+	Normal,
+	Tangent,
+	Bitangent
 };
 
 class VertexLayout
@@ -32,6 +34,14 @@ public:
 			case Normal:
 				sizeInByte = 12;
 				semantic = "Normal";
+				break;
+			case Tangent:
+				sizeInByte = 12;
+				semantic = "Tangent";
+				break;
+			case Bitangent:
+				sizeInByte = 12;
+				semantic = "Bitangent";
 				break;
 			default:
 				sizeInByte = 0;

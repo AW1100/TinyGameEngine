@@ -585,8 +585,11 @@
     <FxCompile Include="Shaders\SolidVS.hlsl" />
     <FxCompile Include="Shaders\SolidPS.hlsl" />
     <FxCompile Include="Shaders\ToonPS.hlsl" />
-    <FxCompile Include="Shaders\BlinnPhongDSPS.hlsl" />
-    <FxCompile Include="Shaders\BlinnPhongDPS.hlsl" />
+    <FxCompile Include="Shaders\BlinnPhongDiffSpecPS.hlsl" />
+    <FxCompile Include="Shaders\BlinnPhongDiffPS.hlsl" />
+    <FxCompile Include="Shaders\BlinnPhongDiffSpecNormPS.hlsl" />
+    <FxCompile Include="Shaders\PhongNormalMapVS.hlsl" />
+    <FxCompile Include="Shaders\BlinnPhongDiffNormPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

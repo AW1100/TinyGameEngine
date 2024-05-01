@@ -21,20 +21,23 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         }));
     //AddBind(std::make_unique<VertexBuffer>(gfx, node->vertices));
 
-    auto pvs = SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexShader>(n)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<VertexShader>(gfx, L"PhongVS.cso");
+    ShaderLookupTable table;
+    
+    auto& targetVS = table.GetVertexShaderfilename(type, vertexType);
+    auto vs = StringToWideString(targetVS.c_str());
+
+    auto pvs = SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexShader>(targetVS)), [&]()-> std::shared_ptr<Bindable> {
+        return std::make_shared<VertexShader>(gfx, vs);
         });
     auto sp = std::dynamic_pointer_cast<VertexShader>(pvs);
     auto pvsbc = sp->GetBytecode();
     AddBind(std::move(sp));
 
-    ShaderLookupTable table;
-    auto& targetPS = table.GetShaderfilename(type, vertexType);
-
-    auto ws = StringToWideString(targetPS.c_str());
+    auto& targetPS = table.GetPixelShaderfilename(type, vertexType);
+    auto ps = StringToWideString(targetPS.c_str());
 
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<PixelShader>(targetPS)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<PixelShader>(gfx, ws);
+        return std::make_shared<PixelShader>(gfx, ps);
         }));
 
     AddIndexBuffer(std::dynamic_pointer_cast<IndexBuffer>(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<IndexBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
@@ -50,10 +53,14 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     {
         texFiles.insert(texFiles.end(), node->specular.begin(), node->specular.end());
     }
+    if (node->normalMap.size() > 0)
+    {
+        texFiles.insert(texFiles.end(), node->normalMap.begin(), node->normalMap.end());
+    }
     if (texFiles.size() > 0)
     {
         AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Texture>(n)), [&]()-> std::shared_ptr<Bindable> {
-            return std::make_shared<Texture>(gfx, node->diffuse);
+            return std::make_shared<Texture>(gfx, texFiles);
             }));
     }
     
@@ -80,7 +87,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         { "TexCoord",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
         { "Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
     };*/
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<InputLayout>()), [&]()-> std::shared_ptr<Bindable> {
+    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<InputLayout>(n)), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<InputLayout>(gfx, ied, pvsbc);
         }));
 

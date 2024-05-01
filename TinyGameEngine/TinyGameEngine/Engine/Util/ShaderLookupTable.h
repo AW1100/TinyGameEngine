@@ -31,21 +31,28 @@ class ShaderLookupTable
 public:
 	ShaderLookupTable()
 	{
-		table[std::make_pair(MeshType::StylishCharacterA, Diffuse)] = "ToonPS.cso";
-		table[std::make_pair(MeshType::RealisticObjectA, Diffuse)] = "BlinnPhongDPS.cso";
-		table[std::make_pair(MeshType::RealisticObjectA, Diffuse | Specular)] = "BlinnPhongDSPS.cso";
-		table[std::make_pair(MeshType::RealisticObjectA, Diffuse | NormalMap)] = "BlinnPhongDSPS.cso";
-		table[std::make_pair(MeshType::RealisticObjectA, Diffuse | Specular | NormalMap)] = "BlinnPhongDSPS.cso";
-		table[std::make_pair(MeshType::RealisticObjectA, None)] = "BlinnPhongDSPS.cso";
+		table[std::make_pair(MeshType::RealisticObjectA, None)] = { "PhongVS.cso","SolidPS.cso" };
+		table[std::make_pair(MeshType::StylishCharacterA, Diffuse)] = { "PhongVS.cso","ToonPS.cso" };
+		table[std::make_pair(MeshType::RealisticObjectA, Diffuse)] = { "PhongVS.cso","BlinnPhongDiffPS.cso" };
+		table[std::make_pair(MeshType::RealisticObjectA, Diffuse | Specular)] = { "PhongVS.cso","BlinnPhongDiffSpecPS.cso" };
+		table[std::make_pair(MeshType::RealisticObjectA, Diffuse | NormalMap)] = { "PhongNormalMapVS.cso","BlinnPhongDiffNormPS.cso" };
+		table[std::make_pair(MeshType::RealisticObjectA, Diffuse | Specular | NormalMap)] = { "PhongNormalMapVS.cso","BlinnPhongDiffSpecNormPS.cso" };
 	} 
 
-	const std::string& GetShaderfilename(MeshType mt, unsigned int vt) const
+	const std::string& GetVertexShaderfilename(MeshType mt, unsigned int vt) const
 	{
 		auto target = table.find(std::make_pair(mt, vt));
 		assert(target != table.end());
-		return target->second;
+		return target->second.first;
+	}
+
+	const std::string& GetPixelShaderfilename(MeshType mt, unsigned int vt) const
+	{
+		auto target = table.find(std::make_pair(mt, vt));
+		assert(target != table.end());
+		return target->second.second;
 	}
 
 private:
-	std::unordered_map<std::pair<MeshType, int>, std::string, PairHash> table;
+	std::unordered_map<std::pair<MeshType, int>, std::pair<std::string, std::string>, PairHash> table;
 };

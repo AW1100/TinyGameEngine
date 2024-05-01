@@ -50,7 +50,7 @@ float4 main(PixelInputType input) : SV_Target
         const float3 halfVector = normalize(vToL + vToC);
         const float specular = pow(max(0.0f, dot(halfVector, input.normal)), alpha);
         const float4 specularColor = texArray.Sample(texSampler, float3(input.tex.x, input.tex.y, input.tex.z + 1.0f));
-        output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor * specular);
+        output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor.xyz * specular);
     }
 
     return float4(output, 1.0f);
