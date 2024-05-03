@@ -19,9 +19,9 @@ VSOut main(float3 pos : POSITION, float3 tex : TEXCOORD0, float3 n : NORMAL, flo
     VSOut vso;
     vso.worldPos = mul(float4(pos, 1.0f), model);
     vso.tex = tex;
-    vso.normal = mul(n, (float3x3) model);
-    vso.tan = mul(tan, (float3x3) model);
-    vso.bitan = mul(bitan, (float3x3) model);
+    vso.normal = normalize(mul(n, (float3x3) model));
+    vso.tan = normalize(mul(tan, (float3x3) model));
+    vso.bitan = normalize(mul(bitan, (float3x3) model));
     vso.pos = mul(float4(pos, 1.0f), modelViewProj);
     return vso;
 }

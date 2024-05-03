@@ -15,7 +15,7 @@ public:
 	void LoadMeshesByFilename(const char* filepath, std::shared_ptr<class MeshNode> rootNode);
 	void ProcessFbxTree(FbxNode* fbxnode, std::shared_ptr<MeshNode> node);
 	void ConstructMesh(FbxNode* fbxMesh, std::shared_ptr<MeshNode> node);
-	void GetMaterialTexture(const FbxProperty& prop, std::shared_ptr<MeshNode> node, int& uniqueTextureIndex);
+	void GetMaterialTexture(const FbxProperty& prop, std::vector<const wchar_t*>& texfilenames, int& uniqueTextureIndex);
 private:
 	FbxManager* lSdkManager;
 	FbxImporter* lImporter;

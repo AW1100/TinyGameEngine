@@ -13,13 +13,11 @@
 #include "../Util/Misc.h"
 
 Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n, unsigned int vertexType)
+    :translation(trans)
 {
-    translation = trans;
-    //auto key = GenerateUID<VertexBuffer>(n);
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexBuffer>(n)), [&]()-> std::shared_ptr<Bindable>{
         return std::make_shared<VertexBuffer>(gfx, node->vertices->GetContents(), node->vertices->GetStride());
         }));
-    //AddBind(std::make_unique<VertexBuffer>(gfx, node->vertices));
 
     ShaderLookupTable table;
     
@@ -81,12 +79,6 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         offset += elems[i].sizeInByte;
     }
 
-    /*const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
-    {
-        { "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-        { "TexCoord",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
-        { "Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
-    };*/
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<InputLayout>(n)), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<InputLayout>(gfx, ied, pvsbc);
         }));
@@ -98,16 +90,12 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<TransformConstantBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
         }));
-    /*PixelConstantBuffer<DirectX::XMMATRIX> pcb(gfx, 1);
-    pcb.Update(gfx, GetModelMatrix());*/
 
 }
 
 Mesh::~Mesh()
 {
-    /*std::ostringstream oss;
-    oss << "Box Destructor Called." << "\n";
-    OutputDebugStringA(oss.str().c_str());*/
+
 }
 
 void Mesh::Update(float dt)

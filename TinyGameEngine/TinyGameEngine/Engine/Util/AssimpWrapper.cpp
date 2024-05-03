@@ -8,7 +8,9 @@ void AssimpWrapper::LoadMeshesByFilename(const char* filepath, std::shared_ptr<M
 	const aiScene* scene = importer.ReadFile(filepath, 
 		aiProcess_Triangulate |
 		aiProcess_FlipUVs |
-		aiProcess_CalcTangentSpace);
+		//aiProcess_ConvertToLeftHanded |
+		aiProcess_CalcTangentSpace
+	);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		Log::GetInstance().AddLog(std::string("Failed to load " + std::string(filepath)).c_str());
@@ -112,17 +114,11 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 	{
 		bUseNormalMap = false;
 	}
-	
 
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) 
 	{
 		aiFace face = mesh->mFaces[i];
 		assert(face.mNumIndices == 3);
-
-		auto i0 = face.mIndices[0];
-		auto i1 = face.mIndices[1];
-		auto i2 = face.mIndices[2];
-		Vertex v0, v1, v2;
 
 		for (int i = 0; i < face.mNumIndices; i++)
 		{
@@ -148,5 +144,62 @@ void AssimpWrapper::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_
 			}
 			node->indices.push_back(index);
 		}
-	}	
+	}
+
+
+	/*for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace face = mesh->mFaces[i];
+		auto index0 = face.mIndices[0];
+		auto index1 = face.mIndices[1];
+		auto index2 = face.mIndices[2];
+		auto p0 = mesh->mVertices[index0];
+		auto t0 = mesh->mTextureCoords[0][index0];
+		auto n0 = mesh->mNormals[index0];
+		auto p1 = mesh->mVertices[index1];
+		auto t1 = mesh->mTextureCoords[0][index1];
+		auto n1 = mesh->mNormals[index1];
+		auto p2 = mesh->mVertices[index2];
+		auto t2 = mesh->mTextureCoords[0][index2];
+		auto n2 = mesh->mNormals[index2];
+
+
+		auto e0 = p1 - p0;
+		auto e1 = p2 - p0;
+		auto d0 = t1 - t0;
+		auto d1 = t2 - t0;
+		float invDet = 1.0f / (d0.x * d1.y - d1.x * d0.y);
+		auto tangent = invDet * (d1.y * e0 - d0.y * e1);
+		auto bitangent = invDet * (-d1.x * e0 + d0.x * e1);
+		
+		node->vertices->Store(p0);
+		node->vertices->Store(t0);
+		node->vertices->Store(n0);
+		if (bUseNormalMap)
+		{
+			node->vertices->Store(tangent);
+			node->vertices->Store(bitangent);
+		}
+		node->vertices->Store(p1);
+		node->vertices->Store(t1);
+		node->vertices->Store(n1);
+		if (bUseNormalMap)
+		{
+			node->vertices->Store(tangent);
+			node->vertices->Store(bitangent);
+		}
+		node->vertices->Store(p2);
+		node->vertices->Store(t2);
+		node->vertices->Store(n2);
+		if (bUseNormalMap)
+		{
+			node->vertices->Store(tangent);
+			node->vertices->Store(bitangent);
+		}
+
+		node->indices.push_back(index0);
+		node->indices.push_back(index1);
+		node->indices.push_back(index2);
+	}*/
+	
 }

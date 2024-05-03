@@ -36,7 +36,7 @@ float4 main(PixelInputType input) : SV_Target
     
     const float3x3 tanToWorld = float3x3(normalize(input.tan), normalize(input.bitan), normalize(input.normal));
     const float3 norm = texArray.Sample(texSampler, float3(input.tex.x, input.tex.y, input.tex.z + 2.0f)).xyz;
-    const float3 n = normalize(mul(float3(norm.x * 2.0f - 1.0f, -norm.y * 2.0f + 1.0f, norm.z), tanToWorld));
+    float3 n = normalize(mul(float3(norm.x * 2.0f - 1.0f, -norm.y * 2.0f + 1.0f, norm.z), tanToWorld));
     
     float distance = length(lightPos.xyz - input.worldPos);
     float attenuation = 1.0f / (attConst + attLin * distance + attQuad * distance * distance);
@@ -46,19 +46,16 @@ float4 main(PixelInputType input) : SV_Target
     
     const float3 vToC = normalize(eyePos.xyz - input.worldPos);
     
-    float3 output = { 0.0f, 0.0f, 0.0f };
-    if (abs(diffuse - 0.0f) < threshold)
-    {
-        output += ambient;
-    }
-    else
+    float3 output = ambient;
+    if (abs(diffuse - 0.0f) > threshold)
     {
         const float3 halfVector = normalize(vToL + vToC);
         const float specular = pow(max(0.0f, dot(halfVector, n)), alpha);
         const float4 specularColor = texArray.Sample(texSampler, float3(input.tex.x, input.tex.y, input.tex.z + 1.0f));
-        output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor.xyz * specular);
+        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor.xyz * specular);
     }
 
-    //return float4(output, 1.0f);
-    return float4((n * 0.5f) + 0.5f, 1.0f);
+    return float4(output, 1.0f);
+    //return float4(norm, 1.0f);
+    //return float4((n * 0.5f) + 0.5f, 1.0f);
 }

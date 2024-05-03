@@ -41,16 +41,12 @@ float4 main(PixelInputType input) : SV_Target
     
     const float3 vToC = normalize(eyePos.xyz - input.worldPos);
     
-    float3 output = { 0.0f, 0.0f, 0.0f };
-    if (abs(diffuse - 0.0f) < threshold)
-    {
-        output += ambient;
-    }
-    else
+    float3 output = ambient;
+    if (abs(diffuse - 0.0f) > threshold)
     {
         const float3 halfVector = normalize(vToL + vToC);
         const float specular = pow(max(0.0f, dot(halfVector, input.normal)), alpha);
-        output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular);
+        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular);
     }
 
     return float4(output, 1.0f);

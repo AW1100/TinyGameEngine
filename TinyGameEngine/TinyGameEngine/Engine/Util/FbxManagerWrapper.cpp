@@ -163,24 +163,33 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
                 if (diffuseProp.GetSrcObjectCount<FbxTexture>() > 0)
                 {
                     node->vertexType = node->vertexType | Diffuse;
-                    GetMaterialTexture(diffuseProp, node, uniqueTextureIndex);
+                    GetMaterialTexture(diffuseProp, node->diffuse, uniqueTextureIndex);
                 }
                 
 
                 FbxProperty specularProp = material->FindProperty(FbxSurfaceMaterial::sSpecular);
-                GetMaterialTexture(specularProp, node, uniqueTextureIndex);
+                if (specularProp.GetSrcObjectCount<FbxTexture>() > 0)
+                {
+                    int temp = 0;
+                    GetMaterialTexture(specularProp, node->specular, temp);
+                }
+                
 
-                FbxProperty emissiveProp = material->FindProperty(FbxSurfaceMaterial::sEmissive);
-                GetMaterialTexture(emissiveProp, node, uniqueTextureIndex);
+                //FbxProperty emissiveProp = material->FindProperty(FbxSurfaceMaterial::sEmissive);
+                //GetMaterialTexture(emissiveProp, node, uniqueTextureIndex);
 
                 FbxProperty normalProp = material->FindProperty(FbxSurfaceMaterial::sNormalMap);
-                GetMaterialTexture(normalProp, node, uniqueTextureIndex);
+                if (normalProp.GetSrcObjectCount<FbxTexture>() > 0)
+                {
+                    int temp = 0;
+                    GetMaterialTexture(normalProp, node->normalMap, temp);
+                }
+              
+                //FbxProperty reflectionProp = material->FindProperty(FbxSurfaceMaterial::sReflection);
+                //GetMaterialTexture(reflectionProp, node, uniqueTextureIndex);
 
-                FbxProperty reflectionProp = material->FindProperty(FbxSurfaceMaterial::sReflection);
-                GetMaterialTexture(reflectionProp, node, uniqueTextureIndex);
-
-                FbxProperty bumpProp = material->FindProperty(FbxSurfaceMaterial::sBump);
-                GetMaterialTexture(bumpProp, node, uniqueTextureIndex);
+                //FbxProperty bumpProp = material->FindProperty(FbxSurfaceMaterial::sBump);
+                //GetMaterialTexture(bumpProp, node, uniqueTextureIndex);
             }
         }
         
@@ -192,13 +201,13 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
         auto thirdIndex = fbxMesh->GetPolygonVertex(i, 2);
 
         node->vertices->Store(positions[firstIndex]);
-        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3].x, (1.0f-texCoords[i * 3].y), uniqueTextureIndex));
+        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3].x, (1.0f - texCoords[i * 3].y), uniqueTextureIndex));
         node->vertices->Store(normals[i*3]);
         node->vertices->Store(positions[secondIndex]);
-        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3 + 1].x, (1.0f - texCoords[i * 3+1].y), uniqueTextureIndex));
+        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3 + 1].x, (1.0f - texCoords[i * 3 + 1].y), uniqueTextureIndex));
         node->vertices->Store(normals[i*3+1]);
         node->vertices->Store(positions[thirdIndex]);
-        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3 + 2].x, (1.0f - texCoords[i * 3+2].y), uniqueTextureIndex));
+        node->vertices->Store(DirectX::XMFLOAT3(texCoords[i * 3 + 2].x, (1.0f - texCoords[i * 3 + 2].y), uniqueTextureIndex));
         node->vertices->Store(normals[i*3+2]);
 
         node->indices.push_back(i * 3);
@@ -208,7 +217,7 @@ void FbxManagerWrapper::ConstructMesh(FbxNode* fbxNode, std::shared_ptr<MeshNode
 
 }
 
-void FbxManagerWrapper::GetMaterialTexture(const FbxProperty& prop, std::shared_ptr<MeshNode> node, int& uniqueTextureIndex)
+void FbxManagerWrapper::GetMaterialTexture(const FbxProperty& prop, std::vector<const wchar_t *>& texfilenames, int& uniqueTextureIndex)
 {
 
 
@@ -224,17 +233,17 @@ void FbxManagerWrapper::GetMaterialTexture(const FbxProperty& prop, std::shared_
                 wchar_t* wideString = new wchar_t[bufferLen];
                 MultiByteToWideChar(CP_UTF8, 0, relativeFilename, -1, wideString, bufferLen);
 
-                auto it = std::find_if(node->diffuse.begin(), node->diffuse.end(), [wideString](const wchar_t* str) {
+                auto it = std::find_if(texfilenames.begin(), texfilenames.end(), [wideString](const wchar_t* str) {
                     return wcscmp(str, wideString) == 0;
                     });
-                if (it == node->diffuse.end())
+                if (it == texfilenames.end())
                 {
-                    node->diffuse.push_back(wideString);
-                    uniqueTextureIndex = node->diffuse.size();
+                    texfilenames.push_back(wideString);
+                    uniqueTextureIndex = texfilenames.size();
                 }
                 else
                 {
-                    uniqueTextureIndex = std::distance(node->diffuse.begin(), it);
+                    uniqueTextureIndex = std::distance(texfilenames.begin(), it);
 
                 }
             }
