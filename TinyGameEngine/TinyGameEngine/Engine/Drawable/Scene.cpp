@@ -15,45 +15,6 @@ std::mutex mtx;
 
 Scene::Scene(Graphics& gfx)
 {
-	/*auto LoadModels = [&]() -> void {
-		Log::GetInstance().AddLog("Loading meshes ...");
-		models.push_back(new Model("F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::Anima_Character));
-		models.push_back(new Model("F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::Scene));
-		Log::GetInstance().AddLog("Load Complete");
-		mtx.lock();
-		for (auto& m : models)
-		{
-			m->FindRenderables(objects, gfx);
-		}
-		mtx.unlock();
-		};
-
-	std::thread LoadWorker(LoadModels);
-	LoadWorker.detach();*/
-	/*struct Test
-	{
-		float x;
-		float y;
-		float z;
-	};
-	Test t0;
-	t0.x = 0.5;
-	t0.y = 1.5;
-	t0.z = 2.5;
-	VertexLayout v;
-	v.Append({ ElementType::Position3D });
-	v.Append({ ElementType::Texture2D });
-	v.Append({ ElementType::Normal });
-	DynamicVertex dv(std::move(v));
-	dv.Store(t0);
-	for (size_t i = 0; i < dv.contents.size(); i += 4)
-	{
-		float value;
-		std::memcpy(&value, &dv.contents[i], sizeof(float));
-		int pause = 0;
-
-	}*/
-
 	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::StylishCharacterA);
 	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::RealisticObjectA);
 
@@ -107,7 +68,7 @@ void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMF
 
 void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type)
 {
-	//Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
+	Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
 	Model* temp = new Model(filename, trans, type);
 	models.push_back(temp);
 	//Log::GetInstance().AddLog("Load Complete");

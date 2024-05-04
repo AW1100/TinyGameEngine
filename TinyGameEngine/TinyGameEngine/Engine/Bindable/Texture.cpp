@@ -50,7 +50,7 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
     //GetContext(gfx)->CopyResource(textureArray.Get(), firstTexture.Get());
     auto d1 = D3D11CalcSubresource(0, 0, textureDesc.MipLevels);
     GetContext(gfx)->CopySubresourceRegion(textureArray.Get(), D3D11CalcSubresource(0, 0, textureDesc.MipLevels), 0, 0, 0, firstTexture.Get(), 0, nullptr);
-    //GetContext(gfx)->UpdateSubresource(textureArray.Get(),0u,nullptr,)
+    //GetContext(gfx)->UpdateSubresource()
 
     int numMipmaps = CalculateNextTextureOffsetForMipmaping(textureDesc.Width, textureDesc.Height);
 
@@ -111,6 +111,7 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureArraySRV;
     hr = GetDevice(gfx)->CreateShaderResourceView(textureArray.Get(), &srvDesc, &textureArraySRV);
     if (FAILED(hr)) return; // Handle error
+
     GetContext(gfx)->GenerateMips(textureArraySRV.Get());
     // Store the SRV for use in rendering
     pTextureViews.push_back(textureArraySRV);

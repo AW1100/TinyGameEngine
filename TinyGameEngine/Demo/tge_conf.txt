@@ -1,1 +1,3 @@
 Point Light position reset.
+Loading F:/3DModels/fbx/kafkaW.fbx
+Loading F:/3DModels/obj/sponza.obj
