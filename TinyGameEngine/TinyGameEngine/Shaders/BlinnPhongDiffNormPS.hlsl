@@ -33,6 +33,7 @@ struct PixelInputType
 float4 main(PixelInputType input) : SV_Target
 {
     const float4 textureColor = texArray.Sample(texSampler, input.tex);
+    clip(textureColor.a < 0.1f ? -1 : 1);
     const float threshold = 0.0001f;
     
     const float3x3 tanToWorld = float3x3(normalize(input.tan), normalize(input.bitan), normalize(input.normal));
@@ -55,6 +56,6 @@ float4 main(PixelInputType input) : SV_Target
         output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular);
     }
 
-    return float4(output, 1.0f);
+    return float4(output, textureColor.a);
     //return float4((n * 0.5f) + 0.5f, 1.0f);
 }

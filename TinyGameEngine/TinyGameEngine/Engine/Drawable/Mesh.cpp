@@ -87,6 +87,10 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         }));
 
+    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Blender>(n)), [&]()-> std::shared_ptr<Bindable> {
+        return std::make_shared<Blender>(gfx, true);
+        }));
+
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<TransformConstantBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
         }));

@@ -10,3 +10,4 @@
 #include "Texture.h"
 #include "Sampler.h"
 #include "Rasterizer.h"
+#include "Blender.h"

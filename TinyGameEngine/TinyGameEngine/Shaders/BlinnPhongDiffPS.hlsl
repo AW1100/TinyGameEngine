@@ -49,5 +49,5 @@ float4 main(PixelInputType input) : SV_Target
         output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular);
     }
 
-    return float4(output, 1.0f);
+    return float4(output, textureColor.a);
 }
