@@ -42,6 +42,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<IndexBuffer>(gfx, node->indices);
         })));
     
+    bool useAlpha = false;
     std::vector<const wchar_t*> texFiles;
     if (node->diffuse.size() > 0)
     {
@@ -58,7 +59,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     if (texFiles.size() > 0)
     {
         AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Texture>(n)), [&]()-> std::shared_ptr<Bindable> {
-            return std::make_shared<Texture>(gfx, texFiles);
+            return std::make_shared<Texture>(gfx, texFiles, useAlpha);
             }));
     }
     
@@ -66,8 +67,8 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<Sampler>(gfx);
         }));
 
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>()), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<Rasterizer>(gfx);
+    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>(useAlpha ? "None" : "Back")), [&]()-> std::shared_ptr<Bindable> {
+        return std::make_shared<Rasterizer>(gfx, useAlpha);
         }));
 
     std::vector<D3D11_INPUT_ELEMENT_DESC> ied;

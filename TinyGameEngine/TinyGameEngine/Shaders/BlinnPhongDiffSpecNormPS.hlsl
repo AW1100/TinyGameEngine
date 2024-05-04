@@ -34,6 +34,10 @@ float4 main(PixelInputType input) : SV_Target
     const float4 textureColor = texArray.Sample(texSampler, input.tex);
     clip(textureColor.a < 0.1f ? -1 : 1);
     const float threshold = 0.0001f;
+    if (dot(eyePos.xyz - input.worldPos, input.normal) < 0.0f)
+    {
+        input.normal = -input.normal;
+    }
     
     const float3x3 tanToWorld = float3x3(normalize(input.tan), normalize(input.bitan), normalize(input.normal));
     const float3 norm = texArray.Sample(texSampler, float3(input.tex.x, input.tex.y, input.tex.z + 2.0f)).xyz;

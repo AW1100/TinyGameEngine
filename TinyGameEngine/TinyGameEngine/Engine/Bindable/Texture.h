@@ -5,7 +5,7 @@
 class Texture : public Bindable
 {
 public:
-	Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths);
+	Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths, bool& useAlpha);
 	int CalculateNextTextureOffsetForMipmaping(UINT width, UINT height);
 	void Bind(Graphics& gfx) override;
 

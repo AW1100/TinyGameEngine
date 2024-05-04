@@ -27,9 +27,9 @@ private:
 };
 
 template<typename T>
-std::string GenerateUID(const std::string& filename)
+std::string GenerateUID(const std::string& addition)
 {
-	return std::string(typeid(T).name()) + std::string("#") + filename;
+	return std::string(typeid(T).name()) + std::string("#") + addition;
 }
 
 template<typename T>

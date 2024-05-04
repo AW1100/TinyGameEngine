@@ -32,6 +32,10 @@ float4 main(PixelInputType input) : SV_Target
 {
     const float4 textureColor = texArray.Sample(texSampler, input.tex);
     const float threshold = 0.0001f;
+    if (dot(eyePos.xyz - input.worldPos, input.normal) < 0.0f)
+    {
+        input.normal = -input.normal;
+    }
     
     float distance = length(lightPos.xyz - input.worldPos);
     float attenuation = 1.0f / (attConst + attLin * distance + attQuad * distance * distance);

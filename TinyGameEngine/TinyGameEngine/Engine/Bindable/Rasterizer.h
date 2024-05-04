@@ -4,7 +4,7 @@
 class Rasterizer : public Bindable
 {
 public:
-	Rasterizer(Graphics& gfx);
+	Rasterizer(Graphics& gfx, bool useAlpha);
 	void Bind(Graphics& gfx) override;
 
 private:

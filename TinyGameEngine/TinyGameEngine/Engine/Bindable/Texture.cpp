@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
+Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths, bool& useAlpha)
 {
     HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     Microsoft::WRL::ComPtr<ID3D11Resource> firstResource;
@@ -32,6 +32,11 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths)
     hr = firstResource.As(&firstTexture);
     if (FAILED(hr)) return;
     firstTexture->GetDesc(&textureDesc);
+
+    if (textureDesc.Format == DXGI_FORMAT_B8G8R8A8_UNORM)
+    {
+        useAlpha = true;
+    }
 
     // Modify the texture description to create a texture array
     textureDesc.ArraySize = static_cast<UINT>(filepaths.size());
