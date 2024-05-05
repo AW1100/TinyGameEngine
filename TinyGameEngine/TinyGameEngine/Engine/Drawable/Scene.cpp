@@ -77,7 +77,7 @@ void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMF
 
 void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline)
 {
-	Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
+	//Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
 	Model* temp = new Model(filename, trans, type);
 	temp->UseOutline(outline);
 	models.push_back(temp);

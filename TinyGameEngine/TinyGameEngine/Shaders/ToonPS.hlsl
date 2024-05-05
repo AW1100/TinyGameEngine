@@ -35,11 +35,11 @@ float4 main(PixelInputType input) : SV_Target
     // Calculate the diffuse lighting factor.
     float diff = max(dot(input.normal, vToL), 0.0f);
     
-    if (abs(input.tex.z - 4.0f) < 0.01f)
-    {
-        return float4(0.5 * textureColor.xyz + 0.3 * max(dot(float3(0.0f,0.0f,-1.0f), vToL), 0.0f) * textureColor.xyz, 1.0f);
+    //if (abs(input.tex.z - 4.0f) < 0.01f)
+    //{
+    //    return float4(0.5 * textureColor.xyz + 0.3 * max(dot(float3(0.0f,0.0f,-1.0f), vToL), 0.0f) * textureColor.xyz, 1.0f);
 
-    }
+    //}
 
     const int levels = 3;
     diff = floor(diff * levels) / (levels - 1);
@@ -52,5 +52,5 @@ float4 main(PixelInputType input) : SV_Target
     float3 color = clamp(lerp(darkColor, lightColor, diff), 0.0f, 1.0f);
 
     // Return the final color.
-    return float4(0.5 * textureColor.xyz + 0.3 * attenuation * color, 1.0f);
+    return float4(0.8 * attenuation * textureColor.xyz + 0.2 * attenuation * color, 1.0f);
 }
