@@ -7,10 +7,12 @@
 class Mesh : public Drawable
 {
 public:
-	Mesh(Graphics& gfx, std::shared_ptr<class MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n, unsigned int vertexType);
+	Mesh(Graphics& gfx, std::shared_ptr<class MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n, unsigned int vertexType, bool useOutline);
 	virtual ~Mesh() override;
 	void Update(float dt) override;
 	DirectX::XMMATRIX GetModelMatrix() const override;
+	void DrawOutline(Graphics& gfx);
+	inline bool IsOutlineEnabled() { return outlineEnabled; }
 
 private:
 	float r = 0.0f;
@@ -29,4 +31,7 @@ private:
 	float dchi = 0.0f;
 
 	DirectX::XMFLOAT3 translation;
+	bool outlineEnabled = false;
+	bool outlining = false;
+	std::vector<std::shared_ptr<Bindable>> outlineBinds;
 };

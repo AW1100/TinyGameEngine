@@ -46,7 +46,7 @@ void Model::Traverse(std::shared_ptr<MeshNode> node, std::vector<Drawable*>& mes
 {
 	if (node->Renderable())
 	{
-		meshes.push_back(new Mesh(gfx, node, translation, meshType, node->name, node->vertexType));
+		meshes.push_back(new Mesh(gfx, node, translation, meshType, node->name, node->vertexType, useOutline));
 	}
 	if (node->GetChildNodes().size() == 0)
 	{

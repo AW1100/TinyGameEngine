@@ -12,8 +12,8 @@
 #include "Model.h"
 #include "../Util/Misc.h"
 
-Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n, unsigned int vertexType)
-    :translation(trans)
+Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 trans, MeshType type, const std::string& n, unsigned int vertexType, bool useOutline)
+    :translation(trans), outlineEnabled(useOutline)
 {
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexBuffer>(n)), [&]()-> std::shared_ptr<Bindable>{
         return std::make_shared<VertexBuffer>(gfx, node->vertices->GetContents(), node->vertices->GetStride());
@@ -96,6 +96,35 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
         }));
 
+    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Stencil>(n)), [&]()-> std::shared_ptr<Bindable> {
+        return std::make_shared<Stencil>(gfx, useOutline ? Stencil::Mode::Write : Stencil::Mode::Off);
+        }));
+
+
+    if (useOutline)
+    {
+        // Outline
+        outlineBinds.push_back(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<VertexBuffer>(gfx, node->vertices->GetContents(), node->vertices->GetStride());
+            }));
+
+        sp = std::make_shared<VertexShader>(gfx, L"SolidVS.cso");
+        pvsbc = sp->GetBytecode();
+        outlineBinds.push_back(std::move(sp));
+        outlineBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"OutlinePS.cso")));
+        outlineBinds.push_back(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<IndexBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<IndexBuffer>(gfx, node->indices);
+            }));
+        outlineBinds.push_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
+        outlineBinds.push_back(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Topology>()), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            }));
+        outlineBinds.push_back(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<TransformConstantBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
+            }));
+        outlineBinds.push_back(std::make_shared<Stencil>(gfx, Stencil::Mode::Mask));
+    }
+    
 }
 
 Mesh::~Mesh()
@@ -115,9 +144,25 @@ void Mesh::Update(float dt)
 
 DirectX::XMMATRIX Mesh::GetModelMatrix() const
 {
-    return //DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, DirectX::XMConvertToRadians(180.0f))*
+    auto modelMatrix = //DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, DirectX::XMConvertToRadians(180.0f))*
         //DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(-90.0f), 0.0f, 0.0f)*
         DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
-        //DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
+    //DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
+    if (outlining)
+    {
+        modelMatrix = DirectX::XMMatrixTranslation(0.0f, -0.005f, 0.0f) * DirectX::XMMatrixScaling(1.01f, 1.01f, 1.01f) * modelMatrix;
+    }
+    return modelMatrix;
+}
+
+void Mesh::DrawOutline(Graphics& gfx)
+{
+    outlining = true;
+    for (auto& bind : outlineBinds)
+    {
+        bind->Bind(gfx);
+    }
+    gfx.DrawIndexed(pIndexBuffer->GetCount());
+    outlining = false;
 }
 

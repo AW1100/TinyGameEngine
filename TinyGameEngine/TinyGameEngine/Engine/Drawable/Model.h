@@ -16,6 +16,7 @@ public:
 	std::vector<std::shared_ptr<MeshNode>>& GetChildNodes();
 	inline bool Renderable() const { return renderable; }
 	inline void SetRenderable() { renderable = true; }
+	
 
 private:
 	std::vector<std::shared_ptr<MeshNode>> childNodes;
@@ -30,6 +31,7 @@ public:
 	std::vector<const wchar_t*> normalMap;
 	std::string name;
 	unsigned int vertexType = None;
+
 };
 
 class Model
@@ -40,9 +42,11 @@ public:
 	void FindRenderables(std::vector<Drawable*>& meshes, Graphics& gfx);
 	void Traverse(std::shared_ptr<MeshNode> rootNode, std::vector<Drawable*>& meshes, Graphics& gfx);
 	void SetTranslation(const DirectX::XMFLOAT3& pos);
+	inline void UseOutline(bool use) { useOutline = use; }
 
 private:
 	std::shared_ptr<MeshNode> rootNode = nullptr;
 	DirectX::XMFLOAT3 translation;
 	MeshType meshType;
+	bool useOutline = false;
 };

@@ -15,8 +15,8 @@ public:
 	~Scene();
 	void UpdateFrame(float dt, Graphics& gfx);
 	inline std::vector<PointLight*>& GetLights() { return lights; }
-	void CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type);
-	void LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type);
+	void CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
+	void LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
 
 protected:
 	std::vector<class Model*> models;

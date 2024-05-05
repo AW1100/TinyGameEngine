@@ -11,3 +11,4 @@
 #include "Sampler.h"
 #include "Rasterizer.h"
 #include "Blender.h"
+#include "Stencil.h"

@@ -80,16 +80,16 @@ void Graphics::CreateSwapChain(HWND hWnd)
 		&pTarget
 	));
 
-	// create depth stensil state
-	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-	dsDesc.DepthEnable = TRUE;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	ComPtr<ID3D11DepthStencilState> pDSState;
-	DX::ThrowIfFailed(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
+	//// create depth stensil state
+	//D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	//dsDesc.DepthEnable = TRUE;
+	//dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	//dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	//ComPtr<ID3D11DepthStencilState> pDSState;
+	//DX::ThrowIfFailed(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
 
-	// bind depth state
-	pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
+	//// bind depth state
+	//pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
 
 	// create depth stensil texture
 	ComPtr<ID3D11Texture2D> pDepthStencil;
@@ -98,7 +98,7 @@ void Graphics::CreateSwapChain(HWND hWnd)
 	descDepth.Height = HEIGHT;
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
-	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	descDepth.SampleDesc.Count = SAMPLES;
 	descDepth.SampleDesc.Quality = msaaQuality;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -107,7 +107,7 @@ void Graphics::CreateSwapChain(HWND hWnd)
 
 	// create view of depth stensil texture
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
-	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 	descDSV.Texture2D.MipSlice = 0u;
 	DX::ThrowIfFailed(pDevice->CreateDepthStencilView(
@@ -137,7 +137,7 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red,green,blue,1.0f };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
-	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }
 
 void Graphics::Draw(UINT count)

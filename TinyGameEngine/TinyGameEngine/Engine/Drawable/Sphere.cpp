@@ -31,6 +31,8 @@ Sphere::Sphere(Graphics& gfx, float radius)
     AddBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
     AddBind(std::make_unique<TransformConstantBuffer>(gfx, *this, 0));
+
+    AddBind(std::make_unique<Stencil>(gfx, Stencil::Mode::Off));
 }
 
 Sphere::~Sphere()
