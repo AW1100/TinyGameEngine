@@ -108,7 +108,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
             return std::make_shared<VertexBuffer>(gfx, node->vertices->GetContents(), node->vertices->GetStride());
             }));
 
-        sp = std::make_shared<VertexShader>(gfx, L"SolidVS.cso");
+        sp = std::make_shared<VertexShader>(gfx, L"OutlineVS.cso");
         pvsbc = sp->GetBytecode();
         outlineBinds.push_back(std::move(sp));
         outlineBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"OutlinePS.cso")));

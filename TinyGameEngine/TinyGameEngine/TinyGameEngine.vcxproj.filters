@@ -603,6 +603,7 @@
     <FxCompile Include="Shaders\PhongNormalMapVS.hlsl" />
     <FxCompile Include="Shaders\BlinnPhongDiffNormPS.hlsl" />
     <FxCompile Include="Shaders\OutlinePS.hlsl" />
+    <FxCompile Include="Shaders\OutlineVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">
