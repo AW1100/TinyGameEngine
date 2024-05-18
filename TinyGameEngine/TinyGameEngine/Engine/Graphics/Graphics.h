@@ -9,7 +9,7 @@ using namespace Microsoft::WRL;
 
 class Graphics
 {
-	friend class Bindable;
+	friend class GraphicResource;
 public:
 	Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete;

@@ -76,7 +76,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     auto& elems = node->vertices->GetLayout().elements;
     for (int i = 0; i < elems.size(); i++)
     {
-        ied.push_back({ elems[i].semantic,0,DXGI_FORMAT_R32G32B32_FLOAT,0,offset,D3D11_INPUT_PER_VERTEX_DATA ,0 });
+        ied.emplace_back(elems[i].semantic,0,DXGI_FORMAT_R32G32B32_FLOAT,0,offset,D3D11_INPUT_PER_VERTEX_DATA ,0);
         offset += elems[i].sizeInByte;
     }
 

@@ -1,13 +1,10 @@
 #pragma once
-#include "../Graphics/Graphics.h"
+#include "GraphicResource.h"
 
-class Bindable
+class Bindable : public GraphicResource
 {
 public:
 	virtual void Bind(Graphics& gfx) = 0;
 	virtual ~Bindable() = default;
 
-protected:
-	static ID3D11DeviceContext* GetContext(Graphics& gfx);
-	static ID3D11Device* GetDevice(Graphics& gfx);
 };

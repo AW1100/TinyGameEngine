@@ -10,6 +10,9 @@
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
+#include "../Bindable/DepthStencil.h"
+#include "../Bindable/RenderTarget.h"
+
 Graphics::Graphics(HWND hWnd)
 {
 	CreateDevice();
@@ -80,17 +83,6 @@ void Graphics::CreateSwapChain(HWND hWnd)
 		&pTarget
 	));
 
-	//// create depth stensil state
-	//D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-	//dsDesc.DepthEnable = TRUE;
-	//dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	//dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	//ComPtr<ID3D11DepthStencilState> pDSState;
-	//DX::ThrowIfFailed(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
-
-	//// bind depth state
-	//pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
-
 	// create depth stensil texture
 	ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
@@ -111,7 +103,7 @@ void Graphics::CreateSwapChain(HWND hWnd)
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 	descDSV.Texture2D.MipSlice = 0u;
 	DX::ThrowIfFailed(pDevice->CreateDepthStencilView(
-		pDepthStencil.Get(), &descDSV, &pDSV
+		pDepthStencil.Get(), nullptr, &pDSV
 	));
 
 	// bind depth stensil view to OM

@@ -170,10 +170,13 @@
     <ClInclude Include="Engine\Bindable\Bindable.h" />
     <ClInclude Include="Engine\Bindable\Blender.h" />
     <ClInclude Include="Engine\Bindable\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Bindable\DepthStencil.h" />
+    <ClInclude Include="Engine\Bindable\GraphicResource.h" />
     <ClInclude Include="Engine\Bindable\IndexBuffer.h" />
     <ClInclude Include="Engine\Bindable\InputLayout.h" />
     <ClInclude Include="Engine\Bindable\PixelShader.h" />
     <ClInclude Include="Engine\Bindable\Rasterizer.h" />
+    <ClInclude Include="Engine\Bindable\RenderTarget.h" />
     <ClInclude Include="Engine\Bindable\Sampler.h" />
     <ClInclude Include="Engine\Bindable\Stencil.h" />
     <ClInclude Include="Engine\Bindable\Texture.h" />
@@ -198,7 +201,9 @@
     <ClInclude Include="Engine\Event\KeyboardEvent.h" />
     <ClInclude Include="Engine\Exception\Exception.h" />
     <ClInclude Include="Engine\Exception\WindowException.h" />
+    <ClInclude Include="Engine\Graphics\FrameCommander.h" />
     <ClInclude Include="Engine\Graphics\Graphics.h" />
+    <ClInclude Include="Engine\Graphics\Strategy.h" />
     <ClInclude Include="Engine\Light\PointLight.h" />
     <ClInclude Include="Engine\Util\AssimpWrapper.h" />
     <ClInclude Include="Engine\Util\Camera.h" />
@@ -316,10 +321,13 @@
     <ClCompile Include="Engine\Application.cpp" />
     <ClCompile Include="Engine\Bindable\Bindable.cpp" />
     <ClCompile Include="Engine\Bindable\Blender.cpp" />
+    <ClCompile Include="Engine\Bindable\DepthStencil.cpp" />
+    <ClCompile Include="Engine\Bindable\GraphicResource.cpp" />
     <ClCompile Include="Engine\Bindable\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Bindable\InputLayout.cpp" />
     <ClCompile Include="Engine\Bindable\PixelShader.cpp" />
     <ClCompile Include="Engine\Bindable\Rasterizer.cpp" />
+    <ClCompile Include="Engine\Bindable\RenderTarget.cpp" />
     <ClCompile Include="Engine\Bindable\Sampler.cpp" />
     <ClCompile Include="Engine\Bindable\Stencil.cpp" />
     <ClCompile Include="Engine\Bindable\Texture.cpp" />
