@@ -133,6 +133,7 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 	for (int i = 0; i < 6; i++)
 	{
+		pContext->ClearRenderTargetView(pShadowMapRT[i].Get(), color);
 		pContext->ClearDepthStencilView(pShadowDSV[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 	}
 	
@@ -279,7 +280,7 @@ DirectX::XMMATRIX Graphics::GetCamera() const
 
 void Graphics::SetShadowPassRT(int index)
 {
-	pContext->OMSetRenderTargets(0u, nullptr, pShadowDSV[index].Get());
+	pContext->OMSetRenderTargets(1u, pShadowMapRT[index].GetAddressOf(), pShadowDSV[index].Get());
 
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = 0.0f;
@@ -308,7 +309,7 @@ void Graphics::BindShadowMapToPixelShader()
 {
 	ID3D11ShaderResourceView* nullSRVs[2] = { nullptr,nullptr };
 	pContext->PSSetShaderResources(0, 2, nullSRVs); // Unbind from pixel shader slot 0
-	pContext->PSSetShaderResources(1, 1, pShadowMapSRV.GetAddressOf());
+	pContext->PSSetShaderResources(1, 1, pShadowMapRTSRV.GetAddressOf());
 }
 
 void Graphics::UnbindShadowMapToPixelShader()
@@ -369,15 +370,47 @@ void Graphics::CreateShadowMapResource()
 		DX::ThrowIfFailed(pDevice->CreateDepthStencilView(pCubeShadowMap.Get(), &dsvDesc, &pShadowDSV[i]));
 	}
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	/*D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	ZeroMemory(&srvDesc, sizeof(srvDesc));
 	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
 	srvDesc.TextureCube.MipLevels = 1;
 
-	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pCubeShadowMap.Get(), &srvDesc, &pShadowMapSRV));
+	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pCubeShadowMap.Get(), &srvDesc, &pShadowMapSRV));*/
 
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = 1024u;
+	textureDesc.Height = 1024u;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 6; // 6 faces for the cube
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // Or any other format you need
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	DX::ThrowIfFailed(pDevice->CreateTexture2D(&textureDesc, nullptr, &pCubeShadowMapRT));
+
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.Format = textureDesc.Format;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+	rtvDesc.Texture2DArray.MipSlice = 0;
+	rtvDesc.Texture2DArray.ArraySize = 1;
+
+	for (UINT i = 0; i < 6; ++i) 
+	{
+		rtvDesc.Texture2DArray.FirstArraySlice = i;
+		DX::ThrowIfFailed(pDevice->CreateRenderTargetView(pCubeShadowMapRT.Get(), &rtvDesc, &pShadowMapRT[i]));
+	}
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	srvDesc.TextureCube.MostDetailedMip = 0;
+	srvDesc.TextureCube.MipLevels = 1;
+
+	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pCubeShadowMapRT.Get(), &srvDesc, &pShadowMapRTSRV));
 }
 
 void Graphics::ShadowPass(PointLight& light)

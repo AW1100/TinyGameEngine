@@ -108,7 +108,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         auto sp = std::make_shared<VertexShader>(gfx, L"ShadowVS.cso");
         ID3DBlob* pvsbc = sp->GetBytecode();
         shadowBinds.push_back(std::move(sp));
-        shadowBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"OutlinePS.cso")));
+        shadowBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"ShadowPS.cso")));
         shadowBinds.push_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
         shadowBinds.push_back(std::make_shared<Sampler>(gfx, 1u));
     }

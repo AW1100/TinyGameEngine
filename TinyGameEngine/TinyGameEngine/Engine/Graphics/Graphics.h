@@ -40,7 +40,11 @@ public:
 	void ShadowPass(class PointLight& light);
 	ComPtr<ID3D11Texture2D> pCubeShadowMap;
 	ComPtr<ID3D11DepthStencilView> pShadowDSV[6];
-	ComPtr<ID3D11ShaderResourceView> pShadowMapSRV;
+	//ComPtr<ID3D11ShaderResourceView> pShadowMapSRV;
+
+	ComPtr<ID3D11Texture2D> pCubeShadowMapRT;
+	ComPtr<ID3D11RenderTargetView> pShadowMapRT[6];
+	ComPtr<ID3D11ShaderResourceView> pShadowMapRTSRV;
 
 private:
 	ComPtr<ID3D11Device> pDevice = nullptr;
