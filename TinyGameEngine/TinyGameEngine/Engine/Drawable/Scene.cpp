@@ -10,15 +10,17 @@
 
 #include "..\Util\DynamicVertex.hpp"
 
+#include "../Bindable/ConstantBuffer.h"
+
 
 std::mutex mtx;
 
 Scene::Scene(Graphics& gfx)
 {
-	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::StylishCharacterA, true);
+	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::StylishCharacterA);
 	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::RealisticObjectA);
 
-	lights.push_back(new PointLight(gfx, 0.03f));
+	light = std::make_shared<PointLight>(gfx, 0.03f);
 }
 
 Scene::~Scene()
@@ -33,19 +35,19 @@ Scene::~Scene()
 		delete m;
 	}
 	
-	for (auto l : lights)
+	/*for (auto l : lights)
 	{
 		delete l;
-	}
+	}*/
 }
 
 void Scene::UpdateFrame(float dt, Graphics& gfx)
 {
-	for (auto& light : lights)
-	{
-		light->Update(gfx);
-		light->Draw(gfx);
-	}
+	ShadowPass(dt, gfx);
+	gfx.SetBasePassRT();
+	gfx.BindShadowMapToPixelShader();
+	light->Update(gfx);
+	light->Draw(gfx);
 	mtx.lock();
 	if (loadedObjects.size() > 0)
 	{
@@ -67,6 +69,7 @@ void Scene::UpdateFrame(float dt, Graphics& gfx)
 		}	
 	}
 	mtx.unlock();
+	gfx.UnbindShadowMapToPixelShader();
 }
 
 void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline)
@@ -85,4 +88,37 @@ void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3
 	mtx.lock();
 	temp->FindRenderables(loadedObjects, gfx);
 	mtx.unlock();
+}
+
+void Scene::ShadowPass(float dt, Graphics& gfx)
+{
+	bShadowPass = true;
+	auto lightPosition = light->GetPosition();
+	DirectX::XMVECTOR lightPos{ lightPosition.x, lightPosition.y, lightPosition.z, 0.0f };
+	DirectX::XMMATRIX viewMatrices[6];
+	viewMatrices[0] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(1, 0, 0, 0)), DirectX::XMVectorSet(0, 1, 0, 0)); // +X
+	viewMatrices[1] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(-1, 0, 0, 0)), DirectX::XMVectorSet(0, 1, 0, 0)); // -X
+	viewMatrices[2] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, 1, 0, 0)), DirectX::XMVectorSet(0, 0, -1, 0)); // +Y
+	viewMatrices[3] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, -1, 0, 0)), DirectX::XMVectorSet(0, 0, 1, 0)); // -Y
+	viewMatrices[4] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, 0, 1, 0)), DirectX::XMVectorSet(0, 1, 0, 0)); // +Z
+	viewMatrices[5] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, 0, -1, 0)), DirectX::XMVectorSet(0, 1, 0, 0)); // -Z
+
+	for (int i = 0; i < 6; ++i)
+	{
+		gfx.SetShadowPassRT(i);
+
+		for (auto& object : objects)
+		{
+			DirectX::XMMATRIX worldView = DirectX::XMMatrixTranspose(object->GetModelMatrix() * viewMatrices[i]);
+			gfx.SetShadowMapConstantBuffer(worldView, 0u);
+
+			DirectX::XMMATRIX worldViewProjMatrix = DirectX::XMMatrixTranspose(object->GetModelMatrix() * viewMatrices[i] * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 0.5f, 100.0f));
+			gfx.SetShadowMapConstantBuffer(worldViewProjMatrix, 1u);
+			
+
+			Mesh* temp = dynamic_cast<Mesh*>(object);
+			temp->DrawShadowMap(gfx);
+		}
+	}
+	bShadowPass = false;
 }

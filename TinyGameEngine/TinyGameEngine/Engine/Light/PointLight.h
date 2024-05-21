@@ -12,6 +12,7 @@ public:
 	void Reset();
 	void Draw(Graphics& gfx);
 	void Update(Graphics& gfx);
+	inline DirectX::XMFLOAT4& GetPosition() { return pos; }
 	inline std::shared_ptr<Sphere> GetMesh() { return mesh; }
 private:
 	struct alignas(16) PointLightCBuf
@@ -20,7 +21,7 @@ private:
 		DirectX::XMFLOAT4 color;
 	};
 private:
-	DirectX::XMFLOAT4 initialPos = { 1.0f,1.0f, -1.0f,1.0f };
+	DirectX::XMFLOAT4 initialPos = { 2.0f,1.0f, 0.0f,1.0f };
 	DirectX::XMFLOAT4 pos;
 	DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
 	mutable std::shared_ptr<Sphere> mesh;

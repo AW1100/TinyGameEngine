@@ -10,10 +10,14 @@
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
+#include "../Light/PointLight.h"
+#include "../Drawable/Scene.h"
+
 Graphics::Graphics(HWND hWnd)
 {
 	CreateDevice();
 	CreateSwapChain(hWnd);
+	CreateShadowMapResource();
 
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
@@ -80,17 +84,6 @@ void Graphics::CreateSwapChain(HWND hWnd)
 		&pTarget
 	));
 
-	//// create depth stensil state
-	//D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-	//dsDesc.DepthEnable = TRUE;
-	//dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	//dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	//ComPtr<ID3D11DepthStencilState> pDSState;
-	//DX::ThrowIfFailed(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
-
-	//// bind depth state
-	//pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
-
 	// create depth stensil texture
 	ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
@@ -115,7 +108,7 @@ void Graphics::CreateSwapChain(HWND hWnd)
 	));
 
 	// bind depth stensil view to OM
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+	// pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
 	// configure viewport
 	D3D11_VIEWPORT vp;
@@ -138,6 +131,11 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 	const float color[] = { red,green,blue,1.0f };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+	for (int i = 0; i < 6; i++)
+	{
+		pContext->ClearDepthStencilView(pShadowDSV[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+	}
+	
 }
 
 void Graphics::Draw(UINT count)
@@ -277,4 +275,114 @@ void Graphics::SetCamera(DirectX::FXMMATRIX cam)
 DirectX::XMMATRIX Graphics::GetCamera() const
 {
 	return camera;
+}
+
+void Graphics::SetShadowPassRT(int index)
+{
+	pContext->OMSetRenderTargets(0u, nullptr, pShadowDSV[index].Get());
+
+	D3D11_VIEWPORT vp;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	vp.Width = 1024;
+	vp.Height = 1024;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	pContext->RSSetViewports(1, &vp);
+}
+
+void Graphics::SetBasePassRT()
+{
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+	D3D11_VIEWPORT vp;
+	vp.Width = WIDTH;
+	vp.Height = HEIGHT;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	pContext->RSSetViewports(1u, &vp);
+}
+
+void Graphics::BindShadowMapToPixelShader()
+{
+	ID3D11ShaderResourceView* nullSRVs[2] = { nullptr,nullptr };
+	pContext->PSSetShaderResources(0, 2, nullSRVs); // Unbind from pixel shader slot 0
+	pContext->PSSetShaderResources(1, 1, pShadowMapSRV.GetAddressOf());
+}
+
+void Graphics::UnbindShadowMapToPixelShader()
+{
+	ID3D11ShaderResourceView* nullSRVs[1] = { nullptr };
+	pContext->PSSetShaderResources(1, 1, nullSRVs); // Unbind from pixel shader slot 0
+}
+
+void Graphics::SetShadowMapConstantBuffer(DirectX::XMMATRIX& matrix, UINT s)
+{
+	VertexConstantBuffer<DirectX::XMMATRIX> vcb(*this, matrix);
+	vcb.slot = s;
+	vcb.Bind(*this);
+}
+
+void Graphics::UnbindRenderTarget()
+{
+	ID3D11ShaderResourceView* nullSRVs[1] = { nullptr };
+	pContext->PSSetShaderResources(0, 1, nullSRVs); // Unbind from pixel shader slot 0
+	pContext->VSSetShaderResources(0, 1, nullSRVs); // Unbind from vertex shader slot 0
+	// Repeat for other shader stages if necessary (geometry shader, compute shader, etc.)
+
+	// Unbind any UAVs if used
+	ID3D11UnorderedAccessView* nullUAVs[1] = { nullptr };
+	pContext->CSSetUnorderedAccessViews(0, 1, nullUAVs, nullptr);
+}
+
+void Graphics::CreateShadowMapResource()
+{
+	D3D11_TEXTURE2D_DESC texDesc;
+	ZeroMemory(&texDesc, sizeof(texDesc));
+	texDesc.Width = 1024u; // Ensure WIDTH / 2 is an integer
+	texDesc.Height = 1024u; // Ensure HEIGHT / 2 is an integer
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 6; // 6 faces of the cube
+	texDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	DX::ThrowIfFailed(pDevice->CreateTexture2D(&texDesc, nullptr, &pCubeShadowMap));
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	ZeroMemory(&dsvDesc, sizeof(dsvDesc));
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+	dsvDesc.Texture2DArray.MipSlice = 0;
+	dsvDesc.Texture2DArray.FirstArraySlice = 0;
+	dsvDesc.Texture2DArray.ArraySize = 1;
+
+	
+	for (int i = 0; i < 6; ++i)
+	{
+		dsvDesc.Texture2DArray.FirstArraySlice = i;
+		DX::ThrowIfFailed(pDevice->CreateDepthStencilView(pCubeShadowMap.Get(), &dsvDesc, &pShadowDSV[i]));
+	}
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	srvDesc.TextureCube.MostDetailedMip = 0;
+	srvDesc.TextureCube.MipLevels = 1;
+
+	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pCubeShadowMap.Get(), &srvDesc, &pShadowMapSRV));
+
+}
+
+void Graphics::ShadowPass(PointLight& light)
+{
+	
+
+
 }

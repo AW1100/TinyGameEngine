@@ -13,6 +13,7 @@ public:
 	DirectX::XMMATRIX GetModelMatrix() const override;
 	void DrawOutline(Graphics& gfx);
 	inline bool IsOutlineEnabled() { return outlineEnabled; }
+	void DrawShadowMap(Graphics& gfx);
 
 private:
 	float r = 0.0f;
@@ -34,4 +35,5 @@ private:
 	bool outlineEnabled = false;
 	bool outlining = false;
 	std::vector<std::shared_ptr<Bindable>> outlineBinds;
+	std::vector<std::shared_ptr<Bindable>> shadowBinds;
 };

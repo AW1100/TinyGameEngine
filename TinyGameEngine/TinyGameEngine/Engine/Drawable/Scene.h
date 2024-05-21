@@ -14,13 +14,17 @@ public:
 	Scene(Graphics& gfx);
 	~Scene();
 	void UpdateFrame(float dt, Graphics& gfx);
-	inline std::vector<PointLight*>& GetLights() { return lights; }
+	inline std::shared_ptr<PointLight>& GetLights() { return light; }
 	void CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
 	void LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
+	void ShadowPass(float dt, Graphics& gfx);
+
+	inline static bool bShadowPass = false;
+
 
 protected:
 	std::vector<class Model*> models;
 	std::vector<class Drawable*> objects;
 	std::vector<class Drawable*> loadedObjects;
-	std::vector<class PointLight*> lights;
+	std::shared_ptr<class PointLight> light;
 };

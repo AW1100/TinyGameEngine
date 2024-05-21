@@ -59,7 +59,7 @@ void TGE::Application::DoFrame()
 	wnd->Gfx().BeginImgui(speed_factor);
 	Log::GetInstance().RenderLogWindow();
 	cam.SpawnControlWindow();
-	scene->GetLights().at(0)->SpawnControlWindow();
+	scene->GetLights()->SpawnControlWindow();
 	wnd->Gfx().RenderImgui();
 	wnd->Gfx().EndFrame();
 }

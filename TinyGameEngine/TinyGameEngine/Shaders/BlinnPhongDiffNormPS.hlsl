@@ -20,6 +20,9 @@ static const float attQuad = 0.1f;
 Texture2DArray texArray : register(t0);
 SamplerState texSampler : register(s0);
 
+TextureCube shadowMap : register(t1);
+SamplerState shadowSampler : register(s1);
+
 struct PixelInputType
 {
     float4 position : SV_POSITION;
@@ -50,6 +53,17 @@ float4 main(PixelInputType input) : SV_Target
     const float3 vToL = normalize(lightPos.xyz - input.worldPos);
     const float diffuse = max(0.0f, dot(vToL, n));
     
+    float3 lightToPixel = input.worldPos - lightPos.xyz;
+    float currentDepth = length(lightToPixel);
+       
+    // Sample the shadow map using the normalized direction vector
+    float shadowDepth = shadowMap.Sample(shadowSampler, lightToPixel);
+    shadowDepth *= 100.0f;
+
+    // Compare the sampled depth with the fragment's distance to the light
+    float bias = 0.05;
+    float shadow = currentDepth < shadowDepth + bias ? 1.0f : 0.2f;
+    
     const float3 vToC = normalize(eyePos.xyz - input.worldPos);
     
     float3 output = ambient;
@@ -57,7 +71,7 @@ float4 main(PixelInputType input) : SV_Target
     {
         const float3 halfVector = normalize(vToL + vToC);
         const float specular = pow(max(0.0f, dot(halfVector, n)), alpha);
-        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular);
+        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular) * shadow;
     }
 
     return float4(output, textureColor.a);

@@ -19,25 +19,6 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<VertexBuffer>(gfx, node->vertices->GetContents(), node->vertices->GetStride());
         }));
 
-    ShaderLookupTable table;
-    
-    auto& targetVS = table.GetVertexShaderfilename(type, vertexType);
-    auto vs = StringToWideString(targetVS.c_str());
-
-    auto pvs = SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexShader>(targetVS)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<VertexShader>(gfx, vs);
-        });
-    auto sp = std::dynamic_pointer_cast<VertexShader>(pvs);
-    auto pvsbc = sp->GetBytecode();
-    AddBind(std::move(sp));
-
-    auto& targetPS = table.GetPixelShaderfilename(type, vertexType);
-    auto ps = StringToWideString(targetPS.c_str());
-
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<PixelShader>(targetPS)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<PixelShader>(gfx, ps);
-        }));
-
     AddIndexBuffer(std::dynamic_pointer_cast<IndexBuffer>(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<IndexBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<IndexBuffer>(gfx, node->indices);
         })));
@@ -78,11 +59,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     {
         ied.push_back({ elems[i].semantic,0,DXGI_FORMAT_R32G32B32_FLOAT,0,offset,D3D11_INPUT_PER_VERTEX_DATA ,0 });
         offset += elems[i].sizeInByte;
-    }
-
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<InputLayout>(n)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<InputLayout>(gfx, ied, pvsbc);
-        }));
+    }  
 
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Topology>()), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -92,14 +69,49 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<Blender>(gfx, true);
         }));
 
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<TransformConstantBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
-        }));
+    shadowBinds = binds;
 
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Stencil>(n)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<Stencil>(gfx, useOutline ? Stencil::Mode::Write : Stencil::Mode::Off);
-        }));
+    ShaderLookupTable table;
 
+    {
+        auto& targetVS = table.GetVertexShaderfilename(type, vertexType);
+        auto vs = StringToWideString(targetVS.c_str());
+
+        auto pvs = SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<VertexShader>(targetVS)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<VertexShader>(gfx, vs);
+            });
+        auto sp = std::dynamic_pointer_cast<VertexShader>(pvs);
+        ID3DBlob* pvsbc = sp->GetBytecode();
+        AddBind(std::move(sp));
+
+        auto& targetPS = table.GetPixelShaderfilename(type, vertexType);
+        auto ps = StringToWideString(targetPS.c_str());
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<PixelShader>(targetPS)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<PixelShader>(gfx, ps);
+            }));
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<InputLayout>(n)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<InputLayout>(gfx, ied, pvsbc);
+            }));
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<TransformConstantBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
+            }));
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Stencil>(n)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<Stencil>(gfx, useOutline ? Stencil::Mode::Write : Stencil::Mode::Off);
+            }));
+    }
+
+    {
+        auto sp = std::make_shared<VertexShader>(gfx, L"ShadowVS.cso");
+        ID3DBlob* pvsbc = sp->GetBytecode();
+        shadowBinds.push_back(std::move(sp));
+        shadowBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"OutlinePS.cso")));
+        shadowBinds.push_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
+        shadowBinds.push_back(std::make_shared<Sampler>(gfx, 1u));
+    }
 
     if (useOutline)
     {
@@ -108,8 +120,8 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
             return std::make_shared<VertexBuffer>(gfx, node->vertices->GetContents(), node->vertices->GetStride());
             }));
 
-        sp = std::make_shared<VertexShader>(gfx, L"OutlineVS.cso");
-        pvsbc = sp->GetBytecode();
+        auto sp = std::make_shared<VertexShader>(gfx, L"OutlineVS.cso");
+        ID3DBlob* pvsbc = sp->GetBytecode();
         outlineBinds.push_back(std::move(sp));
         outlineBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"OutlinePS.cso")));
         outlineBinds.push_back(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<IndexBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
@@ -150,7 +162,7 @@ DirectX::XMMATRIX Mesh::GetModelMatrix() const
     //DirectX::XMMatrixScaling(0.01f, 0.01f, 0.01f);
     if (outlining)
     {
-        modelMatrix = DirectX::XMMatrixTranslation(0.0f, -0.005f, 0.0f) * DirectX::XMMatrixScaling(1.01f, 1.01f, 1.01f) * modelMatrix;
+        //modelMatrix = DirectX::XMMatrixTranslation(0.0f, -0.005f, 0.0f) * DirectX::XMMatrixScaling(1.01f, 1.01f, 1.01f) * modelMatrix;
     }
     return modelMatrix;
 }
@@ -164,5 +176,14 @@ void Mesh::DrawOutline(Graphics& gfx)
     }
     gfx.DrawIndexed(pIndexBuffer->GetCount());
     outlining = false;
+}
+
+void Mesh::DrawShadowMap(Graphics& gfx)
+{
+    for (auto& bind : shadowBinds)
+    {
+        bind->Bind(gfx);
+    }
+    gfx.DrawIndexed(pIndexBuffer->GetCount());
 }
 
