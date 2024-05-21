@@ -20,6 +20,7 @@ struct PixelInputType
     float3 normal : NORMAL;
 };
 
+static const float3 ambient = { 0.05f, 0.05f, 0.05f };
 static const float attConst = 0.1f;
 static const float attLin = 0.2f;
 static const float attQuad = 0.3f;
@@ -52,5 +53,5 @@ float4 main(PixelInputType input) : SV_Target
     float3 color = clamp(lerp(darkColor, lightColor, diff), 0.0f, 1.0f);
 
     // Return the final color.
-    return float4(0.8 * attenuation * textureColor.xyz + 0.2 * attenuation * color, 1.0f);
+    return float4(ambient + 0.8 * attenuation * textureColor.xyz + 0.2 * attenuation * color, 1.0f);
 }
