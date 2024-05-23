@@ -130,6 +130,4 @@ void Scene::ShadowPass(float dt, Graphics& gfx)
 		}
 		gfx.ClearRenderTarget();
 	}
-
-	gfx.UnbindGeometryShader();
 }
