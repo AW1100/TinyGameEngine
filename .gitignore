@@ -38,3 +38,5 @@ TinyGameEngine/.vs/
 # binary
 bin/
 bin-int/
+
+TinyGameEngine/Demo/*.cso
