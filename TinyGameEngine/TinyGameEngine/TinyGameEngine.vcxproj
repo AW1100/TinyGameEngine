@@ -170,6 +170,7 @@
     <ClInclude Include="Engine\Bindable\Bindable.h" />
     <ClInclude Include="Engine\Bindable\Blender.h" />
     <ClInclude Include="Engine\Bindable\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Bindable\GeometryShader.h" />
     <ClInclude Include="Engine\Bindable\IndexBuffer.h" />
     <ClInclude Include="Engine\Bindable\InputLayout.h" />
     <ClInclude Include="Engine\Bindable\PixelShader.h" />
@@ -316,6 +317,7 @@
     <ClCompile Include="Engine\Application.cpp" />
     <ClCompile Include="Engine\Bindable\Bindable.cpp" />
     <ClCompile Include="Engine\Bindable\Blender.cpp" />
+    <ClCompile Include="Engine\Bindable\GeometryShader.cpp" />
     <ClCompile Include="Engine\Bindable\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Bindable\InputLayout.cpp" />
     <ClCompile Include="Engine\Bindable\PixelShader.cpp" />
@@ -421,6 +423,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shaders\ShadowGS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Demo\%(Filename).cso</ObjectFileOutput>

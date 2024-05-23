@@ -19,7 +19,7 @@ public:
 	void LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
 	void ShadowPass(float dt, Graphics& gfx);
 
-	inline static bool bShadowPass = false;
+	//inline static bool bShadowPass = false;
 
 
 protected:

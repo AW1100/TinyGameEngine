@@ -71,13 +71,28 @@ template<typename T>
 class PixelConstantBuffer : public ConstantBuffer<T>
 {
 	using ConstantBuffer<T>::pConstantBuffer;
-	using ConstantBuffer<T>::slot;
 	using Bindable::GetContext;
 
 public:
+	using ConstantBuffer<T>::slot;
 	using ConstantBuffer<T>::ConstantBuffer;
 	void Bind(Graphics& gfx) override
 	{
 		GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
+	}
+};
+
+template<typename T>
+class GeometryConstantBuffer : public ConstantBuffer<T>
+{
+	using ConstantBuffer<T>::pConstantBuffer;
+	using Bindable::GetContext;
+
+public:
+	using ConstantBuffer<T>::slot;
+	using ConstantBuffer<T>::ConstantBuffer;
+	void Bind(Graphics& gfx) override
+	{
+		GetContext(gfx)->GSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
 };

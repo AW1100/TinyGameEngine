@@ -453,6 +453,9 @@
     <ClInclude Include="Engine\Bindable\Stencil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Bindable\GeometryShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -584,6 +587,9 @@
     <ClCompile Include="Engine\Bindable\Stencil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Bindable\GeometryShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ColorCubeVS.hlsl" />
@@ -607,6 +613,7 @@
     <FxCompile Include="Shaders\SobelOutlinePS.hlsl" />
     <FxCompile Include="Shaders\ShadowVS.hlsl" />
     <FxCompile Include="Shaders\ShadowPS.hlsl" />
+    <FxCompile Include="Shaders\ShadowGS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

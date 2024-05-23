@@ -24,29 +24,6 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         })));
     
     bool useAlpha = false;
-    std::vector<const wchar_t*> texFiles;
-    if (node->diffuse.size() > 0)
-    {
-        texFiles.insert(texFiles.end(), node->diffuse.begin(), node->diffuse.end());
-    }
-    if (node->specular.size() > 0)
-    {
-        texFiles.insert(texFiles.end(), node->specular.begin(), node->specular.end());
-    }
-    if (node->normalMap.size() > 0)
-    {
-        texFiles.insert(texFiles.end(), node->normalMap.begin(), node->normalMap.end());
-    }
-    if (texFiles.size() > 0)
-    {
-        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Texture>(n)), [&]()-> std::shared_ptr<Bindable> {
-            return std::make_shared<Texture>(gfx, texFiles, useAlpha);
-            }));
-    }
-    
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Sampler>()), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<Sampler>(gfx);
-        }));
 
     AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>(useAlpha ? "None" : "Back")), [&]()-> std::shared_ptr<Bindable> {
         return std::make_shared<Rasterizer>(gfx, useAlpha);
@@ -102,15 +79,43 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Stencil>(n)), [&]()-> std::shared_ptr<Bindable> {
             return std::make_shared<Stencil>(gfx, useOutline ? Stencil::Mode::Write : Stencil::Mode::Off);
             }));
+
+        std::vector<const wchar_t*> texFiles;
+        if (node->diffuse.size() > 0)
+        {
+            texFiles.insert(texFiles.end(), node->diffuse.begin(), node->diffuse.end());
+        }
+        if (node->specular.size() > 0)
+        {
+            texFiles.insert(texFiles.end(), node->specular.begin(), node->specular.end());
+        }
+        if (node->normalMap.size() > 0)
+        {
+            texFiles.insert(texFiles.end(), node->normalMap.begin(), node->normalMap.end());
+        }
+        if (texFiles.size() > 0)
+        {
+            AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Texture>(n)), [&]()-> std::shared_ptr<Bindable> {
+                return std::make_shared<Texture>(gfx, texFiles, useAlpha);
+                }));
+        }
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Sampler>()), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<Sampler>(gfx);
+            }));
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Sampler>("Shadow")), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<Sampler>(gfx, 1u);
+            }));
     }
 
     {
         auto sp = std::make_shared<VertexShader>(gfx, L"ShadowVS.cso");
         ID3DBlob* pvsbc = sp->GetBytecode();
         shadowBinds.push_back(std::move(sp));
+        //shadowBinds.push_back(std::move(std::make_shared<GeometryShader>(gfx, L"ShadowGS.cso")));
         shadowBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"ShadowPS.cso")));
         shadowBinds.push_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
-        shadowBinds.push_back(std::make_shared<Sampler>(gfx, 1u));
     }
 
     if (useOutline)

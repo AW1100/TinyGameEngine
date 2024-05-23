@@ -21,7 +21,7 @@ Texture2DArray texArray : register(t0);
 SamplerState texSampler : register(s0);
 
 TextureCube shadowMap : register(t1);
-SamplerState shadowSampler : register(s1);
+SamplerComparisonState shadowSampler : register(s1);
 
 struct PixelInputType
 {
@@ -57,12 +57,9 @@ float4 main(PixelInputType input) : SV_Target
     float currentDepth = length(lightToPixel);
        
     // Sample the shadow map using the normalized direction vector
-    float shadowDepth = shadowMap.Sample(shadowSampler, lightToPixel);
-    shadowDepth *= 100.0f;
-
-    // Compare the sampled depth with the fragment's distance to the light
-    float bias = 0.05;
-    float shadow = currentDepth < shadowDepth + bias ? 1.0f : 0.2f;
+    float shadowDepth = shadowMap.SampleCmpLevelZero(shadowSampler, lightToPixel, distance / 50.0f - 0.001f).r;
+    shadowDepth *= 50.0f;
+    float shadow = currentDepth < shadowDepth ? 1.0f : 0.3f;
     
     const float3 vToC = normalize(eyePos.xyz - input.worldPos);
     
