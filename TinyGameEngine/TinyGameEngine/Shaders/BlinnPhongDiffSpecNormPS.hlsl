@@ -13,8 +13,8 @@ static const float3 ambient = { 0.05f, 0.05f, 0.05f };
 static const float alpha = 10.0f;
 
 static const float attConst = 0.7f;
-static const float attLin = 0.05f;
-static const float attQuad = 0.1f;
+static const float attLin = 0.3f;
+static const float attQuad = 0.2f;
 
 Texture2DArray texArray : register(t0);
 SamplerState texSampler : register(s0);
@@ -56,7 +56,7 @@ float4 main(PixelInputType input) : SV_Target
     float currentDepth = length(lightToPixel);
     
     // Sample the shadow map using the normalized direction vector
-    float shadowDepth = shadowMap.SampleCmpLevelZero(shadowSampler, lightToPixel, distance / 50.0f - 0.001f).r;
+    float shadowDepth = shadowMap.SampleCmpLevelZero(shadowSampler, lightToPixel, distance / 50.0f - 0.0005f).r;
     shadowDepth *= 50.0f;
     float shadow = currentDepth < shadowDepth ? 1.0f : 0.3f;
     

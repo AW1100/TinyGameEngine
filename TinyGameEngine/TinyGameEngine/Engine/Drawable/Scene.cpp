@@ -17,7 +17,7 @@ std::mutex mtx;
 
 Scene::Scene(Graphics& gfx)
 {
-	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.0f, 0.0f }, MeshType::StylishCharacterA);
+	CreateWorkerThread(gfx, "F:/3DModels/fbx/kafkaW.fbx", { 0.0f, -1.02f, 0.0f }, MeshType::StylishCharacterA);
 	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::RealisticObjectA);
 
 	light = std::make_shared<PointLight>(gfx, 0.03f);

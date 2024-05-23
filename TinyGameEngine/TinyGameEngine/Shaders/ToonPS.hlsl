@@ -22,8 +22,8 @@ struct PixelInputType
 
 static const float3 ambient = { 0.05f, 0.05f, 0.05f };
 static const float attConst = 0.1f;
-static const float attLin = 0.2f;
-static const float attQuad = 0.3f;
+static const float attLin = 0.3f;
+static const float attQuad = 0.2f;
 
 float4 main(PixelInputType input) : SV_Target
 {

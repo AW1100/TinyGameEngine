@@ -318,8 +318,8 @@ void Graphics::SetShadowPassRT(int index)
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = 0.0f;
 	vp.TopLeftY = 0.0f;
-	vp.Width = 512;
-	vp.Height = 512;
+	vp.Width = 1024.0f;
+	vp.Height = 1024.0f;
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	pContext->RSSetViewports(1, &vp);
@@ -374,8 +374,8 @@ void Graphics::CreateShadowMapResource()
 {
 	D3D11_TEXTURE2D_DESC texDesc;
 	ZeroMemory(&texDesc, sizeof(texDesc));
-	texDesc.Width = 512; // Ensure WIDTH / 2 is an integer
-	texDesc.Height = 512; // Ensure HEIGHT / 2 is an integer
+	texDesc.Width = 1024u; // Ensure WIDTH / 2 is an integer
+	texDesc.Height = 1024u; // Ensure HEIGHT / 2 is an integer
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 6; // 6 faces of the cube
 	texDesc.Format = DXGI_FORMAT_R32_TYPELESS;
@@ -413,8 +413,8 @@ void Graphics::CreateShadowMapResource()
 	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pShadowDepth.Get(), &srvDesc, &pShadowDepthSRV));
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = 512;
-	textureDesc.Height = 512;
+	textureDesc.Width = 1024u;
+	textureDesc.Height = 1024u;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // Or any other format you need
