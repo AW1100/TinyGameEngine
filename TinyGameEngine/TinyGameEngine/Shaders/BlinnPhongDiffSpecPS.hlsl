@@ -6,6 +6,7 @@ cbuffer LightCBuf
 {
     float4 lightPos;
     float4 lightColor;
+    float4 attConsts;
 };
 
 cbuffer cameraCBuf
@@ -37,7 +38,7 @@ float4 main(PixelInputType input) : SV_Target
     }
     
     float distance = length(lightPos.xyz - input.worldPos);
-    float attenuation = 1.0f / (attConst + attLin * distance + attQuad * distance * distance);
+    float attenuation = 1.0f / (attConsts.x + attConsts.y * distance + attConsts.z * distance * distance);
     
     const float3 vToL = normalize(lightPos.xyz - input.worldPos);
     const float diffuse = max(0.0f, dot(vToL, input.normal));
@@ -53,7 +54,7 @@ float4 main(PixelInputType input) : SV_Target
     }
     else
     {
-        const float3 specularColor = CalculateSpecularColor(vToL, vToC, texArray, texSampler, input.tex, input.normal, alpha);
+        const float3 specularColor = CalculateSpecularColor(vToL, vToC, texArray, texSampler, input.tex, input.normal, attConsts.w);
         float shadowLevel = SampleShadow(shadowMap, shadowSampler, lightToPixel, distance);
         output = ambient + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor) * shadowLevel;
     }

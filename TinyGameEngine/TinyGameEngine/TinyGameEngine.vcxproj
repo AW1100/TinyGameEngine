@@ -176,6 +176,7 @@
     <ClInclude Include="Engine\Bindable\PixelShader.h" />
     <ClInclude Include="Engine\Bindable\Rasterizer.h" />
     <ClInclude Include="Engine\Bindable\Sampler.h" />
+    <ClInclude Include="Engine\Bindable\ShadowRasterizer.h" />
     <ClInclude Include="Engine\Bindable\Stencil.h" />
     <ClInclude Include="Engine\Bindable\Texture.h" />
     <ClInclude Include="Engine\Bindable\Topology.h" />
@@ -323,6 +324,7 @@
     <ClCompile Include="Engine\Bindable\PixelShader.cpp" />
     <ClCompile Include="Engine\Bindable\Rasterizer.cpp" />
     <ClCompile Include="Engine\Bindable\Sampler.cpp" />
+    <ClCompile Include="Engine\Bindable\ShadowRasterizer.cpp" />
     <ClCompile Include="Engine\Bindable\Stencil.cpp" />
     <ClCompile Include="Engine\Bindable\Texture.cpp" />
     <ClCompile Include="Engine\Bindable\Topology.cpp" />

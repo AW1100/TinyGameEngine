@@ -23,12 +23,6 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<IndexBuffer>(gfx, node->indices);
         })));
     
-    bool useAlpha = false;
-
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>(useAlpha ? "None" : "Back")), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<Rasterizer>(gfx, useAlpha);
-        }));
-
     std::vector<D3D11_INPUT_ELEMENT_DESC> ied;
     unsigned int offset = 0;
     auto& elems = node->vertices->GetLayout().elements;
@@ -80,6 +74,12 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
             return std::make_shared<Stencil>(gfx, useOutline ? Stencil::Mode::Write : Stencil::Mode::Off);
             }));
 
+        bool useAlpha = false;
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>(useAlpha ? "None" : "Back")), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<Rasterizer>(gfx, useAlpha);
+            }));
+
         std::vector<const wchar_t*> texFiles;
         if (node->diffuse.size() > 0)
         {
@@ -114,8 +114,9 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         ID3DBlob* pvsbc = sp->GetBytecode();
         shadowBinds.push_back(std::move(sp));
         //shadowBinds.push_back(std::move(std::make_shared<GeometryShader>(gfx, L"ShadowGS.cso")));
-        shadowBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"ShadowPS.cso")));
-        shadowBinds.push_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
+        shadowBinds.emplace_back(std::make_shared<PixelShader>(gfx, L"ShadowPS.cso"));
+        shadowBinds.emplace_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
+        shadowBinds.emplace_back(std::make_shared<ShadowRasterizer>(gfx, 0, 0.0f, 0.0f));
     }
 
     if (useOutline)

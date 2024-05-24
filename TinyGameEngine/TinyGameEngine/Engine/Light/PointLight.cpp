@@ -21,6 +21,10 @@ void PointLight::SpawnControlWindow()
 		ImGui::SliderFloat("X", &pos.x, -15.0f, 15.0f, "%.3f");
 		ImGui::SliderFloat("Y", &pos.y, -15.0f, 15.0f, "%.3f");
 		ImGui::SliderFloat("Z", &pos.z, -15.0f, 15.0f, "%.3f");
+		ImGui::SliderFloat("Att Const", &attConsts.x, 0.0f, 1.0f, "%.1f");
+		ImGui::SliderFloat("Att Linear", &attConsts.y, 0.0f, 1.0f, "%.1f");
+		ImGui::SliderFloat("Att Quad", &attConsts.z, 0.0f, 1.0f, "%.1f");
+		ImGui::SliderFloat("Alpha", &attConsts.w, 0.0f, 50.0f, "%1.0f");
 		if (ImGui::Button("Reset"))
 		{
 			Reset();
@@ -43,7 +47,7 @@ void PointLight::Draw(Graphics& gfx)
 
 void PointLight::Update(Graphics& gfx)
 {
-	cbuf.Update(gfx, PointLightCBuf{ pos,color });
+	cbuf.Update(gfx, PointLightCBuf{ pos,color,attConsts });
 	cbuf.Bind(gfx);
 }
 

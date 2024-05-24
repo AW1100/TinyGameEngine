@@ -13,3 +13,4 @@
 #include "Blender.h"
 #include "Stencil.h"
 #include "GeometryShader.h"
+#include "ShadowRasterizer.h"
