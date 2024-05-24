@@ -31,7 +31,7 @@ struct PixelInputType
     float3 tan : TANGENT;
     float3 bitan : BITANGENT;
 };
-
+#define PCF_RANGE 2
 float4 main(PixelInputType input) : SV_Target
 {
     const float4 textureColor = texArray.Sample(texSampler, input.tex);
@@ -55,10 +55,21 @@ float4 main(PixelInputType input) : SV_Target
     float3 lightToPixel = input.worldPos - lightPos.xyz;
     float currentDepth = length(lightToPixel);
     
-    // Sample the shadow map using the normalized direction vector
-    float shadowDepth = shadowMap.SampleCmpLevelZero(shadowSampler, lightToPixel, distance / 50.0f - 0.0005f).r;
-    shadowDepth *= 50.0f;
-    float shadow = currentDepth < shadowDepth ? 1.0f : 0.3f;
+    float shadowLevel = 0.0f;
+    float texelSize = 1.0f / 1024.0f;
+    [unroll]
+    for (int x = -PCF_RANGE; x <= PCF_RANGE; ++x)
+    {
+        [unroll]
+        for (int y = -PCF_RANGE; y <= PCF_RANGE; ++y)
+        {
+            float3 offset = float3(x * texelSize, y * texelSize, 0.0f);
+            shadowLevel += shadowMap.SampleCmpLevelZero(shadowSampler, lightToPixel+offset, distance / 50.0f - 0.0005f).r;
+        }
+
+    }
+    shadowLevel /= ((PCF_RANGE * 2 + 1) * (PCF_RANGE * 2 + 1));
+    shadowLevel = shadowLevel * 0.7f + 0.3f;
     
     const float3 vToC = normalize(eyePos.xyz - input.worldPos);
     
@@ -68,7 +79,7 @@ float4 main(PixelInputType input) : SV_Target
         const float3 halfVector = normalize(vToL + vToC);
         const float specular = pow(max(0.0f, dot(halfVector, n)), alpha);
         const float4 specularColor = texArray.Sample(texSampler, float3(input.tex.x, input.tex.y, input.tex.z + 1.0f));
-        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor.xyz * specular) * shadow;
+        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * specularColor.xyz * specular) * shadowLevel;
     }
 
     return float4(output, textureColor.a);

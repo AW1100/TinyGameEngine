@@ -21,7 +21,7 @@ private:
 		DirectX::XMFLOAT4 color;
 	};
 private:
-	DirectX::XMFLOAT4 initialPos = { 2.0f,1.0f, 0.0f,1.0f };
+	DirectX::XMFLOAT4 initialPos = { 2.0f,1.0f, -1.0f,1.0f };
 	DirectX::XMFLOAT4 pos;
 	DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
 	mutable std::shared_ptr<Sphere> mesh;
