@@ -559,6 +559,9 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\LightingConstants.hlsli" />
+    <None Include="Shaders\ShadowLevel.hlsli" />
+    <None Include="Shaders\SpecularColor.hlsli" />
     <None Include="ThirdParty\assimp\color4.inl" />
     <None Include="ThirdParty\assimp\material.inl" />
     <None Include="ThirdParty\assimp\matrix3x3.inl" />

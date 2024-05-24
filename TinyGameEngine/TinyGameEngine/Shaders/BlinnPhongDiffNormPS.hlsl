@@ -1,3 +1,6 @@
+#include "ShadowLevel.hlsli"
+#include "LightingConstants.hlsli"
+
 cbuffer LightCBuf
 {
     float4 lightPos;
@@ -8,14 +11,6 @@ cbuffer cameraCBuf
 {
     float4 eyePos;
 };
-
-static const float3 ambient = { 0.05f, 0.05f, 0.05f };
-static const float Intensity = 0.3f;
-static const float alpha = 10.0f;
-
-static const float attConst = 0.7f;
-static const float attLin = 0.3f;
-static const float attQuad = 0.2f;
 
 Texture2DArray texArray : register(t0);
 SamplerState texSampler : register(s0);
@@ -54,12 +49,6 @@ float4 main(PixelInputType input) : SV_Target
     const float diffuse = max(0.0f, dot(vToL, n));
     
     float3 lightToPixel = input.worldPos - lightPos.xyz;
-    float currentDepth = length(lightToPixel);
-       
-    // Sample the shadow map using the normalized direction vector
-    float shadowDepth = shadowMap.SampleCmpLevelZero(shadowSampler, lightToPixel, distance / 50.0f - 0.0005f).r;
-    shadowDepth *= 50.0f;
-    float shadow = currentDepth < shadowDepth ? 1.0f : 0.3f;
     
     const float3 vToC = normalize(eyePos.xyz - input.worldPos);
     
@@ -68,7 +57,8 @@ float4 main(PixelInputType input) : SV_Target
     {
         const float3 halfVector = normalize(vToL + vToC);
         const float specular = pow(max(0.0f, dot(halfVector, n)), alpha);
-        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular) * shadow;
+        float shadowLevel = SampleShadow(shadowMap, shadowSampler, lightToPixel, distance);
+        output = output + attenuation * (diffuse * textureColor.xyz + diffuse * lightColor.xyz * Intensity * specular) * shadowLevel;
     }
 
     return float4(output, textureColor.a);

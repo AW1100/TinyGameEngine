@@ -640,5 +640,8 @@
     <None Include="ThirdParty\assimp\vector3.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="Shaders\ShadowLevel.hlsli" />
+    <None Include="Shaders\SpecularColor.hlsli" />
+    <None Include="Shaders\LightingConstants.hlsli" />
   </ItemGroup>
 </Project>
