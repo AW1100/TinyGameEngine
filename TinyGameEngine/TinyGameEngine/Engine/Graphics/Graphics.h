@@ -29,16 +29,14 @@ public:
 	void SetCamera(DirectX::FXMMATRIX cam);
 	DirectX::XMMATRIX GetCamera() const;
 
-	void SetShadowPassRT();
-	void SetShadowPassRT(int index);
+	void SetShadowPassDepthStencil(int index);
 	void SetBasePassRT();
 	void BindShadowMapToPixelShader();
 	void UnbindShadowMapToPixelShader();
 	void SetShadowMapConstantBuffer(DirectX::XMMATRIX& matrix, UINT s);
 	void UnbindRenderTarget();
 
-	void CreateShadowMapResource();
-	void ShadowPass(class PointLight& light);
+	void CreateShadowPassResource();
 	void UnbindGeometryShader();
 	void ClearRenderTarget();
 

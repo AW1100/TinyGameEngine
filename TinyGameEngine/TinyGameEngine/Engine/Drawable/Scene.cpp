@@ -44,32 +44,7 @@ Scene::~Scene()
 void Scene::UpdateFrame(float dt, Graphics& gfx)
 {
 	ShadowPass(dt, gfx);
-	gfx.SetBasePassRT();
-	gfx.BindShadowMapToPixelShader();
-	light->Update(gfx);
-	light->Draw(gfx);
-	mtx.lock();
-	if (loadedObjects.size() > 0)
-	{
-		objects.insert(objects.end(), loadedObjects.begin(), loadedObjects.end());
-		loadedObjects.clear();
-	}
-	for (auto& obj : objects)
-	{
-		obj->Update(dt);
-		obj->Draw(gfx);
-	}
-	for (auto& obj : objects)
-	{
-		Mesh* temp = dynamic_cast<Mesh*>(obj);
-		if (temp && temp->IsOutlineEnabled())
-		{
-			temp->Update(dt);
-			temp->DrawOutline(gfx);
-		}	
-	}
-	mtx.unlock();
-	gfx.UnbindShadowMapToPixelShader();
+	BasePass(dt, gfx);
 }
 
 void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline)
@@ -101,13 +76,11 @@ void Scene::ShadowPass(float dt, Graphics& gfx)
 	viewMatrices[2] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, 1, 0, 0)), DirectX::XMVectorSet(0, 0, -1, 0)); // +Y
 	viewMatrices[3] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, -1, 0, 0)), DirectX::XMVectorSet(0, 0, 1, 0)); // -Y
 	viewMatrices[4] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, 0, 1, 0)), DirectX::XMVectorSet(0, 1, 0, 0)); // +Z
-	viewMatrices[5] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, 0, -1, 0)), DirectX::XMVectorSet(0, 1, 0, 0)); // -Z
-
-	
+	viewMatrices[5] = DirectX::XMMatrixLookAtLH(lightPos, DirectX::XMVectorAdd(lightPos, DirectX::XMVectorSet(0, 0, -1, 0)), DirectX::XMVectorSet(0, 1, 0, 0)); // -Z	
 
 	for (int i = 0; i < 6; ++i)
 	{
-		gfx.SetShadowPassRT(i);
+		gfx.SetShadowPassDepthStencil(i);
 		for (auto& object : objects)
 		{
 			struct VSCBuf
@@ -130,4 +103,34 @@ void Scene::ShadowPass(float dt, Graphics& gfx)
 		}
 		gfx.ClearRenderTarget();
 	}
+}
+
+void Scene::BasePass(float dt, Graphics& gfx)
+{
+	gfx.SetBasePassRT();
+	gfx.BindShadowMapToPixelShader();
+	light->Update(gfx);
+	light->Draw(gfx);
+	mtx.lock();
+	if (loadedObjects.size() > 0)
+	{
+		objects.insert(objects.end(), loadedObjects.begin(), loadedObjects.end());
+		loadedObjects.clear();
+	}
+	for (auto& obj : objects)
+	{
+		obj->Update(dt);
+		obj->Draw(gfx);
+	}
+	for (auto& obj : objects)
+	{
+		Mesh* temp = dynamic_cast<Mesh*>(obj);
+		if (temp && temp->IsOutlineEnabled())
+		{
+			temp->Update(dt);
+			temp->DrawOutline(gfx);
+		}
+	}
+	mtx.unlock();
+	gfx.UnbindShadowMapToPixelShader();
 }

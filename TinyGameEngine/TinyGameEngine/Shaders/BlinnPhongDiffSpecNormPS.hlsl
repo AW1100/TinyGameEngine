@@ -56,7 +56,7 @@ float4 main(PixelInputType input) : SV_Target
     float currentDepth = length(lightToPixel);
     
     float shadowLevel = 0.0f;
-    float texelSize = 1.0f / 1024.0f;
+    float texelSize = 4.0f / 1024.0f;
     [unroll]
     for (int x = -PCF_RANGE; x <= PCF_RANGE; ++x)
     {

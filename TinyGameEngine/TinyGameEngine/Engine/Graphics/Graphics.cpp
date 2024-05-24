@@ -17,7 +17,7 @@ Graphics::Graphics(HWND hWnd)
 {
 	CreateDevice();
 	CreateSwapChain(hWnd);
-	CreateShadowMapResource();
+	CreateShadowPassResource();
 
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
@@ -278,40 +278,7 @@ DirectX::XMMATRIX Graphics::GetCamera() const
 	return camera;
 }
 
-void Graphics::SetShadowPassRT()
-{
-	/*ID3D11RenderTargetView* rtv[6] = { 
-		pShadowCubeRTV[0].Get(),
-		pShadowCubeRTV[1].Get(),
-		pShadowCubeRTV[2].Get(),
-		pShadowCubeRTV[3].Get(),
-		pShadowCubeRTV[4].Get(),
-		pShadowCubeRTV[5].Get() };
-	ID3D11DepthStencilView* dsv[6] = {
-		pShadowCubeDSV[0].Get(),
-		pShadowCubeDSV[1].Get(),
-		pShadowCubeDSV[2].Get(),
-		pShadowCubeDSV[3].Get(),
-		pShadowCubeDSV[4].Get(),
-		pShadowCubeDSV[5].Get(),
-	};
-	pContext->OMSetRenderTargets(1u, rtv, nullptr);
-	for (int i = 0; i < 6; ++i)
-	{
-		pContext->OMSetRenderTargets(1u, pShadowCubeRTV[i].GetAddressOf(), pShadowCubeDSV[i].Get());
-	}
-
-	D3D11_VIEWPORT vp;
-	vp.TopLeftX = 0.0f;
-	vp.TopLeftY = 0.0f;
-	vp.Width = 512;
-	vp.Height = 512;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	pContext->RSSetViewports(1, &vp);*/
-}
-
-void Graphics::SetShadowPassRT(int index)
+void Graphics::SetShadowPassDepthStencil(int index)
 {
 	pContext->OMSetRenderTargets(1u, pShadowCubeRTV.GetAddressOf(), pShadowCubeDSV[index].Get());
 
@@ -340,8 +307,8 @@ void Graphics::SetBasePassRT()
 
 void Graphics::BindShadowMapToPixelShader()
 {
-	ID3D11ShaderResourceView* nullSRVs[2] = { nullptr,nullptr };
-	pContext->PSSetShaderResources(0, 2, nullSRVs); // Unbind from pixel shader slot 0
+	//ID3D11ShaderResourceView* nullSRVs[2] = { nullptr,nullptr };
+	//pContext->PSSetShaderResources(0, 2, nullSRVs); // Unbind from pixel shader slot 0
 	pContext->PSSetShaderResources(1, 1, pShadowDepthSRV.GetAddressOf());
 }
 
@@ -370,7 +337,7 @@ void Graphics::UnbindRenderTarget()
 	pContext->CSSetUnorderedAccessViews(0, 1, nullUAVs, nullptr);
 }
 
-void Graphics::CreateShadowMapResource()
+void Graphics::CreateShadowPassResource()
 {
 	D3D11_TEXTURE2D_DESC texDesc;
 	ZeroMemory(&texDesc, sizeof(texDesc));
@@ -440,13 +407,6 @@ void Graphics::CreateShadowMapResource()
 	srvDesc.TextureCube.MipLevels = 1;
 
 	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pShadowRT.Get(), &srvDesc, &pShadowSRV));*/
-}
-
-void Graphics::ShadowPass(PointLight& light)
-{
-	
-
-
 }
 
 void Graphics::UnbindGeometryShader()

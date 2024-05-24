@@ -18,9 +18,7 @@ public:
 	void CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
 	void LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
 	void ShadowPass(float dt, Graphics& gfx);
-
-	//inline static bool bShadowPass = false;
-
+	void BasePass(float dt, Graphics& gfx);
 
 protected:
 	std::vector<class Model*> models;
