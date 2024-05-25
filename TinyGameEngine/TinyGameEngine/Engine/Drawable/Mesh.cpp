@@ -112,8 +112,8 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
     {
         auto sp = std::make_shared<VertexShader>(gfx, L"ShadowVS.cso");
         ID3DBlob* pvsbc = sp->GetBytecode();
-        shadowBinds.push_back(std::move(sp));
-        //shadowBinds.push_back(std::move(std::make_shared<GeometryShader>(gfx, L"ShadowGS.cso")));
+        shadowBinds.emplace_back(std::move(sp));
+        //shadowBinds.emplace_back(std::make_shared<GeometryShader>(gfx, L"ShadowGS.cso"));
         shadowBinds.emplace_back(std::make_shared<PixelShader>(gfx, L"ShadowPS.cso"));
         shadowBinds.emplace_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
         shadowBinds.emplace_back(std::make_shared<ShadowRasterizer>(gfx, 0, 0.0f, 0.0f));
@@ -141,7 +141,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
             return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
             }));
         outlineBinds.push_back(std::make_shared<Stencil>(gfx, Stencil::Mode::Mask));
-        //outlineBinds.push_back(std::make_shared<GeometryShader>(gfx, L"OutlineGS.cso"));
+        outlineBinds.push_back(std::make_shared<GeometryShader>(gfx, L"OutlineGS.cso"));
     }
     
 }
