@@ -11,6 +11,8 @@
 #include "..\Util\DynamicVertex.hpp"
 
 #include "../Bindable/ConstantBuffer.h"
+#include "../Drawable/FullScreenPlane.h"
+#include "../Drawable/MergePlane.h"
 
 
 std::mutex mtx;
@@ -129,6 +131,7 @@ void Scene::BasePass(float dt, Graphics& gfx)
 
 void Scene::PostPass(float dt, Graphics& gfx)
 {
+	gfx.SetPostProcessingRT();
 	for (auto& obj : objects)
 	{
 		Mesh* temp = dynamic_cast<Mesh*>(obj);
@@ -137,6 +140,15 @@ void Scene::PostPass(float dt, Graphics& gfx)
 			temp->Update(dt);
 			temp->DrawOutline(gfx);
 		}
-		gfx.UnbindGeometryShader();
+		//gfx.UnbindGeometryShader();
 	}
+	gfx.SetConvRT();
+	gfx.BindPostRTToPixelShader();
+	Drawable* fullScreen = new FullScreenPlane(gfx);
+	fullScreen->Draw(gfx);
+	
+	gfx.SetBasePassRT();
+	gfx.BindConvRTToPixelShader();
+	Drawable* mergeScreen = new MergePlane(gfx);
+	mergeScreen->Draw(gfx);
 }

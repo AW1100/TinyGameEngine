@@ -54,7 +54,7 @@ void TGE::Application::DoFrame()
 	std::ostringstream oss;
 	oss << std::fixed << std::setprecision(1) << timer.Duration();
 	SetWindowText(wnd->GetHWnd(), TITLE);
-	wnd->Gfx().ClearBuffer(0.1f, 0.1f, 0.1f);
+	wnd->Gfx().ClearBuffer(0.0f, 0.0f, 0.0f);
 	scene->UpdateFrame(dt, wnd->Gfx());
 	wnd->Gfx().BeginImgui(speed_factor);
 	Log::GetInstance().RenderLogWindow();

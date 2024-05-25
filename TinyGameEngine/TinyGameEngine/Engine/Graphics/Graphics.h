@@ -40,6 +40,12 @@ public:
 	void UnbindGeometryShader();
 	void ClearRenderTarget();
 
+	void CreatePostProcessingResource();
+	void SetPostProcessingRT();
+	void BindPostRTToPixelShader();
+	void SetConvRT();
+	void BindConvRTToPixelShader();
+
 private:
 	ComPtr<ID3D11Texture2D> pShadowDepth;
 	ComPtr<ID3D11DepthStencilView> pShadowCubeDSV[6];
@@ -48,6 +54,13 @@ private:
 	ComPtr<ID3D11Texture2D> pShadowRT;
 	ComPtr<ID3D11RenderTargetView> pShadowCubeRTV;
 	ComPtr<ID3D11ShaderResourceView> pShadowSRV;
+
+	ComPtr< ID3D11Texture2D> pPostRT;
+	ComPtr<ID3D11RenderTargetView> pPostRTV;
+	ComPtr<ID3D11ShaderResourceView> pPostSRV;
+	ComPtr< ID3D11Texture2D> pConvRT;
+	ComPtr<ID3D11RenderTargetView> pConvRTV;
+	ComPtr<ID3D11ShaderResourceView> pConvSRV;
 
 	ComPtr<ID3D11Device> pDevice = nullptr;
 	ComPtr<IDXGISwapChain> pSwap = nullptr;

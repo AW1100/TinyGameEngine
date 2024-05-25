@@ -459,6 +459,12 @@
     <ClInclude Include="Engine\Bindable\ShadowRasterizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Drawable\FullScreenPlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Drawable\MergePlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -596,6 +602,12 @@
     <ClCompile Include="Engine\Bindable\ShadowRasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Drawable\FullScreenPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Drawable\MergePlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ColorCubeVS.hlsl" />
@@ -621,6 +633,10 @@
     <FxCompile Include="Shaders\ShadowPS.hlsl" />
     <FxCompile Include="Shaders\ShadowGS.hlsl" />
     <FxCompile Include="Shaders\OutlineGS.hlsl" />
+    <FxCompile Include="Shaders\PostVS.hlsl" />
+    <FxCompile Include="Shaders\PostPS.hlsl" />
+    <FxCompile Include="Shaders\MergeVS.hlsl" />
+    <FxCompile Include="Shaders\MergePS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

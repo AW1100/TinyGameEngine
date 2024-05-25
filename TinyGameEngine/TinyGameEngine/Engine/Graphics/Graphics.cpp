@@ -18,6 +18,7 @@ Graphics::Graphics(HWND hWnd)
 	CreateDevice();
 	CreateSwapChain(hWnd);
 	CreateShadowPassResource();
+	CreatePostProcessingResource();
 
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
@@ -136,7 +137,8 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 		pContext->ClearRenderTargetView(pShadowCubeRTV.Get(), color);
 		pContext->ClearDepthStencilView(pShadowCubeDSV[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 	}
-	
+	pContext->ClearRenderTargetView(pPostRTV.Get(), color);
+	pContext->ClearRenderTargetView(pConvRTV.Get(), color);	
 }
 
 void Graphics::Draw(UINT count)
@@ -394,19 +396,11 @@ void Graphics::CreateShadowPassResource()
 
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 	rtvDesc.Format = textureDesc.Format;
-	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	rtvDesc.Texture2DArray.MipSlice = 0;
 	rtvDesc.Texture2DArray.ArraySize = 1;
 
 	DX::ThrowIfFailed(pDevice->CreateRenderTargetView(pShadowRT.Get(), &rtvDesc, &pShadowCubeRTV));
-
-	/*D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = 1;
-
-	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pShadowRT.Get(), &srvDesc, &pShadowSRV));*/
 }
 
 void Graphics::UnbindGeometryShader()
@@ -419,3 +413,62 @@ void Graphics::ClearRenderTarget()
 	const float color[] = { 0.1f,0.1f,0.1f,1.0f };
 	pContext->ClearRenderTargetView(pShadowCubeRTV.Get(), color);
 }
+
+void Graphics::CreatePostProcessingResource()
+{
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = WIDTH;
+	textureDesc.Height = HEIGHT;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.MiscFlags = 0;
+
+	DX::ThrowIfFailed(pDevice->CreateTexture2D(&textureDesc, nullptr, &pPostRT));
+
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.Format = textureDesc.Format;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Texture2DArray.MipSlice = 0;
+	rtvDesc.Texture2DArray.ArraySize = 1;
+
+	DX::ThrowIfFailed(pDevice->CreateRenderTargetView(pPostRT.Get(), &rtvDesc, &pPostRTV));
+	
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.TextureCube.MostDetailedMip = 0;
+	srvDesc.TextureCube.MipLevels = 1;
+
+	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pPostRT.Get(), &srvDesc, &pPostSRV));
+
+	// Second
+	DX::ThrowIfFailed(pDevice->CreateTexture2D(&textureDesc, nullptr, &pConvRT));
+	DX::ThrowIfFailed(pDevice->CreateRenderTargetView(pConvRT.Get(), &rtvDesc, &pConvRTV));
+	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pConvRT.Get(), &srvDesc, &pConvSRV));
+}
+
+void Graphics::SetPostProcessingRT()
+{
+	pContext->OMSetRenderTargets(1u, pPostRTV.GetAddressOf(), nullptr);
+}
+
+void Graphics::BindPostRTToPixelShader()
+{
+	pContext->PSSetShaderResources(0, 1, pPostSRV.GetAddressOf());
+}
+
+void Graphics::SetConvRT()
+{
+	pContext->OMSetRenderTargets(1u, pConvRTV.GetAddressOf(), nullptr);
+}
+
+void Graphics::BindConvRTToPixelShader()
+{
+	pContext->PSSetShaderResources(0, 1, pConvSRV.GetAddressOf());
+}
+
+

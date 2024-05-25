@@ -141,8 +141,8 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         outlineBinds.push_back(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<TransformConstantBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
             return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
             }));
-        outlineBinds.push_back(std::make_shared<Stencil>(gfx, Stencil::Mode::Mask));
-        outlineBinds.push_back(std::make_shared<GeometryShader>(gfx, L"OutlineGS.cso"));
+        outlineBinds.push_back(std::make_shared<Stencil>(gfx, Stencil::Mode::Off));
+        //outlineBinds.push_back(std::make_shared<GeometryShader>(gfx, L"OutlineGS.cso"));
     }
     
 }
