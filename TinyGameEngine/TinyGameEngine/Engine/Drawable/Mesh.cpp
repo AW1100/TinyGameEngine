@@ -117,6 +117,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         shadowBinds.emplace_back(std::make_shared<PixelShader>(gfx, L"ShadowPS.cso"));
         shadowBinds.emplace_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
         shadowBinds.emplace_back(std::make_shared<ShadowRasterizer>(gfx, 0, 0.0f, 0.0f));
+        shadowBinds.emplace_back(std::make_shared<Stencil>(gfx, Stencil::Mode::Off));
     }
 
     if (useOutline)

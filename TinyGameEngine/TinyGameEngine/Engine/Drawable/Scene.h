@@ -19,6 +19,7 @@ public:
 	void LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline = false);
 	void ShadowPass(float dt, Graphics& gfx);
 	void BasePass(float dt, Graphics& gfx);
+	void PostPass(float dt, Graphics& gfx);
 
 protected:
 	std::vector<class Model*> models;

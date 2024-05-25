@@ -45,6 +45,7 @@ void Scene::UpdateFrame(float dt, Graphics& gfx)
 {
 	ShadowPass(dt, gfx);
 	BasePass(dt, gfx);
+	PostPass(dt, gfx);
 }
 
 void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline)
@@ -122,6 +123,12 @@ void Scene::BasePass(float dt, Graphics& gfx)
 		obj->Update(dt);
 		obj->Draw(gfx);
 	}
+	mtx.unlock();
+	gfx.UnbindShadowMapToPixelShader();
+}
+
+void Scene::PostPass(float dt, Graphics& gfx)
+{
 	for (auto& obj : objects)
 	{
 		Mesh* temp = dynamic_cast<Mesh*>(obj);
@@ -132,6 +139,4 @@ void Scene::BasePass(float dt, Graphics& gfx)
 		}
 		gfx.UnbindGeometryShader();
 	}
-	mtx.unlock();
-	gfx.UnbindShadowMapToPixelShader();
 }
