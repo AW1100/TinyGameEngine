@@ -620,6 +620,7 @@
     <FxCompile Include="Shaders\ShadowVS.hlsl" />
     <FxCompile Include="Shaders\ShadowPS.hlsl" />
     <FxCompile Include="Shaders\ShadowGS.hlsl" />
+    <FxCompile Include="Shaders\OutlineGS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

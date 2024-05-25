@@ -130,6 +130,7 @@ void Scene::BasePass(float dt, Graphics& gfx)
 			temp->Update(dt);
 			temp->DrawOutline(gfx);
 		}
+		//gfx.UnbindGeometryShader();
 	}
 	mtx.unlock();
 	gfx.UnbindShadowMapToPixelShader();

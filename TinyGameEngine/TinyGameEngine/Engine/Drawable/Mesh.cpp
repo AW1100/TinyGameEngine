@@ -129,7 +129,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         auto sp = std::make_shared<VertexShader>(gfx, L"OutlineVS.cso");
         ID3DBlob* pvsbc = sp->GetBytecode();
         outlineBinds.push_back(std::move(sp));
-        outlineBinds.push_back(std::move(std::make_shared<PixelShader>(gfx, L"OutlinePS.cso")));
+        outlineBinds.push_back(std::make_shared<PixelShader>(gfx, L"OutlinePS.cso"));
         outlineBinds.push_back(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<IndexBuffer>(n)), [&]()-> std::shared_ptr<Bindable> {
             return std::make_shared<IndexBuffer>(gfx, node->indices);
             }));
@@ -141,6 +141,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
             return std::make_shared<TransformConstantBuffer>(gfx, *this, 0);
             }));
         outlineBinds.push_back(std::make_shared<Stencil>(gfx, Stencil::Mode::Mask));
+        //outlineBinds.push_back(std::make_shared<GeometryShader>(gfx, L"OutlineGS.cso"));
     }
     
 }
