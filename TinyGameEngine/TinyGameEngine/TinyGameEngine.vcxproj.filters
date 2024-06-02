@@ -628,7 +628,6 @@
     <FxCompile Include="Shaders\BlinnPhongDiffNormPS.hlsl" />
     <FxCompile Include="Shaders\OutlinePS.hlsl" />
     <FxCompile Include="Shaders\OutlineVS.hlsl" />
-    <FxCompile Include="Shaders\SobelOutlinePS.hlsl" />
     <FxCompile Include="Shaders\ShadowVS.hlsl" />
     <FxCompile Include="Shaders\ShadowPS.hlsl" />
     <FxCompile Include="Shaders\ShadowGS.hlsl" />

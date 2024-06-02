@@ -14,6 +14,8 @@ public:
 	void DrawOutline(Graphics& gfx);
 	inline bool IsOutlineEnabled() { return outlineEnabled; }
 	void DrawShadowMap(Graphics& gfx);
+	virtual bool IsTranslucent() const override { return useAlpha; }
+	virtual bool operator<(const Drawable& other) const override { return useAlpha < other.IsTranslucent(); }
 
 private:
 	float r = 0.0f;
@@ -34,6 +36,7 @@ private:
 	DirectX::XMFLOAT3 translation;
 	bool outlineEnabled = false;
 	bool outlining = false;
+	bool useAlpha = false;
 	std::vector<std::shared_ptr<Bindable>> outlineBinds;
 	std::vector<std::shared_ptr<Bindable>> shadowBinds;
 };

@@ -36,10 +36,6 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         return std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         }));
 
-    AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Blender>(n)), [&]()-> std::shared_ptr<Bindable> {
-        return std::make_shared<Blender>(gfx, true);
-        }));
-
     shadowBinds = binds;
 
     ShaderLookupTable table;
@@ -74,8 +70,6 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
             return std::make_shared<Stencil>(gfx, useOutline ? Stencil::Mode::Write : Stencil::Mode::Off);
             }));
 
-        bool useAlpha = false;
-
         AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>(useAlpha ? "None" : "Back")), [&]()-> std::shared_ptr<Bindable> {
             return std::make_shared<Rasterizer>(gfx, useAlpha);
             }));
@@ -106,6 +100,10 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
 
         AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Sampler>("Shadow")), [&]()-> std::shared_ptr<Bindable> {
             return std::make_shared<Sampler>(gfx, 1u);
+            }));
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Blender>(n)), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<Blender>(gfx, true);
             }));
     }
 

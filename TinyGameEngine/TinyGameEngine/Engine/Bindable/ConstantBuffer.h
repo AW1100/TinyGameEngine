@@ -1,5 +1,6 @@
 #pragma once
 #include "Bindable.h"
+#include "../Exception/Exception.h"
 
 template<typename T>
 class ConstantBuffer : public Bindable
@@ -17,7 +18,7 @@ public:
 
 		D3D11_SUBRESOURCE_DATA csd = {};
 		csd.pSysMem = &consts;
-		GetDevice(gfx)->CreateBuffer(&cbd, &csd, &pConstantBuffer);
+		DX::ThrowIfFailed(GetDevice(gfx)->CreateBuffer(&cbd, &csd, &pConstantBuffer));
 	}
 
 	ConstantBuffer(Graphics& gfx, UINT s)
@@ -31,7 +32,7 @@ public:
 		cbd.ByteWidth = sizeof(T);
 		cbd.StructureByteStride = 0u;
 
-		GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pConstantBuffer);
+		DX::ThrowIfFailed(GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pConstantBuffer));
 	}
 
 	void Update(Graphics& gfx, const T& consts)

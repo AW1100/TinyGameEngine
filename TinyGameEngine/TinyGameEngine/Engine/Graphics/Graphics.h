@@ -21,7 +21,7 @@ public:
 	void ClearBuffer(float red, float green, float blue);
 	void Draw(UINT count);
 	void DrawIndexed(UINT count);
-	void DrawTestTriangle();
+	//void DrawTestTriangle();
 	void SetProjection(DirectX::XMMATRIX proj);
 	DirectX::XMMATRIX GetProjection() const;
 	void BeginImgui(float &sf);

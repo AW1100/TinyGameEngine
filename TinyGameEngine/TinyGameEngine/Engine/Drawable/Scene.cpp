@@ -7,6 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <sstream>
+#include <algorithm>
 
 #include "..\Util\DynamicVertex.hpp"
 
@@ -65,6 +66,7 @@ void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3
 	//Log::GetInstance().AddLog("Load Complete");
 	mtx.lock();
 	temp->FindRenderables(loadedObjects, gfx);
+	//std::sort(loadedObjects.begin(), loadedObjects.end());
 	mtx.unlock();
 }
 
@@ -119,6 +121,9 @@ void Scene::BasePass(float dt, Graphics& gfx)
 	{
 		objects.insert(objects.end(), loadedObjects.begin(), loadedObjects.end());
 		loadedObjects.clear();
+		std::sort(objects.begin(), objects.end(), [](const Drawable* a, const Drawable* b) {
+			return *a < *b;
+			});
 	}
 	for (auto& obj : objects)
 	{

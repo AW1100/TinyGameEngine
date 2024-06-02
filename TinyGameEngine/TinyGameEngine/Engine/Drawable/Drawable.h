@@ -17,6 +17,8 @@ public:
 	virtual void Update(float dt) = 0;
 	void AddBind(std::shared_ptr<class Bindable> bind);
 	void AddIndexBuffer(std::shared_ptr<class IndexBuffer> ib);
+	virtual bool IsTranslucent() const { return false; }
+	virtual bool operator<(const Drawable& other) const { return false; }
 
 protected:
 	IndexBuffer* pIndexBuffer = nullptr;
