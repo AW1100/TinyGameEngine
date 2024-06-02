@@ -12,6 +12,7 @@
 
 #include "../Light/PointLight.h"
 #include "../Drawable/Scene.h"
+#include "../Bindable/BindableHeader.h"
 
 Graphics::Graphics(HWND hWnd)
 {
@@ -84,42 +85,8 @@ void Graphics::CreateSwapChain(HWND hWnd)
 		nullptr,
 		&pTarget
 	));
-
-	// create depth stensil texture
-	ComPtr<ID3D11Texture2D> pDepthStencil;
-	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = WIDTH;
-	descDepth.Height = HEIGHT;
-	descDepth.MipLevels = 1u;
-	descDepth.ArraySize = 1u;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = SAMPLES;
-	descDepth.SampleDesc.Quality = msaaQuality;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	DX::ThrowIfFailed(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
-
-	// create view of depth stensil texture
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
-	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
-	descDSV.Texture2D.MipSlice = 0u;
-	DX::ThrowIfFailed(pDevice->CreateDepthStencilView(
-		pDepthStencil.Get(), &descDSV, &pDSV
-	));
-
-	// bind depth stensil view to OM
-	// pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
-
-	// configure viewport
-	D3D11_VIEWPORT vp;
-	vp.Width = WIDTH;
-	vp.Height = HEIGHT;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0.0f;
-	vp.TopLeftY = 0.0f;
-	pContext->RSSetViewports(1u, &vp);
+	
+	pDepthStencil = std::make_unique<DepthStencil>(*this, WIDTH, HEIGHT, SAMPLES, msaaQuality);
 }
 
 void Graphics::EndFrame()
@@ -131,7 +98,7 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red,green,blue,1.0f };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
-	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+	pContext->ClearDepthStencilView(pDepthStencil->Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 	for (int i = 0; i < 6; i++)
 	{
 		pContext->ClearRenderTargetView(pShadowCubeRTV.Get(), color);
@@ -296,7 +263,8 @@ void Graphics::SetShadowPassDepthStencil(int index)
 
 void Graphics::SetBasePassRT()
 {
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDepthStencil->Get());
+
 	D3D11_VIEWPORT vp;
 	vp.Width = WIDTH;
 	vp.Height = HEIGHT;
@@ -343,10 +311,10 @@ void Graphics::CreateShadowPassResource()
 {
 	D3D11_TEXTURE2D_DESC texDesc;
 	ZeroMemory(&texDesc, sizeof(texDesc));
-	texDesc.Width = 1024u; // Ensure WIDTH / 2 is an integer
-	texDesc.Height = 1024u; // Ensure HEIGHT / 2 is an integer
+	texDesc.Width = 1024u;
+	texDesc.Height = 1024u;
 	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 6; // 6 faces of the cube
+	texDesc.ArraySize = 6;
 	texDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
@@ -386,7 +354,7 @@ void Graphics::CreateShadowPassResource()
 	textureDesc.Height = 1024u;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // Or any other format you need
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;

@@ -10,5 +10,5 @@ public:
 	void Bind(Graphics& gfx) override;
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11GeometryShader> pGeometryShader;
+	ComPtr<ID3D11GeometryShader> pGeometryShader;
 };

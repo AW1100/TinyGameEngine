@@ -9,7 +9,7 @@ public:
 	void Bind(Graphics& gfx) override;
 
 protected:
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizer;
+	ComPtr<ID3D11RasterizerState> pRasterizer;
 
 public:
 	int depthBias;

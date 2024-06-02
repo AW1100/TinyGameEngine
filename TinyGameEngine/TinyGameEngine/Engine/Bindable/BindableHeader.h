@@ -14,3 +14,4 @@
 #include "Stencil.h"
 #include "GeometryShader.h"
 #include "ShadowRasterizer.h"
+#include "DepthStencil.h"

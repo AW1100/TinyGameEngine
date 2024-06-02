@@ -8,5 +8,5 @@ public:
 	void Bind(Graphics& gfx) override;
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizer;
+	ComPtr<ID3D11RasterizerState> pRasterizer;
 };

@@ -108,6 +108,7 @@ void Scene::ShadowPass(float dt, Graphics& gfx)
 		}
 		gfx.ClearRenderTarget();
 	}
+	
 }
 
 void Scene::BasePass(float dt, Graphics& gfx)
@@ -136,6 +137,7 @@ void Scene::BasePass(float dt, Graphics& gfx)
 
 void Scene::PostPass(float dt, Graphics& gfx)
 {
+	// draw solid objects
 	gfx.SetPostProcessingRT();
 	for (auto& obj : objects)
 	{
@@ -147,11 +149,14 @@ void Scene::PostPass(float dt, Graphics& gfx)
 		}
 		//gfx.UnbindGeometryShader();
 	}
+
+	// do convolution operation
 	gfx.SetConvRT();
 	gfx.BindPostRTToPixelShader();
 	Drawable* fullScreen = new FullScreenPlane(gfx);
 	fullScreen->Draw(gfx);
 	
+	// apply it to base pass RT
 	gfx.SetBasePassRT();
 	gfx.BindConvRTToPixelShader();
 	Drawable* mergeScreen = new MergePlane(gfx);

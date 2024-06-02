@@ -25,7 +25,7 @@ private:
 	DirectX::XMFLOAT4 initialPos = { 2.0f,1.0f, -1.0f,1.0f };
 	DirectX::XMFLOAT4 pos;
 	DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
-	DirectX::XMFLOAT4 attConsts = { 0.7f, 0.3f, 0.2f, 30.0f }; // attConst, attLin, attQuad, alpha
+	DirectX::XMFLOAT4 attConsts = { 0.7f, 0.3f, 0.1f, 30.0f }; // attConst, attLin, attQuad, alpha
 	mutable std::shared_ptr<Sphere> mesh;
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
 };

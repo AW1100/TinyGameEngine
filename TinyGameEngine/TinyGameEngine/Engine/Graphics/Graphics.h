@@ -4,12 +4,13 @@
 #include <d3dcompiler.h>
 #include <span>
 #include <DirectXMath.h>
+#include <memory>
 
 using namespace Microsoft::WRL;
 
 class Graphics
 {
-	friend class Bindable;
+	friend class GraphicsResource;
 public:
 	Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete;
@@ -66,7 +67,8 @@ private:
 	ComPtr<IDXGISwapChain> pSwap = nullptr;
 	ComPtr<ID3D11DeviceContext> pContext = nullptr;
 	ComPtr<ID3D11RenderTargetView> pTarget = nullptr;
-	ComPtr<ID3D11DepthStencilView> pDSV = nullptr;
+	//ComPtr<ID3D11DepthStencilView> pDSV = nullptr;
+	std::unique_ptr<class DepthStencil> pDepthStencil;
 
 #ifdef _DEBUG 
 	ComPtr<ID3D11Debug> pDebug;

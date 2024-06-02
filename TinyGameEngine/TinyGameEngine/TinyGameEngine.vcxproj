@@ -170,7 +170,10 @@
     <ClInclude Include="Engine\Bindable\Bindable.h" />
     <ClInclude Include="Engine\Bindable\Blender.h" />
     <ClInclude Include="Engine\Bindable\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Bindable\DepthCubemap.h" />
+    <ClInclude Include="Engine\Bindable\DepthStencil.h" />
     <ClInclude Include="Engine\Bindable\GeometryShader.h" />
+    <ClInclude Include="Engine\Bindable\GraphicsResource.h" />
     <ClInclude Include="Engine\Bindable\IndexBuffer.h" />
     <ClInclude Include="Engine\Bindable\InputLayout.h" />
     <ClInclude Include="Engine\Bindable\PixelShader.h" />
@@ -320,7 +323,10 @@
     <ClCompile Include="Engine\Application.cpp" />
     <ClCompile Include="Engine\Bindable\Bindable.cpp" />
     <ClCompile Include="Engine\Bindable\Blender.cpp" />
+    <ClCompile Include="Engine\Bindable\DepthCubemap.cpp" />
+    <ClCompile Include="Engine\Bindable\DepthStencil.cpp" />
     <ClCompile Include="Engine\Bindable\GeometryShader.cpp" />
+    <ClCompile Include="Engine\Bindable\GraphicsResource.cpp" />
     <ClCompile Include="Engine\Bindable\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Bindable\InputLayout.cpp" />
     <ClCompile Include="Engine\Bindable\PixelShader.cpp" />
