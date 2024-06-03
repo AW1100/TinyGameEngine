@@ -50,7 +50,7 @@ public:
 
 protected:
 	ComPtr<ID3D11Buffer> pConstantBuffer;
-	UINT slot;
+	UINT slot = 0u;
 };
 
 template<typename T>

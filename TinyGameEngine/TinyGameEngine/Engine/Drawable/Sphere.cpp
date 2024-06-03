@@ -61,8 +61,8 @@ void Sphere::createSphere(float radius, int numLatitudeLines, int numLongitudeLi
     indices.clear();
 
     // Calculate increments
-    float phiInc = M_PI / (numLatitudeLines + 1);
-    float thetaInc = 2 * M_PI / numLongitudeLines;
+    float phiInc = float(M_PI / (numLatitudeLines + 1));
+    float thetaInc = float(2 * M_PI / numLongitudeLines);
 
     // North pole vertex
     vertices.push_back({ 0, 0, radius });

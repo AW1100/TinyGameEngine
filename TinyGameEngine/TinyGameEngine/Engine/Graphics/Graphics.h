@@ -2,10 +2,10 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <d3dcompiler.h>
-#include <span>
 #include <DirectXMath.h>
 #include <memory>
 
+class DepthStencil;
 class RenderTarget;
 class DepthCubemap;
 
@@ -33,22 +33,24 @@ public:
 	void SetCamera(DirectX::FXMMATRIX cam);
 	DirectX::XMMATRIX GetCamera() const;
 
-	void SetShadowPassDepthStencil(int index);
-	void SetBasePassRT();
-	void BindShadowMapToPixelShader();
-	void UnbindShadowMapToPixelShader();
-	void SetShadowMapConstantBuffer(DirectX::XMMATRIX& matrix, UINT s);
-	void UnbindRenderTarget();
-
 	void CreateShadowPassResource();
+	void CreatePostProcessingResource();
+	
+	void SetBasePassRT();
+	void SetPostProcessingRT();
+	void SetConvRT();
+	void SetShadowPassDepthStencil(int index);
+	void SetShadowMapConstantBuffer(DirectX::XMMATRIX& matrix, UINT s);
+	
+	void BindShadowMapToPixelShader();
+	void BindPostRTToPixelShader();
+	void BindConvRTToPixelShader();
+	void UnbindShadowMapToPixelShader();
+	void UnbindRenderTarget();
 	void UnbindGeometryShader();
 	void ClearRenderTarget();
 
-	void CreatePostProcessingResource();
-	void SetPostProcessingRT();
-	void BindPostRTToPixelShader();
-	void SetConvRT();
-	void BindConvRTToPixelShader();
+
 
 private:
 	ComPtr<ID3D11Device> pDevice = nullptr;
@@ -56,7 +58,7 @@ private:
 	ComPtr<ID3D11DeviceContext> pContext = nullptr;
 	ComPtr<ID3D11RenderTargetView> pTarget = nullptr;
 
-	std::unique_ptr<class DepthStencil> pDepthStencil;
+	std::unique_ptr<DepthStencil> pDepthStencil;
 
 	std::unique_ptr<RenderTarget> pShadowRT;
 	std::unique_ptr<DepthCubemap> pShadowCube;

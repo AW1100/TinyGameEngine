@@ -55,7 +55,7 @@ void Graphics::CreateSwapChain(HWND hWnd)
 	sd.BufferDesc.RefreshRate.Denominator = 0;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	sd.SampleDesc.Count = SAMPLES;
+	sd.SampleDesc.Count = SAMPLES_COUNT;
 	sd.SampleDesc.Quality = msaaQuality;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = 1;
@@ -86,7 +86,7 @@ void Graphics::CreateSwapChain(HWND hWnd)
 		&pTarget
 	));
 	
-	pDepthStencil = std::make_unique<DepthStencil>(*this, WIDTH, HEIGHT, SAMPLES, msaaQuality);
+	pDepthStencil = std::make_unique<DepthStencil>(*this, WINDOW_WIDTH, WINDOW_HEIGHT, SAMPLES_COUNT, msaaQuality);
 }
 
 void Graphics::EndFrame()
@@ -265,8 +265,8 @@ void Graphics::SetBasePassRT()
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDepthStencil->Get());
 
 	D3D11_VIEWPORT vp;
-	vp.Width = WIDTH;
-	vp.Height = HEIGHT;
+	vp.Width = WINDOW_WIDTH;
+	vp.Height = WINDOW_HEIGHT;
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0.0f;
@@ -325,8 +325,8 @@ void Graphics::ClearRenderTarget()
 
 void Graphics::CreatePostProcessingResource()
 {
-	pPostRT = std::make_unique<RenderTarget>(*this, WIDTH, HEIGHT);
-	pConvRT = std::make_unique<RenderTarget>(*this, WIDTH, HEIGHT);
+	pPostRT = std::make_unique<RenderTarget>(*this, WINDOW_WIDTH, WINDOW_HEIGHT);
+	pConvRT = std::make_unique<RenderTarget>(*this, WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 void Graphics::SetPostProcessingRT()

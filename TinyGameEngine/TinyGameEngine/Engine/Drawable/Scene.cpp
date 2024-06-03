@@ -59,6 +59,7 @@ void Scene::CreateWorkerThread(Graphics& gfx, const char* filename, DirectX::XMF
 
 void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3 trans, MeshType type, bool outline)
 {
+	auto start = std::chrono::high_resolution_clock::now();
 	//Log::GetInstance().AddLog((std::string("Loading ")+std::string(filename)).c_str());
 	Model* temp = new Model(filename, trans, type);
 	temp->UseOutline(outline);
@@ -66,8 +67,10 @@ void Scene::LoadMeshAsync(Graphics& gfx, const char* filename, DirectX::XMFLOAT3
 	//Log::GetInstance().AddLog("Load Complete");
 	mtx.lock();
 	temp->FindRenderables(loadedObjects, gfx);
-	//std::sort(loadedObjects.begin(), loadedObjects.end());
 	mtx.unlock();
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+	Log::GetInstance().AddLog((std::string("Loading ") + std::string(filename)).c_str() + std::string("took: " + duration.count()));
 }
 
 void Scene::ShadowPass(float dt, Graphics& gfx)
@@ -106,7 +109,7 @@ void Scene::ShadowPass(float dt, Graphics& gfx)
 				temp->DrawShadowMap(gfx);
 			}
 		}
-		gfx.ClearRenderTarget();
+		//gfx.ClearRenderTarget();
 	}
 	
 }

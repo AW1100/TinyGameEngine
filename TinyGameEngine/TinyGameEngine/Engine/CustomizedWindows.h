@@ -34,8 +34,6 @@
 #define NOIMAGE
 #define NOTAPE
 
-#define STRICT
-
 #include <Windows.h>
 
 #define IDI_ICON1 101

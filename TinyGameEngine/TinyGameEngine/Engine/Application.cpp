@@ -13,11 +13,11 @@
 
 TGE::Application::Application()
 {
-	wnd = new WindowWindows(WIDTH, HEIGHT);
-	wnd->Init(TITLE);
+	wnd = new WindowWindows(WINDOW_WIDTH, WINDOW_HEIGHT);
+	wnd->Init(WINDOW_TITLE);
 	wnd->Show();
 	scene = new Scene(wnd->Gfx());
-	wnd->Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, HEIGHT/WIDTH, NEAR, FAR));
+	wnd->Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, WINDOW_HEIGHT/WINDOW_WIDTH, NEAR_PLANE, FAR_PLANE));
 	cam.SetConstantBuffer(wnd->Gfx());
 }
 
@@ -53,7 +53,7 @@ void TGE::Application::DoFrame()
 	cam.Update(wnd->Gfx());
 	std::ostringstream oss;
 	oss << std::fixed << std::setprecision(1) << timer.Duration();
-	SetWindowText(wnd->GetHWnd(), TITLE);
+	SetWindowText(wnd->GetHWnd(), WINDOW_TITLE);
 	wnd->Gfx().ClearBuffer(0.0f, 0.0f, 0.0f);
 	scene->UpdateFrame(dt, wnd->Gfx());
 	wnd->Gfx().BeginImgui(speed_factor);

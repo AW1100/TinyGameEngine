@@ -71,7 +71,7 @@ Texture::Texture(Graphics& gfx, const std::vector<const wchar_t*>& filepaths, bo
         DirectX::ScratchImage resizedImage;
         image_ptr = &image;
         hr = DirectX::LoadFromWICFile(filepaths[i], DirectX::WIC_FLAGS_NONE, nullptr, image);
-        auto im = image_ptr->GetMetadata();
+        auto& im = image_ptr->GetMetadata();
         if (im.format != textureDesc.Format)
         {            
             DX::ThrowIfFailed(DirectX::Convert(image_ptr->GetImages(), image_ptr->GetImageCount(), image_ptr->GetMetadata(), textureDesc.Format, DirectX::TEX_FILTER_DEFAULT, 0.5, convertedImage));
