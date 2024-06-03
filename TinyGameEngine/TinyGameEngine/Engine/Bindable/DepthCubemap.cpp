@@ -2,7 +2,7 @@
 
 DepthCubemap::DepthCubemap(Graphics& gfx, UINT size)
 {
-	/*D3D11_TEXTURE2D_DESC texDesc;
+	D3D11_TEXTURE2D_DESC texDesc;
 	ZeroMemory(&texDesc, sizeof(texDesc));
 	texDesc.Width = size;
 	texDesc.Height = size;
@@ -41,25 +41,26 @@ DepthCubemap::DepthCubemap(Graphics& gfx, UINT size)
 	srvDesc.TextureCube.MipLevels = 1;
 
 	DX::ThrowIfFailed(GetDevice(gfx)->CreateShaderResourceView(pShadowDepth.Get(), &srvDesc, &pShadowDepthSRV));
+}
 
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = size;
-	textureDesc.Height = size;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.MiscFlags = 0;
+ID3D11DepthStencilView* DepthCubemap::Get(int index)
+{
+	return pShadowCubeDSV[index].Get();
+}
 
-	DX::ThrowIfFailed(GetDevice(gfx)->CreateTexture2D(&textureDesc, nullptr, &pShadowRT));
+void DepthCubemap::BindToOutputMerger(Graphics& gfx)
+{
+}
 
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	rtvDesc.Format = textureDesc.Format;
-	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Texture2DArray.MipSlice = 0;
-	rtvDesc.Texture2DArray.ArraySize = 1;
+void DepthCubemap::BindToPixelShader(Graphics& gfx, UINT slot)
+{
+	GetContext(gfx)->PSSetShaderResources(slot, 1, pShadowDepthSRV.GetAddressOf());
+}
 
-	DX::ThrowIfFailed(GetDevice(gfx)->CreateRenderTargetView(pShadowRT.Get(), &rtvDesc, &pShadowCubeRTV));*/
+void DepthCubemap::Clear(Graphics& gfx)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		GetContext(gfx)->ClearDepthStencilView(pShadowCubeDSV[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+	}
 }

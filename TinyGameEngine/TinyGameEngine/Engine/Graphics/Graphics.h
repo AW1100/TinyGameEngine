@@ -6,6 +6,9 @@
 #include <DirectXMath.h>
 #include <memory>
 
+class RenderTarget;
+class DepthCubemap;
+
 using namespace Microsoft::WRL;
 
 class Graphics
@@ -48,27 +51,18 @@ public:
 	void BindConvRTToPixelShader();
 
 private:
-	ComPtr<ID3D11Texture2D> pShadowDepth;
-	ComPtr<ID3D11DepthStencilView> pShadowCubeDSV[6];
-	ComPtr<ID3D11ShaderResourceView> pShadowDepthSRV;
-
-	ComPtr<ID3D11Texture2D> pShadowRT;
-	ComPtr<ID3D11RenderTargetView> pShadowCubeRTV;
-	ComPtr<ID3D11ShaderResourceView> pShadowSRV;
-
-	ComPtr< ID3D11Texture2D> pPostRT;
-	ComPtr<ID3D11RenderTargetView> pPostRTV;
-	ComPtr<ID3D11ShaderResourceView> pPostSRV;
-	ComPtr< ID3D11Texture2D> pConvRT;
-	ComPtr<ID3D11RenderTargetView> pConvRTV;
-	ComPtr<ID3D11ShaderResourceView> pConvSRV;
-
 	ComPtr<ID3D11Device> pDevice = nullptr;
 	ComPtr<IDXGISwapChain> pSwap = nullptr;
 	ComPtr<ID3D11DeviceContext> pContext = nullptr;
 	ComPtr<ID3D11RenderTargetView> pTarget = nullptr;
-	//ComPtr<ID3D11DepthStencilView> pDSV = nullptr;
+
 	std::unique_ptr<class DepthStencil> pDepthStencil;
+
+	std::unique_ptr<RenderTarget> pShadowRT;
+	std::unique_ptr<DepthCubemap> pShadowCube;
+
+	std::unique_ptr<RenderTarget> pPostRT;
+	std::unique_ptr<RenderTarget> pConvRT;
 
 #ifdef _DEBUG 
 	ComPtr<ID3D11Debug> pDebug;

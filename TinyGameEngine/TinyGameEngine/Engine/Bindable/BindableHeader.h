@@ -15,3 +15,5 @@
 #include "GeometryShader.h"
 #include "ShadowRasterizer.h"
 #include "DepthStencil.h"
+#include "DepthCubemap.h"
+#include "RenderTarget.h"

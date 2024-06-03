@@ -99,13 +99,12 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 	const float color[] = { red,green,blue,1.0f };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 	pContext->ClearDepthStencilView(pDepthStencil->Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
-	for (int i = 0; i < 6; i++)
-	{
-		pContext->ClearRenderTargetView(pShadowCubeRTV.Get(), color);
-		pContext->ClearDepthStencilView(pShadowCubeDSV[i].Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
-	}
-	pContext->ClearRenderTargetView(pPostRTV.Get(), color);
-	pContext->ClearRenderTargetView(pConvRTV.Get(), color);	
+	
+	pShadowRT->Clear(*this, color);
+	pShadowCube->Clear(*this);
+
+	pPostRT->Clear(*this, color);
+	pConvRT->Clear(*this, color);
 }
 
 void Graphics::Draw(UINT count)
@@ -249,7 +248,7 @@ DirectX::XMMATRIX Graphics::GetCamera() const
 
 void Graphics::SetShadowPassDepthStencil(int index)
 {
-	pContext->OMSetRenderTargets(1u, pShadowCubeRTV.GetAddressOf(), pShadowCubeDSV[index].Get());
+	pShadowRT->BindToOutputMerger(*this, pShadowCube->Get(index));
 
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = 0.0f;
@@ -279,7 +278,7 @@ void Graphics::BindShadowMapToPixelShader()
 {
 	//ID3D11ShaderResourceView* nullSRVs[2] = { nullptr,nullptr };
 	//pContext->PSSetShaderResources(0, 2, nullSRVs); // Unbind from pixel shader slot 0
-	pContext->PSSetShaderResources(1, 1, pShadowDepthSRV.GetAddressOf());
+	pShadowCube->BindToPixelShader(*this, 1u);
 }
 
 void Graphics::UnbindShadowMapToPixelShader()
@@ -309,66 +308,8 @@ void Graphics::UnbindRenderTarget()
 
 void Graphics::CreateShadowPassResource()
 {
-	D3D11_TEXTURE2D_DESC texDesc;
-	ZeroMemory(&texDesc, sizeof(texDesc));
-	texDesc.Width = 1024u;
-	texDesc.Height = 1024u;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 6;
-	texDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-
-	DX::ThrowIfFailed(pDevice->CreateTexture2D(&texDesc, nullptr, &pShadowDepth));
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
-	ZeroMemory(&dsvDesc, sizeof(dsvDesc));
-	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
-	dsvDesc.Texture2DArray.MipSlice = 0;
-	dsvDesc.Texture2DArray.FirstArraySlice = 0;
-	dsvDesc.Texture2DArray.ArraySize = 1;
-
-	
-	for (int i = 0; i < 6; ++i)
-	{
-		dsvDesc.Texture2DArray.FirstArraySlice = i;
-		DX::ThrowIfFailed(pDevice->CreateDepthStencilView(pShadowDepth.Get(), &dsvDesc, &pShadowCubeDSV[i]));
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = 1;
-
-	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pShadowDepth.Get(), &srvDesc, &pShadowDepthSRV));
-
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = 1024u;
-	textureDesc.Height = 1024u;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.MiscFlags = 0;
-
-	DX::ThrowIfFailed(pDevice->CreateTexture2D(&textureDesc, nullptr, &pShadowRT));
-
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	rtvDesc.Format = textureDesc.Format;
-	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Texture2DArray.MipSlice = 0;
-	rtvDesc.Texture2DArray.ArraySize = 1;
-
-	DX::ThrowIfFailed(pDevice->CreateRenderTargetView(pShadowRT.Get(), &rtvDesc, &pShadowCubeRTV));
+	pShadowCube = std::make_unique<DepthCubemap>(*this, 1024u);
+	pShadowRT = std::make_unique<RenderTarget>(*this, 1024u, 1024u);
 }
 
 void Graphics::UnbindGeometryShader()
@@ -379,64 +320,33 @@ void Graphics::UnbindGeometryShader()
 void Graphics::ClearRenderTarget()
 {
 	const float color[] = { 0.1f,0.1f,0.1f,1.0f };
-	pContext->ClearRenderTargetView(pShadowCubeRTV.Get(), color);
+	pContext->ClearRenderTargetView(pShadowRT->Get(), color);
 }
 
 void Graphics::CreatePostProcessingResource()
 {
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = WIDTH;
-	textureDesc.Height = HEIGHT;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.MiscFlags = 0;
-
-	DX::ThrowIfFailed(pDevice->CreateTexture2D(&textureDesc, nullptr, &pPostRT));
-
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	rtvDesc.Format = textureDesc.Format;
-	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Texture2DArray.MipSlice = 0;
-	rtvDesc.Texture2DArray.ArraySize = 1;
-
-	DX::ThrowIfFailed(pDevice->CreateRenderTargetView(pPostRT.Get(), &rtvDesc, &pPostRTV));
-	
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = 1;
-
-	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pPostRT.Get(), &srvDesc, &pPostSRV));
-
-	// Second
-	DX::ThrowIfFailed(pDevice->CreateTexture2D(&textureDesc, nullptr, &pConvRT));
-	DX::ThrowIfFailed(pDevice->CreateRenderTargetView(pConvRT.Get(), &rtvDesc, &pConvRTV));
-	DX::ThrowIfFailed(pDevice->CreateShaderResourceView(pConvRT.Get(), &srvDesc, &pConvSRV));
+	pPostRT = std::make_unique<RenderTarget>(*this, WIDTH, HEIGHT);
+	pConvRT = std::make_unique<RenderTarget>(*this, WIDTH, HEIGHT);
 }
 
 void Graphics::SetPostProcessingRT()
 {
-	pContext->OMSetRenderTargets(1u, pPostRTV.GetAddressOf(), nullptr);
+	pPostRT->BindToOutputMerger(*this);
 }
 
 void Graphics::BindPostRTToPixelShader()
 {
-	pContext->PSSetShaderResources(0, 1, pPostSRV.GetAddressOf());
+	pPostRT->BindToPixelShader(*this, 0u);
 }
 
 void Graphics::SetConvRT()
 {
-	pContext->OMSetRenderTargets(1u, pConvRTV.GetAddressOf(), nullptr);
+	pConvRT->BindToOutputMerger(*this);
 }
 
 void Graphics::BindConvRTToPixelShader()
 {
-	pContext->PSSetShaderResources(0, 1, pConvSRV.GetAddressOf());
+	pConvRT->BindToPixelShader(*this, 0u);
 }
 
 
