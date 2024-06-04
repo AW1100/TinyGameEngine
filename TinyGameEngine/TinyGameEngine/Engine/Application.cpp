@@ -50,7 +50,7 @@ void TGE::Application::DoFrame()
 {
 	auto dt = timer.Mark() * speed_factor;
 	wnd->Gfx().SetCamera(cam.GetView());
-	cam.Update(wnd->Gfx());
+	cam.Update(wnd->Gfx(),dt);
 	std::ostringstream oss;
 	oss << std::fixed << std::setprecision(1) << timer.Duration();
 	SetWindowText(wnd->GetHWnd(), WINDOW_TITLE);

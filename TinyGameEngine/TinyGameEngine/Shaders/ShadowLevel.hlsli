@@ -3,7 +3,7 @@
 #define BIAS 0.0005f
 #define NUM_OF_TEXELS 4.0f
 #define SHADOWMAP_SIZE 1024.0f
-#define FAR 50.0f
+#define FAR 100.0f
 float SampleShadow(TextureCube shadowMap, SamplerComparisonState shadowSampler, float3 lightToPixel, float distance)
 {
     float shadowLevel = 0.0f;

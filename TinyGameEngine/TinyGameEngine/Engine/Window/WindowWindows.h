@@ -25,7 +25,7 @@ public:
 private:
 	HWND hWnd;
 	std::unique_ptr<Graphics> pGfx;
-	WindowsMessage* wm_ptr;
+	//WindowsMessage* wm_ptr = nullptr;
 };
 
 class WindowWindows::WindowsClass

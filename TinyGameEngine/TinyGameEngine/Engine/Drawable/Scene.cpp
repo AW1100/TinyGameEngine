@@ -156,12 +156,12 @@ void Scene::PostPass(float dt, Graphics& gfx)
 	// do convolution operation
 	gfx.SetConvRT();
 	gfx.BindPostRTToPixelShader();
-	Drawable* fullScreen = new FullScreenPlane(gfx);
-	fullScreen->Draw(gfx);
+	FullScreenPlane fullScreen(gfx);
+	fullScreen.Draw(gfx);
 	
 	// apply it to base pass RT
 	gfx.SetBasePassRT();
 	gfx.BindConvRTToPixelShader();
-	Drawable* mergeScreen = new MergePlane(gfx);
-	mergeScreen->Draw(gfx);
+	MergePlane mergeScreen(gfx);
+	mergeScreen.Draw(gfx);
 }

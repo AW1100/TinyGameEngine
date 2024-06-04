@@ -11,9 +11,6 @@ Camera::Camera(float r, float theta, float phi, float pitch, float yaw, float ro
 
 DirectX::XMMATRIX Camera::GetView() const
 {
-	eyePos = DirectX::XMVector3Transform(
-		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f),
-		DirectX::XMMatrixRotationRollPitchYaw(phi, -theta, 0.0f));
 	return DirectX::XMMatrixLookAtLH(
 		eyePos,
 		DirectX::XMVectorZero(),
@@ -30,8 +27,12 @@ void Camera::SetConstantBuffer(Graphics& gfx)
 	pcb = std::make_unique<PixelConstantBuffer<DirectX::XMVECTOR>>(gfx, 1);
 }
 
-void Camera::Update(Graphics& gfx)
+void Camera::Update(Graphics& gfx, float dt)
 {
+	eyePos = DirectX::XMVector3Transform(
+		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f),
+		DirectX::XMMatrixRotationRollPitchYaw(phi, -theta, 0.0f));
+
 	pcb->Update(gfx, eyePos);
 	pcb->Bind(gfx);
 }
@@ -41,7 +42,7 @@ void Camera::SpawnControlWindow()
 	if (ImGui::Begin("Camera"))
 	{
 		ImGui::Text("Position");
-		ImGui::SliderFloat("R", &r, 0.1f, 20.0f, "%.1f");
+		ImGui::SliderFloat("R", &r, 0.5f, 50.0f, "%.1f");
 		ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);
 		ImGui::SliderAngle("Phi", &phi, -89.0f, 89.0f);
 		ImGui::Text("Orientation");

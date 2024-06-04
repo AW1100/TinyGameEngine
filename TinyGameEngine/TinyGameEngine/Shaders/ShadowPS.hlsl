@@ -20,7 +20,7 @@ PSOutput main(VSInput input)
 {
     PSOutput output;
     float lightDistance = length(input.worldPos.xyz - lightPos.xyz);
-    lightDistance = lightDistance / 50.0f;
+    lightDistance = lightDistance / 100.0f;
     output.color = float4(lightDistance, lightDistance, lightDistance, 1.0f);
     output.depth = lightDistance;
     return output;
