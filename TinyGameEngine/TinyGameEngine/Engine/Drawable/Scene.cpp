@@ -48,6 +48,7 @@ Scene::~Scene()
 
 void Scene::UpdateFrame(float dt, Graphics& gfx)
 {
+	light->Update(gfx);
 	ShadowPass(dt, gfx);
 	BasePass(dt, gfx);
 	SkyboxPass(dt, gfx);
@@ -121,7 +122,6 @@ void Scene::BasePass(float dt, Graphics& gfx)
 {
 	gfx.SetBasePassRT();
 	gfx.BindShadowMapToPixelShader();
-	light->Update(gfx);
 	light->Draw(gfx);
 	mtx.lock();
 	if (loadedObjects.size() > 0)

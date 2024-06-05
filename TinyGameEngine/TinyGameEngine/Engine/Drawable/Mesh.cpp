@@ -70,10 +70,6 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
             return std::make_shared<Stencil>(gfx, useOutline ? Stencil::Mode::Write : Stencil::Mode::Off);
             }));
 
-        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>(useAlpha ? "None" : "Back")), [&]()-> std::shared_ptr<Bindable> {
-            return std::make_shared<Rasterizer>(gfx, useAlpha);
-            }));
-
         std::vector<const wchar_t*> texFiles;
         if (node->diffuse.size() > 0)
         {
@@ -93,6 +89,10 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
                 return std::make_shared<Texture>(gfx, texFiles, useAlpha);
                 }));
         }
+
+        AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Rasterizer>(useAlpha ? "None" : "Back")), [&]()-> std::shared_ptr<Bindable> {
+            return std::make_shared<Rasterizer>(gfx, useAlpha);
+            }));
 
         AddBind(SceneBindables::GetInstance().GetBindable(std::move(GenerateUID<Sampler>()), [&]()-> std::shared_ptr<Bindable> {
             return std::make_shared<Sampler>(gfx);
@@ -116,6 +116,7 @@ Mesh::Mesh(Graphics& gfx, std::shared_ptr<MeshNode> node, DirectX::XMFLOAT3 tran
         shadowBinds.emplace_back(std::make_shared<InputLayout>(gfx, ied, pvsbc));
         shadowBinds.emplace_back(std::make_shared<ShadowRasterizer>(gfx, 0, 0.0f, 0.0f));
         shadowBinds.emplace_back(std::make_shared<Stencil>(gfx, Stencil::Mode::Off));
+        shadowBinds.emplace_back(std::make_shared<Rasterizer>(gfx, useAlpha));
     }
 
     if (useOutline)
