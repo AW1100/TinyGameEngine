@@ -8,7 +8,8 @@ public:
 	{
 		Off,
 		Write,
-		Mask
+		Mask,
+		DepthLessEqual
 	};
 
 	Stencil(Graphics& gfx, Mode mode);

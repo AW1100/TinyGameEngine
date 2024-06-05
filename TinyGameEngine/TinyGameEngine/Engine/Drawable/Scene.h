@@ -20,10 +20,12 @@ public:
 	void ShadowPass(float dt, Graphics& gfx);
 	void BasePass(float dt, Graphics& gfx);
 	void PostPass(float dt, Graphics& gfx);
+	void SkyboxPass(float dt, Graphics& gfx);
 
 protected:
 	std::vector<class Model*> models;
 	std::vector<class Drawable*> objects;
 	std::vector<class Drawable*> loadedObjects;
 	std::shared_ptr<class PointLight> light;
+	std::unique_ptr<class Skybox> skybox;
 };

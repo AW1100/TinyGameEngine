@@ -17,3 +17,4 @@
 #include "DepthStencil.h"
 #include "DepthCubemap.h"
 #include "RenderTarget.h"
+#include "TextureCubemap.h"

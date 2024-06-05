@@ -14,6 +14,7 @@
 #include "../Bindable/ConstantBuffer.h"
 #include "../Drawable/FullScreenPlane.h"
 #include "../Drawable/MergePlane.h"
+#include "../Drawable/Skybox.h"
 
 
 std::mutex mtx;
@@ -24,6 +25,7 @@ Scene::Scene(Graphics& gfx)
 	CreateWorkerThread(gfx, "F:/3DModels/obj/sponza.obj", { 0.0f, -1.0f, 0.0f }, MeshType::RealisticObjectA);
 
 	light = std::make_shared<PointLight>(gfx, 0.03f);
+	skybox = std::make_unique<Skybox>(gfx);
 }
 
 Scene::~Scene()
@@ -48,6 +50,7 @@ void Scene::UpdateFrame(float dt, Graphics& gfx)
 {
 	ShadowPass(dt, gfx);
 	BasePass(dt, gfx);
+	SkyboxPass(dt, gfx);
 	PostPass(dt, gfx);
 }
 
@@ -164,4 +167,9 @@ void Scene::PostPass(float dt, Graphics& gfx)
 	gfx.BindConvRTToPixelShader();
 	MergePlane mergeScreen(gfx);
 	mergeScreen.Draw(gfx);
+}
+
+void Scene::SkyboxPass(float dt, Graphics& gfx)
+{	
+	skybox->Draw(gfx);
 }

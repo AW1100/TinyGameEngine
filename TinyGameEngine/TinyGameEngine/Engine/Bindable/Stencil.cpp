@@ -18,6 +18,12 @@ Stencil::Stencil(Graphics& gfx, Mode mode)
 		dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
 		dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	}
+	else if (mode == Mode::DepthLessEqual)
+	{
+		dsDesc.DepthEnable = TRUE;
+		dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	}
 
 	GetDevice(gfx)->CreateDepthStencilState(&dsDesc, &pStencil);
 }

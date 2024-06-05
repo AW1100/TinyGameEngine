@@ -477,6 +477,12 @@
     <ClInclude Include="Engine\Bindable\RenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Drawable\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Bindable\TextureCubemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Application.cpp">
@@ -632,6 +638,12 @@
     <ClCompile Include="Engine\Bindable\RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Drawable\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Bindable\TextureCubemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ColorCubeVS.hlsl" />
@@ -660,6 +672,8 @@
     <FxCompile Include="Shaders\PostPS.hlsl" />
     <FxCompile Include="Shaders\MergeVS.hlsl" />
     <FxCompile Include="Shaders\MergePS.hlsl" />
+    <FxCompile Include="Shaders\SkyBoxVS.hlsl" />
+    <FxCompile Include="Shaders\SkyBoxPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\assimp\color4.inl">

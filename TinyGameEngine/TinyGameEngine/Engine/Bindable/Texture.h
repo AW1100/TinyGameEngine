@@ -10,5 +10,5 @@ public:
 	void Bind(Graphics& gfx) override;
 
 protected:
-	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> pTextureViews;
+	std::vector<ComPtr<ID3D11ShaderResourceView>> pTextureViews;
 };
