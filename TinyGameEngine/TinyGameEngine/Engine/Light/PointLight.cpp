@@ -18,9 +18,9 @@ void PointLight::SpawnControlWindow()
 	if (ImGui::Begin("Light"))
 	{
 		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &pos.x, -15.0f, 15.0f, "%.05f");
-		ImGui::SliderFloat("Y", &pos.y, -15.0f, 15.0f, "%.05f");
-		ImGui::SliderFloat("Z", &pos.z, -15.0f, 15.0f, "%.05f");
+		ImGui::SliderFloat("X", &pos.x, -15.0f, 15.0f, "%.1f");
+		ImGui::SliderFloat("Y", &pos.y, -15.0f, 15.0f, "%.1f");
+		ImGui::SliderFloat("Z", &pos.z, -15.0f, 15.0f, "%.1f");
 		ImGui::SliderFloat("Att Const", &attConsts.x, 0.0f, 1.0f, "%.1f");
 		ImGui::SliderFloat("Att Linear", &attConsts.y, 0.0f, 1.0f, "%.1f");
 		ImGui::SliderFloat("Att Quad", &attConsts.z, 0.0f, 1.0f, "%.1f");
