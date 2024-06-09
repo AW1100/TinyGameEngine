@@ -15,6 +15,6 @@ DirectX 11 API Renderer
 - DirectXTex
 - DirectXTK
 - imgui
-- 
+  
 ## Up to 2024/06/09 Demo
 ![Demo of the feature](gif_demo/20240609d0.gif)
